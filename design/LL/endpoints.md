@@ -190,4 +190,136 @@ DetailEmployee(
 
 
 
+## Locations:
 
+### Get All Locations:
+This method should return all the locations in the system. It should be accessible
+to all the users in the system. This method should then return the following:
+```
+LocationList(
+    count: int = 25,
+    locations: list[SimpleLocation] = [
+        SimpleLocation(
+            location_id: str = "1234567890abcdefg"
+            country: str = "Iceland",
+            airport: str = "Keflavík, Airport"
+        ),
+        ...  
+    ]
+)
+```
+
+
+### Create Location:
+This method should create a location in the system. It should take in a single
+parameter that is the create location model. This input looks like the following:
+```
+CreateLocationInput(
+    country: str = "Iceland",
+    airport: str = "Keflavík, Airport",
+    supervisor_id: str = "123456789abcdef"
+)
+```
+The system will additionally check for a few constraints:
+* The user must be a supervisor (Forbidden)
+* The supervisor ID exists in the system (NotFound)
+* The supervisor must not be supervising any other location (BadRequest)
+* Any other validation requirements we decide to implement (TBD)
+
+Afterwards the system will respond with a detailed location model:
+```
+DetailLocation(
+    location_id: str = "1234567890abcdef"
+    country: str = "Iceland",
+    airport: str = "Keflavík, Airport",
+    supervisor: BasicEmployee = BasicEmployee(
+        employee_id: str = "1234567890abcdef"
+        name: str = "Úlfur Örn Björnsson",
+        security_number: int = 2811002110,
+        address: str = "Heiðargerði 21",
+        home_phone: int = 5812345,
+        work_phone: int = 6627880,
+        email: str = "ulfurinn@gmail.com",
+        location_id: str = "123456789abcdef"
+    )
+)
+```
+
+
+### Get Location:
+This method should get an input of a single location ID. It should be available to
+all users and should check for the following constraints:
+* The location ID provided should exist in the system (NotFound)
+
+The system should then give the following response:
+```
+DetailLocation(
+    location_id: str = "1234567890abcdef"
+    country: str = "Iceland",
+    airport: str = "Keflavík, Airport",
+    supervisor: BasicEmployee = BasicEmployee(
+        employee_id: str = "1234567890abcdef"
+        name: str = "Úlfur Örn Björnsson",
+        security_number: int = 2811002110,
+        address: str = "Heiðargerði 21",
+        home_phone: int = 5812345,
+        work_phone: int = 6627880,
+        email: str = "ulfurinn@gmail.com",
+        location_id: str = "123456789abcdef"
+    )
+)
+```
+
+
+### Update Location:
+This method should update a location in the system. It should take in a single
+parameter that is the update location model. This input looks like the following:
+```
+UpdateLocationInput(
+    supervisor_id: str = "123456789abcdef"
+)
+```
+The system will additionally check for a few constraints:
+* The user must be a supervisor (Forbidden)
+* The supervisor ID exists in the system (NotFound)
+* Any other validation requirements we decide to implement (TBD)
+
+Afterwards the system will respond with a detailed employee model:
+```
+DetailLocation(
+    location_id: str = "1234567890abcdef"
+    country: str = "Iceland",
+    airport: str = "Keflavík, Airport",
+    supervisor: BasicEmployee = BasicEmployee(
+        employee_id: str = "1234567890abcdef"
+        name: str = "Úlfur Örn Björnsson",
+        security_number: int = 2811002110,
+        address: str = "Heiðargerði 21",
+        home_phone: int = 5812345,
+        work_phone: int = 6627880,
+        email: str = "ulfurinn@gmail.com",
+        location_id: str = "123456789abcdef"
+    )
+)
+```
+
+
+
+## Properties:
+
+### Get All Properties:
+This method should return all the properties in the system. It should be accessible
+to all the users in the system. This method should then return the following:
+```
+PropertyList(
+    count: int = 25,
+    properties: list[SimpleProperty] = [
+        SimpleProperty(
+            location_id: str = "1234567890abcdefg"
+            country: str = "Iceland",
+            airport: str = "Keflavík, Airport"
+        ),
+        ...  
+    ]
+)
+```
