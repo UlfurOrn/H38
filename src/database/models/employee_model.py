@@ -34,18 +34,7 @@ class Employee(DatabaseModel):
 if __name__ == "__main__":
     DatabaseModel._PATH = "../data/"
 
-    # Employee(
-    #     name="Úlfur Örn Björnsson",
-    #     ssn=2811002110,
-    #     address="Heiðargerði 21",
-    #     home_phone=5812345,
-    #     work_phone=6627880,
-    #     email="ulfurinn@gmail.com",
-    #     location_id=UUID("c114a7b3-d5c9-490f-b82d-38709fe825f1"),
-    # ).create()
-    #
-    # print(Employee.read())
+    print(Employee.all())
 
-    employee = Employee.get(UUID("e42cee48-1424-45a3-95a6-3d6037a57d5f"))
+    employee = Employee.all()[0]
     print(employee)
-    print(employee.location)
