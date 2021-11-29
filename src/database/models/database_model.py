@@ -11,7 +11,7 @@ from utils.exceptions import NotFoundException
 
 class DatabaseModel(BaseModel):
     _HEADERS = None
-    _PATH = "../../database/data/"
+    _PATH = "/database/data/"
     _FILENAME = None
 
     id: Optional[UUID] = None
@@ -66,6 +66,28 @@ class DatabaseModel(BaseModel):
                 return self
 
         raise NotFoundException(f'{self.__class__} with ID "{self.id}" does not exist')
+
+    @classmethod
+    def all(cls) -> list[DatabaseModel]:
+        return cls.read()
+
+    @classmethod
+    def _get_model(cls, models: list[DatabaseModel], model_id: UUID) -> DatabaseModel:
+        for model in models:
+            if model.id == model_id:
+                return model
+
+        raise NotFoundException(f'{cls.__name__} with ID "{model_id}" does not exist')
+
+    @classmethod
+    def many(cls, model_ids: list[UUID]) -> list[DatabaseModel]:
+        data = cls.read()
+        return [cls._get_model(data, model_id) for model_id in model_ids]
+
+    @classmethod
+    def get(cls, model_id: UUID) -> DatabaseModel:
+        data = cls.read()
+        return cls._get_model(data, model_id)
 
     @classmethod
     def serialize(cls, model: DatabaseModel) -> dict:

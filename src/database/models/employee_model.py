@@ -1,18 +1,21 @@
 from __future__ import annotations
 
-from typing import Optional
 from uuid import UUID
 
 from database.models.database_model import DatabaseModel
 
 
 class Employee(DatabaseModel):
-    _HEADERS = ["id", "name", "phone"]
+    _HEADERS = ["id", "name", "ssn", "address", "home_phone", "work_phone", "email", "location_id"]
     _FILENAME = "employees.csv"
 
-    # id: Optional[UUID] = None
     name: str
-    phone: int
+    ssn: int
+    address: str
+    home_phone: int
+    work_phone: int
+    email: str
+    location_id: UUID
 
     @classmethod
     def serialize(cls, model: Employee) -> dict:
@@ -20,16 +23,20 @@ class Employee(DatabaseModel):
 
     @classmethod
     def deserialize(cls, data: dict) -> Employee:
-        return Employee(id=data["id"], name=data["name"], phone=data["phone"])
+        return Employee(**data)
 
 
 if __name__ == "__main__":
-    employees = [
-        Employee(name="Úlfur Örn Björnsson", phone=1234567),
-        Employee(name="Silja Dögg Helgadóttir", phone=7654321),
-    ]
+    DatabaseModel._PATH = "../data/"
 
-    for employee in employees:
-        employee.create()
+    Employee(
+        name="Úlfur Örn Björnsson",
+        ssn=2811002110,
+        address="Heiðargerði 21",
+        home_phone=5812345,
+        work_phone=6627880,
+        email="ulfurinn@gmail.com",
+        location_id=UUID("c114a7b3-d5c9-490f-b82d-38709fe825f1"),
+    ).create()
 
     print(Employee.read())
