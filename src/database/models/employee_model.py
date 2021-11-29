@@ -10,7 +10,7 @@ class Employee(DatabaseModel):
     _HEADERS = ["id", "name", "phone"]
     _FILENAME = "employees.csv"
 
-    id: Optional[UUID] = None
+    # id: Optional[UUID] = None
     name: str
     phone: int
 
@@ -29,5 +29,7 @@ if __name__ == "__main__":
         Employee(name="Silja Dögg Helgadóttir", phone=7654321),
     ]
 
-    Employee.save(employees)
+    for employee in employees:
+        employee.create()
+
     print(Employee.read())

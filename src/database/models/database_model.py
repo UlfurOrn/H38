@@ -1,14 +1,20 @@
 from __future__ import annotations
 
 from csv import DictReader, DictWriter
+from typing import Optional
+from uuid import UUID, uuid4
 
 from pydantic import BaseModel
+
+from utils.exceptions import NotFoundException
 
 
 class DatabaseModel(BaseModel):
     _HEADERS = None
     _PATH = "../../database/data/"
     _FILENAME = None
+
+    id: Optional[UUID] = None
 
     @classmethod
     def __get_filepath(cls) -> str:
@@ -34,6 +40,32 @@ class DatabaseModel(BaseModel):
             writer.writeheader()
             for model in data:
                 writer.writerow(cls.serialize(model))
+
+    def create(self) -> DatabaseModel:
+        if self.id is not None:
+            raise Exception(f'{self.__class__} with ID "{self.id}" has already been created')
+
+        self.id = uuid4()
+
+        data = self.read()
+        data.append(self)
+
+        self.save(data)
+        return self
+
+    def update(self) -> DatabaseModel:
+        if self.id is None:
+            raise NotFoundException(f"{self.__class__} has not been created")
+
+        data = self.read()
+
+        for index, model in enumerate(data):
+            if model.id == self.id:
+                data[index] = self
+                self.save(data)
+                return self
+
+        raise NotFoundException(f'{self.__class__} with ID "{self.id}" does not exist')
 
     @classmethod
     def serialize(cls, model: DatabaseModel) -> dict:
