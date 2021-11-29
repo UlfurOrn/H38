@@ -5,7 +5,7 @@ from csv import DictReader, DictWriter
 
 class DatabaseModel:
     HEADERS = ["id"]
-    PATH = "/database/data/"
+    PATH = "../../database/data/"
     FILENAME = None
 
     @classmethod
