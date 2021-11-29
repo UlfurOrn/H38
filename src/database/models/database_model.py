@@ -2,18 +2,20 @@ from __future__ import annotations
 
 from csv import DictReader, DictWriter
 
+from pydantic import BaseModel
 
-class DatabaseModel:
-    HEADERS = ["id"]
-    PATH = "../../database/data/"
-    FILENAME = None
+
+class DatabaseModel(BaseModel):
+    _HEADERS = None
+    _PATH = "../../database/data/"
+    _FILENAME = None
 
     @classmethod
     def __get_filepath(cls) -> str:
-        if cls.FILENAME is None:
+        if cls._FILENAME is None:
             raise Exception(f"Specify FILENAME for class {cls.__name__}")
 
-        return f"{cls.PATH}{cls.FILENAME}"
+        return f"{cls._PATH}{cls._FILENAME}"
 
     @classmethod
     def read(cls) -> list[DatabaseModel]:
@@ -28,7 +30,7 @@ class DatabaseModel:
     def save(cls, data: list[DatabaseModel]) -> None:
         filepath = cls.__get_filepath()
         with open(filepath, "w") as file_object:
-            writer = DictWriter(file_object, cls.HEADERS)
+            writer = DictWriter(file_object, cls._HEADERS)
             writer.writeheader()
             for model in data:
                 writer.writerow(cls.serialize(model))

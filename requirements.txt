@@ -1,4 +1,7 @@
-# Development Dependecies
+# Actual Dependencies:
+pydantic==1.8.2
+
+# Development Dependecies:
 black==21.11b1
 flake8==4.0.1
 pre-commit==2.15.0

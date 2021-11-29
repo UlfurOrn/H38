@@ -1,23 +1,22 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 from typing import Optional
+from uuid import UUID
 
 from database.models.database_model import DatabaseModel
 
 
-@dataclass()
 class Employee(DatabaseModel):
-    HEADERS = ["id", "name", "phone"]
-    FILENAME = "employees.csv"
+    _HEADERS = ["id", "name", "phone"]
+    _FILENAME = "employees.csv"
 
+    id: Optional[UUID] = None
     name: str
     phone: int
-    id: Optional[str] = field(default=None)
 
     @classmethod
     def serialize(cls, model: Employee) -> dict:
-        return {"id": model.id, "name": model.name, "phone": model.phone}
+        return model.dict()
 
     @classmethod
     def deserialize(cls, data: dict) -> Employee:
@@ -26,8 +25,8 @@ class Employee(DatabaseModel):
 
 if __name__ == "__main__":
     employees = [
-        Employee(id="1", name="Úlfur Örn Björnsson", phone=1234567),
-        Employee(id="2", name="Silja Dögg Helgadóttir", phone=7654321),
+        Employee(name="Úlfur Örn Björnsson", phone=1234567),
+        Employee(name="Silja Dögg Helgadóttir", phone=7654321),
     ]
 
     Employee.save(employees)
