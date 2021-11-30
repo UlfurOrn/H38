@@ -8,19 +8,14 @@ from database.models.location_model import Location
 
 
 class Request(DatabaseModel):
-    _HEADERS = ["id", "property", "status", "priority", "date"]
+    _HEADERS = ["id", "property_id", "status", "priority", "date"]
     _FILENAME = "requests.csv"
 
-    request_id: str
     property_id: UUID
     status: str
     priority: str
     date: date
     
-
-    @property
-    def location(self) -> Location:
-        return Location.get(model_id=self.location_id)
 
     @classmethod
     def serialize(cls, model: Request) -> dict:

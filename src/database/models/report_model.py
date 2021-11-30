@@ -8,7 +8,7 @@ from database.models.location_model import Location
 
 
 class Report(DatabaseModel):
-    _HEADERS = ["property", "employee", "description", "cost", "satus", "date"]
+    _HEADERS = ["id", "property_id", "employee_id", "description", "cost", "status", "date"]
     _FILENAME = "reports.csv"
 
     property_id: UUID
@@ -17,10 +17,6 @@ class Report(DatabaseModel):
     cost: str
     status: str
     date: date
-
-    @property
-    def location(self) -> Location:
-        return Location.get(model_id=self.location_id)
 
     @classmethod
     def serialize(cls, model: Report) -> dict:

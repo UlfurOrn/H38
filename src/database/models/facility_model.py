@@ -7,7 +7,7 @@ from database.models.location_model import Location
 
 
 class Facility(DatabaseModel):
-    _HEADERS = ["id", "condition"]
+    _HEADERS = ["id", "property_id", "condition"]
     _FILENAME = "facilities.csv"
 
     property_id: UUID

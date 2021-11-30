@@ -7,7 +7,7 @@ from database.models.location_model import Location
 
 
 class Contractor(DatabaseModel):
-    _HEADERS = ["name", "phone", "opening hours", "email", "location"]
+    _HEADERS = ["name", "phone", "opening_hours", "email", "location_id"]
     _FILENAME = "contractors.csv"
 
     name: str
