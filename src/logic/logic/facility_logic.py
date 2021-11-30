@@ -8,7 +8,6 @@ from logic.helpers import ListItem, Paginator
 
 
 class FacilityItem(ListItem):
-    property_id: UUID
     facility_name: str
     condition: str
 
@@ -31,11 +30,11 @@ class FacilityUpdate(BaseModel):
 
 class FacilityLogic:
     @staticmethod
-    def all(page: int) -> Paginator:
-        facilities = Facility.all()
+    def all(property_id: UUID, page: int) -> Paginator:
+        facilities = Facility.all(property_id)
 
         facility_items = [
-            FacilityItem(property_id=facility.property_id, facility_name=facility.facility_name, condition=facility.condition)
+            FacilityItem(facility_name=facility.facility_name, condition=facility.condition)
             for facility in facilities
         ]
 
