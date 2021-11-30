@@ -1,8 +1,4 @@
-from database.models.employee_model import Employee
+from interface.windows.option_window import MainMenu
 
 if __name__ == "__main__":
-    employees = Employee.all()
-
-    employee = employees[0]
-
-    print(employee)
+    MainMenu().run()
