@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from csv import DictReader, DictWriter
 from typing import Optional
 from uuid import UUID, uuid4
@@ -21,7 +22,7 @@ class DatabaseModel(BaseModel):
         if cls._FILENAME is None:
             raise Exception(f"Specify FILENAME for class {cls.__name__}")
 
-        return f"{cls._PATH}{cls._FILENAME}"
+        return f"{os.curdir}{cls._PATH}{cls._FILENAME}"
 
     @classmethod
     def read(cls) -> list[DatabaseModel]:

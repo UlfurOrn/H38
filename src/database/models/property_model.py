@@ -7,7 +7,7 @@ from database.models.location_model import Location
 
 
 class Property(DatabaseModel):
-    _HEADERS = ["id", "condition", "location_id"]
+    _HEADERS = ["id", "property_number", "condition", "location_id"]
     _FILENAME = "properties.csv"
 
     property_number: str
