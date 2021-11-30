@@ -92,12 +92,18 @@ class ReportLogic:
 
     @staticmethod
     def approve(report_id: UUID) -> UUID:
-        pass
+        report = Report.get(report_id)
+
+        report.status = "approved"
 
     @staticmethod
     def unapprove(report_id: UUID) -> UUID:
-        pass
+        report = Report.get(report_id)
+
+        report.status = "unapproved"
 
     @staticmethod
     def close(report_id: UUID) -> UUID:
-        pass
+        report = Report.get(report_id)
+
+        report.status = "closed"
