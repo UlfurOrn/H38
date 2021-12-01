@@ -23,7 +23,7 @@ class PropertyInfo(BaseModel):
 
 class PropertyCreate(BaseModel):
     property_id: UUID
-    propert_number: str
+    property_number: str
     location: str
     condition: str
     facilities: str
