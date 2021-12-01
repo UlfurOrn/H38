@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+from typing import Any
+
 from pydantic import BaseModel
 
 
 class ListItem(BaseModel):
-    pass
+    def get(self, key: str) -> str:
+        return str(self.__getattribute__(key))
 
 
 class Paginator(BaseModel):
