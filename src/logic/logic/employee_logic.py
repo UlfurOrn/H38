@@ -15,14 +15,14 @@ class EmployeeItem(ListItem):
 
 
 class EmployeeInfo(BaseModel):
-    employee_id: str
+    employee_id: UUID
     name: str
     ssn: int
     address: str
     home_phone: int
     work_phone: int
     email: str
-    location_id: str
+    location_id: UUID
     location: str
 
 
