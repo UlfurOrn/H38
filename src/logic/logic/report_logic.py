@@ -93,17 +93,20 @@ class ReportLogic:
     @staticmethod
     def approve(report_id: UUID) -> UUID:
         report = Report.get(report_id)
-
-        report.status = "approved"
+        
+        if report.status != "approved":
+            report.status = "approved"
 
     @staticmethod
     def unapprove(report_id: UUID) -> UUID:
         report = Report.get(report_id)
 
-        report.status = "unapproved"
+        if report.status != "unapproved":
+            report.status = "unapproved"
 
     @staticmethod
     def close(report_id: UUID) -> UUID:
         report = Report.get(report_id)
 
-        report.status = "closed"
+        if report.status != "closed":
+            report.status = "closed"
