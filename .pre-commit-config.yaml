@@ -15,3 +15,7 @@ repos:
     hooks:
     -   id: isort
         args: ["./src"]
+-   repo: https://github.com/hadialqattan/pycln
+    rev: v1.1.0
+    hooks:
+    -   id: pycln
