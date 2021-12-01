@@ -1,6 +1,3 @@
-import os
-
-
 class Window:
     WINDOW_SIZE = 50
 
