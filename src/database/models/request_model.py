@@ -1,6 +1,6 @@
 from __future__ import annotations
-from datetime import date
 
+from datetime import date
 from uuid import UUID
 
 from database.models.database_model import DatabaseModel
@@ -15,7 +15,6 @@ class Request(DatabaseModel):
     status: str
     priority: str
     date: date
-    
 
     @classmethod
     def serialize(cls, model: Request) -> dict:
