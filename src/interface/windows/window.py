@@ -7,6 +7,7 @@ class Button(BaseModel):
     letter: str
     description: str
     function: Optional[Callable]
+    hide: bool = False
 
 
 class Window:
@@ -29,6 +30,7 @@ class Window:
 
             self.check_buttons(data)
             self.parse_input(data)
+            self.reset()
 
     def window_setup(self) -> None:
         pass
@@ -46,16 +48,26 @@ class Window:
     def display_buttons(self) -> None:
         # ToDo: Implement display buttons function
         for button in self.buttons:
-            self.padded(f"{button.letter}: {button.description}", 20)
+            if not button.hide:
+                self.padded(f"{button.letter}: {button.description}", 20)
         self.boundary()
+
+    def get_button(self, letter: str) -> Button:
+        for button in self.buttons:
+            if button.letter == letter:
+                return button
 
     def check_buttons(self, data: str) -> None:
         for button in self.buttons:
-            if button.letter == data:
+            if not button.hide and button.letter == data:
                 return button.function(self)
 
     def parse_input(self, data: str) -> None:
         pass
+
+    def reset(self) -> None:
+        for button in self.buttons:
+            button.hide = False
 
     def _get_boundary(self) -> str:
         line = "-" * (self.WINDOW_SIZE - 2)
