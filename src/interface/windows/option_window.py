@@ -8,16 +8,7 @@ from interface.windows.window import Window
 class OptionWindow(Window):
     options: list
 
-    def run(self) -> None:
-        while True:
-            self.clear()
-            self.display()
-            data = self.get_input()
-            self.parse_input(data)
-
     def display(self) -> None:
-        self.boundary()
-        self.title("Main Menu")
         self.boundary()
         self.empty()
         for index, option in enumerate(self.options, start=1):
@@ -48,6 +39,7 @@ class MainMenuOptions(str, Enum):
 
 
 class MainMenu(OptionWindow):
+    title = "Main Menu"
     options = list(MainMenuOptions)
 
     def window_specific(self, option: MainMenuOptions) -> Any:

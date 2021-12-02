@@ -1,5 +1,56 @@
+from typing import Callable
+
+from pydantic import BaseModel
+
+
+class Button(BaseModel):
+    letter: str
+    description: str
+    function: Callable
+
+
 class Window:
     WINDOW_SIZE = 50
+    title: str
+    buttons: list[Button]
+
+    def run(self):
+        self.window_setup()
+        while True:
+            self.setup()
+            self.display_title()
+            self.display()
+            self.display_buttons()
+
+            data = self.get_input()
+            self.check_buttons(data)
+            self.parse_input(data)
+
+    def window_setup(self) -> None:
+        pass
+
+    def setup(self) -> None:
+        pass
+
+    def display(self) -> None:
+        raise NotImplementedError()
+
+    def display_title(self) -> None:
+        self.boundary()
+        self.title(self.title)
+
+    def display_buttons(self) -> None:
+        # ToDo: Implement display buttons function
+        print("|                                        b: back |")
+        self.boundary()
+
+    def check_buttons(self, data: str) -> None:
+        for button in self.buttons:
+            if button.letter == data:
+                return button.function()
+
+    def parse_input(self, data: str) -> None:
+        pass
 
     def _get_boundary(self) -> str:
         line = "-" * (self.WINDOW_SIZE - 2)
@@ -32,4 +83,4 @@ class Window:
 
     def get_input(self, text: str = "Enter Command: ") -> str:
         print()
-        return input(text)
+        return input(text).strip()
