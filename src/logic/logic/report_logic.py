@@ -2,7 +2,6 @@ import enum
 from typing import Optional
 from uuid import UUID
 from datetime import date
-from Verklegt_1.H38.src.database.models.location_model import Location
 from enum import Enum
 
 from pydantic import BaseModel
@@ -10,6 +9,7 @@ from pydantic import BaseModel
 from database.models.report_model import *
 from database.models.property_model import Property
 from database.models.employee_model import Employee
+from database.models.contractor_model import *
 from src.utils.exceptions import NotFoundException
 from Verklegt_1.H38.src.logic.helpers import ListItem, Paginator
 
@@ -27,6 +27,7 @@ class ReportInfo(BaseModel):
     cost: str
     status: str
     date: date
+    contractor_id: UUID
 
 class ReportCreate(BaseModel):
     property_id: UUID
@@ -35,6 +36,7 @@ class ReportCreate(BaseModel):
     cost: str
     status: str
     date: date
+    contractor_id: UUID
 
 class ReportUpdate(BaseModel):
     property_id: Optional[UUID] = None
@@ -42,6 +44,7 @@ class ReportUpdate(BaseModel):
     description: Optional[str] = None
     cost: Optional[str] = None
     date: Optional[date] = None
+    contractor_id: Optional[UUID] = None
 
 class ReportLogic:
     @staticmethod
@@ -75,7 +78,8 @@ class ReportLogic:
             description = report.description,
             cost = report.cost,
             status = report.status,
-            date = report.date
+            date = report.date,
+            contractor_id = report.contractor_id
         )
     
     @staticmethod
@@ -88,6 +92,7 @@ class ReportLogic:
         report.cost = data.cost or report.cost
         report.status = data.status or report.status
         report.date = data.date or report.date
+        report.contracor_id = data.contractor_id or report.contractor_id
 
         report.update()
 

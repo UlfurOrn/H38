@@ -10,7 +10,7 @@ from src.utils.exceptions import *
 
 
 class Report(DatabaseModel):
-    _HEADERS = ["id", "property_id", "employee_id", "description", "cost", "status", "date"]
+    _HEADERS = ["id", "property_id", "employee_id", "description", "cost", "status", "date", "contractor"]
     _FILENAME = "reports.csv"
 
     property_id: UUID
@@ -19,6 +19,7 @@ class Report(DatabaseModel):
     cost: str
     status: str
     date: date
+    contractor_id: UUID
 
     @classmethod
     def serialize(cls, model: Report) -> dict:
@@ -33,7 +34,5 @@ class Status(Enum):
     unapprove = "unapprove"
     close = "close"
     
-
-
 if __name__ == "__main__":
     DatabaseModel._PATH = "../data/"
