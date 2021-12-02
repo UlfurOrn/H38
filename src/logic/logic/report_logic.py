@@ -1,13 +1,16 @@
+import enum
 from typing import Optional
 from uuid import UUID
 from datetime import date
 from Verklegt_1.H38.src.database.models.location_model import Location
+from enum import Enum
 
 from pydantic import BaseModel
 
-from database.models.report_model import Report
+from database.models.report_model import *
 from database.models.property_model import Property
 from database.models.employee_model import Employee
+from src.utils.exceptions import NotFoundException
 from Verklegt_1.H38.src.logic.helpers import ListItem, Paginator
 
 class ReportItem(ListItem):
@@ -94,19 +97,26 @@ class ReportLogic:
     def approve(report_id: UUID) -> UUID:
         report = Report.get(report_id)
         
-        if report.status != "approved":
-            report.status = "approved"
+        if report.status == Status.unapprove:
+            report.status = Status.approve
+        else:
+            raise BadRequest()
+
 
     @staticmethod
     def unapprove(report_id: UUID) -> UUID:
         report = Report.get(report_id)
 
-        if report.status != "unapproved":
+        if report.status == "approved":
             report.status = "unapproved"
+        else:
+            NotFoundException.BadRequest()
 
     @staticmethod
     def close(report_id: UUID) -> UUID:
         report = Report.get(report_id)
 
-        if report.status != "closed":
+        if report.status == "approved":
             report.status = "closed"
+        else:
+            NotFoundException.BadRequest()
