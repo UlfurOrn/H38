@@ -13,7 +13,7 @@ class Window:
         string += " " * padding
         string += text
         if len(string) > self.WINDOW_SIZE:
-            string = string[0 : self.WINDOW_SIZE - 2]
+            string = string[0 : self.WINDOW_SIZE - 2]  # noqa: E203
         string += " " * (self.WINDOW_SIZE - len(string) - 1)
         string += "|"
         print(string)

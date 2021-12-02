@@ -61,7 +61,7 @@ class ListWindow(Window):
                 string += " "
                 value = item.get(column.field)
                 if len(value) > column.size - 2:
-                    value = value[0 : column.size - 2]
+                    value = value[0 : column.size - 2]  # noqa: E203
                 value += " " * (column.size - len(value) - 2)
                 string += value
                 string += " "
