@@ -4,7 +4,7 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from database.models.employee_model import Employee
-from logic.helpers import ListItem, Paginator
+from logic.helpers import InfoModel, ListItem, Paginator
 
 
 class EmployeeItem(ListItem):
@@ -14,7 +14,7 @@ class EmployeeItem(ListItem):
     phone: int
 
 
-class EmployeeInfo(BaseModel):
+class EmployeeInfo(InfoModel):
     employee_id: UUID
     name: str
     ssn: int

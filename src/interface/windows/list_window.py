@@ -1,8 +1,10 @@
 from pydantic import BaseModel
 
 from interface.windows.create_window import EmployeeCreateWindow
+from interface.windows.view_window import EmployeeViewWindow
 from interface.windows.window import Button, Window
-from logic.helpers import Paginator
+from logic.helpers import ListItem, Paginator
+from logic.logic.employee_logic import EmployeeItem
 from logic.logic_api import api
 
 
@@ -28,6 +30,15 @@ class ListWindow(Window):
             self.page -= 1
         if data == "d" and self.page < self.paginator.max_page:
             self.page += 1
+
+        if data.isdigit():
+            index = int(data)
+            items = self.paginator.items
+            if index in range(len(items)):
+                self.view_item(items[index])
+
+    def view_item(self, item: ListItem) -> None:
+        raise NotImplementedError()
 
     def display(self) -> None:
         self.list_boundary()
@@ -89,6 +100,11 @@ class EmployeeListWindow(ListWindow):
     def setup(self) -> None:
         self.paginator = api.employees.all(self.page)
 
+    def view_item(self, item: EmployeeItem) -> None:
+        window = EmployeeViewWindow()
+        window.model_id = item.employee_id
+        window.run()
+
     def create(self) -> None:
         EmployeeCreateWindow().run()
 
@@ -109,3 +125,6 @@ class LocationListWindow(ListWindow):
 
     def setup(self) -> None:
         self.paginator = api.locations.all(self.page)
+
+    def view_item(self, item: ListItem) -> None:
+        raise NotImplementedError()
