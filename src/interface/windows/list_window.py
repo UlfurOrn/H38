@@ -55,9 +55,9 @@ class ListWindow(Window):
         print(string)
 
     def list_items(self) -> None:
-        for item in self.paginator.items:
-            string = "|"
-            for column in self.columns:
+        for index, item in enumerate(self.paginator.items):
+            string = f"| {index} |"
+            for column in self.columns[1:]:
                 string += " "
                 value = item.get(column.field)
                 if len(value) > column.size - 2:
@@ -86,15 +86,26 @@ class ListWindow(Window):
         self.list_boundary()
         self.list_paginator()
         self.boundary()
-        print()
 
 
 class EmployeeList(ListWindow):
     columns = [
-        Column(name="Name", field="name", size=26),
+        Column(name="#", field="", size=3),
+        Column(name="Name", field="name", size=22),
         Column(name="SSN", field="ssn", size=11),
         Column(name="Phone", field="phone", size=9),
     ]
 
     def setup(self) -> None:
         self.paginator = api.employees.all(self.page)
+
+
+class LocationList(ListWindow):
+    columns = [
+        Column(name="#", field="", size=3),
+        Column(name="Country", field="country", size=15),
+        Column(name="Airport", field="airport", size=28),
+    ]
+
+    def setup(self) -> None:
+        self.paginator = api.locations.all(self.page)

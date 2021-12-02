@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any
 
-from interface.windows.list_window import EmployeeList
+from interface.windows.list_window import EmployeeList, LocationList
 from interface.windows.window import Window
 
 
@@ -51,7 +51,7 @@ class MainMenu(OptionWindow):
     options = list(MainMenuOptions)
 
     def window_specific(self, option: MainMenuOptions) -> Any:
-        options = {MainMenuOptions.Employees: EmployeeList()}
+        options = {MainMenuOptions.Employees: EmployeeList(), MainMenuOptions.Locations: LocationList()}
 
         if option not in options:
             raise Exception(f"Add option for: {option}")
