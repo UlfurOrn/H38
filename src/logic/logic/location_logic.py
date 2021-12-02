@@ -11,7 +11,7 @@ from logic.helpers import ListItem, Paginator
 class LocationItem(ListItem):
     location_id: UUID
     country: str
-    airport: int
+    airport: str
 
 
 class LocationInfo(BaseModel):

@@ -1,23 +1,14 @@
 from enum import Enum
 from typing import Any
 
-from interface.windows.list_window import EmployeeList
-from interface.windows.window import Window
+from interface.windows.list_window import EmployeeListWindow, LocationListWindow
+from interface.windows.window import Button, Window
 
 
 class OptionWindow(Window):
     options: list
 
-    def run(self) -> None:
-        while True:
-            self.clear()
-            self.display()
-            data = self.get_input()
-            self.parse_input(data)
-
     def display(self) -> None:
-        self.boundary()
-        self.title("Main Menu")
         self.boundary()
         self.empty()
         for index, option in enumerate(self.options, start=1):
@@ -48,10 +39,12 @@ class MainMenuOptions(str, Enum):
 
 
 class MainMenu(OptionWindow):
+    title = "Main Menu"
     options = list(MainMenuOptions)
+    buttons = [Button(letter="b", description="back", function=None)]
 
     def window_specific(self, option: MainMenuOptions) -> Any:
-        options = {MainMenuOptions.Employees: EmployeeList()}
+        options = {MainMenuOptions.Employees: EmployeeListWindow(), MainMenuOptions.Locations: LocationListWindow()}
 
         if option not in options:
             raise Exception(f"Add option for: {option}")

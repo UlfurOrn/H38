@@ -59,11 +59,11 @@ PEP8 standard, which is the python coding standard, in our project.
 automatically formats every file in the project to a specific style which
 has been designed to be as readable as possible.
     * `cd src`
-    * `black -l 120 ./`
+    * `black -l 120 .`
 * isort - isort is a package that orders imports to the PEP8 standard, this
 includes alphabetical order and more.
     * `cd src`
-    * `isort .`
+    * `isort -l 120 .`
 * pre-commit - pre-commit is a package that enables to run git hooks on every
 commit. This allows us to run the above packages for example before ever
 letting our code out of our computers.

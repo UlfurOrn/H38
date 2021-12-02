@@ -4,7 +4,6 @@ from datetime import date
 from uuid import UUID
 
 from database.models.database_model import DatabaseModel
-from database.models.location_model import Location
 
 
 class Request(DatabaseModel):
