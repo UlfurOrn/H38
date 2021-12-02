@@ -41,6 +41,7 @@ class MainMenuOptions(str, Enum):
 class MainMenu(OptionWindow):
     title = "Main Menu"
     options = list(MainMenuOptions)
+    buttons = []
 
     def window_specific(self, option: MainMenuOptions) -> Any:
         options = {MainMenuOptions.Employees: EmployeeList(), MainMenuOptions.Locations: LocationList()}

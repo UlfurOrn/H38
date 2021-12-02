@@ -23,6 +23,10 @@ class Window:
             self.display_buttons()
 
             data = self.get_input()
+
+            if data == "b":
+                return
+
             self.check_buttons(data)
             self.parse_input(data)
 
@@ -37,7 +41,7 @@ class Window:
 
     def display_title(self) -> None:
         self.boundary()
-        self.title(self.title)
+        self.centered(self.title)
 
     def display_buttons(self) -> None:
         # ToDo: Implement display buttons function
@@ -74,9 +78,6 @@ class Window:
 
     def empty(self) -> None:
         print("|" + " " * (self.WINDOW_SIZE - 2) + "|")
-
-    def title(self, title: str) -> None:
-        self.centered(title)
 
     def clear(self) -> None:
         print("\n" * 5)
