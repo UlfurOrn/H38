@@ -8,12 +8,6 @@ from logic.helpers import ListItem, Paginator
 from logic.logic.employee_logic import EmployeeItem
 
 
-class Column(BaseModel):
-    name: str
-    field: str
-    size: int
-
-
 class ListWindow(Window):
     columns: list
     paginator: Paginator
@@ -86,45 +80,3 @@ class ListWindow(Window):
         total = self.paginator.total
 
         print(f"| a: prev   page: {page:>03}/{max_page:>03}  total: {total:>04}   d: next |")
-
-
-class EmployeeListWindow(ListWindow):
-    title = "Employee List"
-    columns = [
-        Column(name="#", field="", size=3),
-        Column(name="Name", field="name", size=21),
-        Column(name="SSN", field="ssn", size=12),
-        Column(name="Phone", field="phone", size=9),
-    ]
-
-    def setup(self) -> None:
-        self.paginator = api.employees.all(self.page)
-
-    def view_item(self, item: EmployeeItem) -> None:
-        window = EmployeeViewWindow()
-        window.model_id = item.employee_id
-        window.run()
-
-    def create(self) -> None:
-        EmployeeCreateWindow().run()
-
-    buttons = [
-        Button(letter="c", description="create", function=create),
-        Button(letter="b", description="back", function=None),
-    ]
-
-
-class LocationListWindow(ListWindow):
-    title = "Location List"
-    columns = [
-        Column(name="#", field="", size=3),
-        Column(name="Country", field="country", size=15),
-        Column(name="Airport", field="airport", size=28),
-    ]
-    buttons = [Button(letter="b", description="back", function=None)]
-
-    def setup(self) -> None:
-        self.paginator = api.locations.all(self.page)
-
-    def view_item(self, item: ListItem) -> None:
-        raise NotImplementedError()

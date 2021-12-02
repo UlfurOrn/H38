@@ -1,13 +1,8 @@
-from interface.window_types.list_window import LocationListWindow
+from interface.extra import CreateField
 from interface.window_types.view_window import Field
 from interface.window_types.window import Button, Return, Window
 from logic.api import api
 from logic.logic.employee_logic import EmployeeCreate
-
-
-class CreateField(Field):
-    required: bool = True
-    submenu: bool = False
 
 
 class CreateWindow(Window):
@@ -51,31 +46,3 @@ class CreateWindow(Window):
             self.info[field.field] = data
 
         self.current = (self.current + 1) % len(self.fields)
-
-
-class EmployeeCreateWindow(CreateWindow):
-    title = "Create Employee"
-    fields = [
-        CreateField(name="Name", field="name"),
-        CreateField(name="SSN", field="ssn"),
-        CreateField(name="Address", field="address"),
-        CreateField(name="Email", field="email"),
-        CreateField(name="Home Phone", field="home_phone", required=False),
-        CreateField(name="Work Phone", field="work_phone"),
-        CreateField(name="Location", field="location", submenu=True),
-    ]
-
-    def submit(self) -> Return:
-        data = EmployeeCreate(**self.info)
-        employee_id = api.employees.create(data)
-
-        return Return(levels=1, data=employee_id)
-
-    def submenu(self) -> None:
-        LocationListWindow().run()
-
-    buttons = [
-        Button(letter="s", description="submit", function=submit),
-        Button(letter="f", description="fill", function=submenu),
-        Button(letter="b", description="back", function=None),
-    ]

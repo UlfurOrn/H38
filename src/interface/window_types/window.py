@@ -1,18 +1,8 @@
-from typing import Any, Callable, Optional
+from typing import Optional
 
 from pydantic import BaseModel
 
-
-class Button(BaseModel):
-    letter: str
-    description: str
-    function: Optional[Callable]
-    hide: bool = False
-
-
-class Return(BaseModel):
-    levels: int
-    data: Any
+from interface.extra import Button, Return
 
 
 class Window:
