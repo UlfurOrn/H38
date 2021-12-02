@@ -58,16 +58,7 @@ class ReportLogic:
             return False
 
         if search is not None:
-            matches_iterate = filter(check_match, reports)
-            matches = list(matches_iterate)
-
-            report_items_searched = [
-            ReportItem(report_id = matches, property_id = report.propert_id, 
-                       status = report.status, date = report.date)
-            for report in reports
-            ]
-
-            return Paginator.paginate(report_items_searched, page)
+            reports = filter(check_match, reports)
 
         report_items = [
             ReportItem(report_id = report.id, property_id = report.propert_id, 

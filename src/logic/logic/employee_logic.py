@@ -57,15 +57,7 @@ class EmployeeLogic:
             return False
 
         if search is not None:
-            matches_iterate = filter(check_match, employees)
-            matches = list(matches_iterate)
-
-            employee_items_searched = [
-            EmployeeItem(employee_id=employee.id, name=employee.name, ssn=matches, phone=employee.work_phone)
-            for employee in employees
-            ]
-
-            return Paginator.paginate(employee_items_searched, page)
+            employees = filter(check_match, employees)
 
         employee_items = [
             EmployeeItem(employee_id=employee.id, name=employee.name, ssn=employee.ssn, phone=employee.work_phone)

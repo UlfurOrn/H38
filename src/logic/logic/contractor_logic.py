@@ -48,16 +48,7 @@ class ContracatorLogic:
             return False
 
         if search is not None:
-            matches_iterate = filter(check_match, contractors)
-            matches = list(matches_iterate)
-
-            contractor_items_searched = [
-                ContractorItem(contractor_id = contractor.id, name = matches, phone = contractor.phone)
-                for contractor in contractors
-            ]
-
-            return Paginator.paginate(contractor_items_searched, page)
-        
+            contractors = filter(check_match, contractors)
 
         contractor_items = [
             ContractorItem(contractor_id = contractor.id, name = contractor.name, phone = contractor.phone)
