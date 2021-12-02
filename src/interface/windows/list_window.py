@@ -92,8 +92,8 @@ class EmployeeListWindow(ListWindow):
     title = "Employee List"
     columns = [
         Column(name="#", field="", size=3),
-        Column(name="Name", field="name", size=22),
-        Column(name="SSN", field="ssn", size=11),
+        Column(name="Name", field="name", size=21),
+        Column(name="SSN", field="ssn", size=12),
         Column(name="Phone", field="phone", size=9),
     ]
 
