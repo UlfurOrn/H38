@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Optional
 
 from pydantic import BaseModel
 
@@ -6,7 +6,7 @@ from pydantic import BaseModel
 class Button(BaseModel):
     letter: str
     description: str
-    function: Callable
+    function: Optional[Callable]
 
 
 class Window:
@@ -45,13 +45,14 @@ class Window:
 
     def display_buttons(self) -> None:
         # ToDo: Implement display buttons function
-        print("|                                        b: back |")
+        for button in self.buttons:
+            self.padded(f"{button.letter}: {button.description}", 20)
         self.boundary()
 
     def check_buttons(self, data: str) -> None:
         for button in self.buttons:
             if button.letter == data:
-                return button.function()
+                return button.function(self)
 
     def parse_input(self, data: str) -> None:
         pass

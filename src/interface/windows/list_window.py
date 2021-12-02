@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 
-from interface.windows.window import Window
+from interface.windows.create_window import EmployeeCreateWindow
+from interface.windows.window import Button, Window
 from logic.helpers import Paginator
 from logic.logic_api import api
 
@@ -76,7 +77,7 @@ class ListWindow(Window):
         print(f"| a: prev   page: {page:>03}/{max_page:>03}  total: {total:>04}   d: next |")
 
 
-class EmployeeList(ListWindow):
+class EmployeeListWindow(ListWindow):
     title = "Employee List"
     columns = [
         Column(name="#", field="", size=3),
@@ -84,20 +85,27 @@ class EmployeeList(ListWindow):
         Column(name="SSN", field="ssn", size=11),
         Column(name="Phone", field="phone", size=9),
     ]
-    buttons = []
 
     def setup(self) -> None:
         self.paginator = api.employees.all(self.page)
 
+    def create(self) -> None:
+        EmployeeCreateWindow().run()
 
-class LocationList(ListWindow):
+    buttons = [
+        Button(letter="c", description="create", function=create),
+        Button(letter="b", description="back", function=None),
+    ]
+
+
+class LocationListWindow(ListWindow):
     title = "Location List"
     columns = [
         Column(name="#", field="", size=3),
         Column(name="Country", field="country", size=15),
         Column(name="Airport", field="airport", size=28),
     ]
-    buttons = []
+    buttons = [Button(letter="b", description="back", function=None)]
 
     def setup(self) -> None:
         self.paginator = api.locations.all(self.page)

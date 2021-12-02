@@ -1,8 +1,8 @@
 from enum import Enum
 from typing import Any
 
-from interface.windows.list_window import EmployeeList, LocationList
-from interface.windows.window import Window
+from interface.windows.list_window import EmployeeListWindow, LocationListWindow
+from interface.windows.window import Button, Window
 
 
 class OptionWindow(Window):
@@ -41,10 +41,10 @@ class MainMenuOptions(str, Enum):
 class MainMenu(OptionWindow):
     title = "Main Menu"
     options = list(MainMenuOptions)
-    buttons = []
+    buttons = [Button(letter="b", description="back", function=None)]
 
     def window_specific(self, option: MainMenuOptions) -> Any:
-        options = {MainMenuOptions.Employees: EmployeeList(), MainMenuOptions.Locations: LocationList()}
+        options = {MainMenuOptions.Employees: EmployeeListWindow(), MainMenuOptions.Locations: LocationListWindow()}
 
         if option not in options:
             raise Exception(f"Add option for: {option}")
