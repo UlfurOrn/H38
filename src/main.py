@@ -1,9 +1,4 @@
-import sys
-import os
-from uuid import UUID
-from database.models.employee_model import Employee
-from database.models.property_model import Property
-
+from interface.windows.option_window import MainMenu
 
 #print("Here:", os.path.relpath(__file__))
 
@@ -259,4 +254,4 @@ if __name__ == "__main__":
     main_menu = Menu()
     main_menu.menu()
 
-
+    # MainMenu().run()
