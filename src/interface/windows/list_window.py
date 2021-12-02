@@ -3,9 +3,9 @@ from pydantic import BaseModel
 from interface.windows.create_window import EmployeeCreateWindow
 from interface.windows.view_window import EmployeeViewWindow
 from interface.windows.window import Button, Window
+from logic.api import api
 from logic.helpers import ListItem, Paginator
 from logic.logic.employee_logic import EmployeeItem
-from logic.logic_api import api
 
 
 class Column(BaseModel):
