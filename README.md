@@ -21,10 +21,6 @@ Now you can run the project by running the following commands:
 * `python main.py`
 
 
-## Code Quality:
-
-
-
 ## Git
 Working with git can be hard at the start. So here is a brief rundown
 of the git workflow:
@@ -47,3 +43,29 @@ To get changes to a branch run the following:
 
 Most, if not all, of the above can be done through the IDE directly.
 You can read about that here: https://code.visualstudio.com/docs/editor/versioncontrol
+
+
+## Code Quality:
+It can be hard to maintain a coherent style across a project when working
+in a group. To help with this, we have added several packages to make sure
+we are following the python formatting standard, and even some automatic
+formatters and optimizers to do this for us. These packages and how to use
+them is listed below:
+* flake8 - flake8 is a package that checks whether we are following the
+PEP8 standard, which is the python coding standard, in our project.
+    * `cd src`
+    * `flake8`
+* black - black is an auto formatter created by people at facebook. It
+automatically formats every file in the project to a specific style which
+has been designed to be as readable as possible.
+    * `cd src`
+    * `black -l 120 ./`
+* isort - isort is a package that orders imports to the PEP8 standard, this
+includes alphabetical order and more.
+    * `cd src`
+    * `isort .`
+* pre-commit - pre-commit is a package that enables to run git hooks on every
+commit. This allows us to run the above packages for example before ever
+letting our code out of our computers.
+    * `pre-commit install`
+    * Use GIT as usual
