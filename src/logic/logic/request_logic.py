@@ -4,6 +4,7 @@ from datetime import date
 from pydantic import BaseModel
 
 from database.models.request_model import Request
+from database.models.contractor_model import Contractor
 from logic.helpers import ListItem, Paginator
 
 
