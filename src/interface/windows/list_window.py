@@ -38,21 +38,17 @@ class ListWindow(Window):
         self.boundary()
 
     def list_boundary(self) -> None:
-        boundary = list(self._get_boundary())
-
-        index = 0
+        string = "+"
         for column in self.columns:
-            index += column.size + 1
-            boundary[index] = "+"
+            string += "-" * column.size
+            string += "+"
 
-        boundary = "".join(boundary)
-        print(boundary)
+        print(string)
 
     def list_header(self) -> None:
         string = "|"
         for column in self.columns:
-            column_name = column.name
-            string += column_name.center(column.size)
+            string += column.name.center(column.size)
             string += "|"
 
         print(string)
