@@ -1,13 +1,13 @@
-from pydantic import ValidationError
-
-from interface.windows.view_window import Field
-from interface.windows.window import Button, Return, Window
+from interface.window_types.list_window import LocationListWindow
+from interface.window_types.view_window import Field
+from interface.window_types.window import Button, Return, Window
 from logic.api import api
 from logic.logic.employee_logic import EmployeeCreate
 
 
 class CreateField(Field):
-    required: bool
+    required: bool = True
+    submenu: bool = False
 
 
 class CreateWindow(Window):
@@ -24,7 +24,11 @@ class CreateWindow(Window):
         for field in self.fields:
             if field.required and self.info.get(field.field) is None:
                 submit_button.hide = True
-                return
+                break
+
+        submenu_button = self.get_button("f")
+        if not self.fields[self.current].submenu:
+            submenu_button.hide = True
 
     def display(self) -> None:
         self.boundary()
@@ -52,13 +56,13 @@ class CreateWindow(Window):
 class EmployeeCreateWindow(CreateWindow):
     title = "Create Employee"
     fields = [
-        CreateField(name="Name", field="name", required=True),
-        CreateField(name="SSN", field="ssn", required=True),
-        CreateField(name="Address", field="address", required=True),
-        CreateField(name="Email", field="email", required=True),
+        CreateField(name="Name", field="name"),
+        CreateField(name="SSN", field="ssn"),
+        CreateField(name="Address", field="address"),
+        CreateField(name="Email", field="email"),
         CreateField(name="Home Phone", field="home_phone", required=False),
-        CreateField(name="Work Phone", field="work_phone", required=True),
-        CreateField(name="Location", field="location", required=True),
+        CreateField(name="Work Phone", field="work_phone"),
+        CreateField(name="Location", field="location", submenu=True),
     ]
 
     def submit(self) -> Return:
@@ -67,7 +71,11 @@ class EmployeeCreateWindow(CreateWindow):
 
         return Return(levels=1, data=employee_id)
 
+    def submenu(self) -> None:
+        LocationListWindow().run()
+
     buttons = [
         Button(letter="s", description="submit", function=submit),
+        Button(letter="f", description="fill", function=submenu),
         Button(letter="b", description="back", function=None),
     ]

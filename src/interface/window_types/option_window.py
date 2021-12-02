@@ -1,8 +1,8 @@
 from enum import Enum
 from typing import Any
 
-from interface.windows.list_window import EmployeeListWindow, LocationListWindow
-from interface.windows.window import Button, Window
+from interface.window_types.list_window import EmployeeListWindow, LocationListWindow
+from interface.window_types.window import Button, Window
 
 
 class OptionWindow(Window):

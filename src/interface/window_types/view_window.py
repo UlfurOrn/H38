@@ -2,7 +2,7 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from interface.windows.window import Button, Window
+from interface.window_types.window import Button, Window
 from logic.api import api
 from logic.helpers import InfoModel
 from logic.logic.employee_logic import EmployeeInfo

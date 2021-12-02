@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 
-from interface.windows.create_window import EmployeeCreateWindow
-from interface.windows.view_window import EmployeeViewWindow
-from interface.windows.window import Button, Window
+from interface.window_types.create_window import EmployeeCreateWindow
+from interface.window_types.view_window import EmployeeViewWindow
+from interface.window_types.window import Button, Window
 from logic.api import api
 from logic.helpers import ListItem, Paginator
 from logic.logic.employee_logic import EmployeeItem
