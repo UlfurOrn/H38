@@ -182,6 +182,42 @@ class Menu:
         +------------------------------------------------+
         """
 
+        self.selectuser = """       
+        +------------------------------------------------+
+        |                 Select User                    |
+        +------------------------------------------------+
+        |                                                |
+        |       Current user: {}                                       
+        |                                                |
+        +------------------------------------------------+
+        | e: Employee Access    s: for Supervisor Access |
+        +------------------------------------------------+   
+        """
+
+        self.user_selected = """       
+        +------------------------------------------------+
+        |                 Select User                    |
+        +------------------------------------------------+
+        |                                                |
+        |       Current user: {}                                       
+        |                                                |
+        +------------------------------------------------+
+        | b: back                                        |
+        +------------------------------------------------+   
+        """
+
+        self.try_login = """       
+        +------------------------------------------------+
+        |                   Login                        |
+        +------------------------------------------------+
+        |                                                |
+        |       Enter SSN: {}                                       
+        |                                                |
+        +------------------------------------------------+
+        | b: back                            c: continue | 
+        +------------------------------------------------+   
+        """
+
     def menu(self):
         print(self.mainmenu)
         self.get_input()
@@ -199,9 +235,15 @@ class Menu:
             elif user_input == "4":
                 Menu.contractor(self)
             elif user_input == "5":
-                pass
+                Menu.type_user(self)
             elif user_input == "6":
-                pass
+                Menu.c_krafa_user_login(self)
+                option = input("Continue/Back: ")
+                if option == "c":
+                    Menu.menu(self)
+                else:
+                    Menu.menu(self)
+                
 
 
 
@@ -241,6 +283,23 @@ class Menu:
         elif new_input == "c":
             Menu.contractor_opt_c(self)
             
+    def type_user(self):
+        print(self.selectuser.format("None" + " " * 23 + "|"))
+        type_user = input("Enter option: ")
+        if type_user == "e":
+            print(self.user_selected.format("Employee" + " " * 19 + "|"))
+        elif type_user == "s":
+            print(self.user_selected.format("Supervisor" + " " * 17 + "|"))
+        else:
+            Menu.menu(self)
+        
+        
+    def c_krafa_user_login(self):
+        print(self.try_login.format(" " * 30 + "|"))
+        input_ssn = input("Enter SSN: ")
+        print(self.try_login.format(input_ssn + " " * 20 + "|"))
+        
+        
 
 
     def locations_opt_c(self):
@@ -254,4 +313,4 @@ if __name__ == "__main__":
     main_menu = Menu()
     main_menu.menu()
 
-    # MainMenu().run()
+    MainMenu().run()
