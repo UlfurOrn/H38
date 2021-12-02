@@ -114,7 +114,7 @@ class ReportLogic:
         if report.status == Status.approve:
             report.status = Status.unapprove
         else:
-            NotFoundException.BadRequest()
+            raise BadRequest()
 
     @staticmethod
     def close(report_id: UUID) -> UUID:
@@ -123,4 +123,4 @@ class ReportLogic:
         if report.status == Status.approve:
             report.status = Status.close
         else:
-            NotFoundException.BadRequest()
+            raise BadRequest()
