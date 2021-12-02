@@ -1,7 +1,7 @@
 from pydantic import ValidationError
 
 from interface.windows.view_window import Field
-from interface.windows.window import Button, Window
+from interface.windows.window import Button, Return, Window
 from logic.api import api
 from logic.logic.employee_logic import EmployeeCreate
 
@@ -61,9 +61,11 @@ class EmployeeCreateWindow(CreateWindow):
         CreateField(name="Location", field="location", required=True),
     ]
 
-    def submit(self) -> None:
+    def submit(self) -> Return:
         data = EmployeeCreate(**self.info)
-        api.employees.create(data)
+        employee_id = api.employees.create(data)
+
+        return Return(levels=1, data=employee_id)
 
     buttons = [
         Button(letter="s", description="submit", function=submit),

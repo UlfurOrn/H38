@@ -1,4 +1,4 @@
-from typing import Callable, Optional
+from typing import Any, Callable, Optional
 
 from pydantic import BaseModel
 
@@ -8,6 +8,11 @@ class Button(BaseModel):
     description: str
     function: Optional[Callable]
     hide: bool = False
+
+
+class Return(BaseModel):
+    levels: int
+    data: Any
 
 
 class Window:
@@ -25,11 +30,13 @@ class Window:
 
             data = self.get_input()
 
-            if data == "b":
-                return
+            value = self.check_buttons(data)
+            value = value or self.parse_input(data)
 
-            self.check_buttons(data)
-            self.parse_input(data)
+            if value and value.levels > 0:
+                value.levels -= 1
+                return value
+
             self.reset()
 
     def window_setup(self) -> None:
@@ -57,12 +64,14 @@ class Window:
             if button.letter == letter:
                 return button
 
-    def check_buttons(self, data: str) -> None:
+    def check_buttons(self, data: str) -> Optional[Return]:
         for button in self.buttons:
+            if button.letter == "b" and data == "b":
+                return Return(levels=1, data=None)
             if not button.hide and button.letter == data:
                 return button.function(self)
 
-    def parse_input(self, data: str) -> None:
+    def parse_input(self, data: str) -> Optional[Return]:
         pass
 
     def reset(self) -> None:
