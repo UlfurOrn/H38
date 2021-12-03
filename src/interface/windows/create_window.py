@@ -1,4 +1,4 @@
-from interface.windows.window import Window
+from interface.windows.window import Button, Window
 
 
 class CreateWindow(Window):
@@ -18,4 +18,4 @@ class CreateWindow(Window):
 class EmployeeCreateWindow(CreateWindow):
     title = "Create Employee"
     info = "Employee Info"
-    buttons = []
+    buttons = [Button(letter="b", description="back", function=None)]

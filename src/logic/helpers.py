@@ -8,6 +8,11 @@ class ListItem(BaseModel):
         return str(self.__getattribute__(key))
 
 
+class InfoModel(BaseModel):
+    def get(self, key: str) -> str:
+        return str(self.__getattribute__(key))
+
+
 class Paginator(BaseModel):
     _PAGE_SIZE = 10
 
