@@ -58,8 +58,6 @@ class Window:
 
     def check_buttons(self, data: str) -> Optional[Return]:
         for button in self.buttons:
-            if button.letter == "b" and data == "b":
-                return Return(levels=1, data=None)
             if not button.hidden and button.letter == data:
                 return button.function()
 

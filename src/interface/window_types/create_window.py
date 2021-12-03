@@ -24,10 +24,10 @@ class CreateWindow(Window):
     def setup(self) -> None:
         for field in self.fields:
             if field.required and self.info.get(field.field) is None:
-                self.hide_button("s")  # Submit
+                self.hide_button("s")  # Submit button
 
         if not self.fields[self.current].submenu:
-            self.hide_button("f")  # Open submenu
+            self.hide_button("f")  # Open submenu button
 
     def display(self) -> None:
         self.boundary()
@@ -47,7 +47,8 @@ class CreateWindow(Window):
     def parse_input(self, data: str) -> None:
         if data:
             field = self.fields[self.current]
-            self.info[field.field] = data
+            if not field.submenu:
+                self.info[field.field] = data
 
         self.current = (self.current + 1) % len(self.fields)
 
