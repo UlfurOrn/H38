@@ -66,7 +66,7 @@ system.
 * Kolbeinn:
     * 
 * Ríkharður:
-    * 
+    * Finished UI Flow and worked on Use Cases
 * Smári:
     * Use cases
 * Úlfur:
@@ -94,7 +94,7 @@ throughput in the following weeks.
 * Kolbeinn:
     * 
 * Ríkharður:
-    * 
+    * Worked on Class diagram and Use cases.
 * Smári:
     * State diagram
 * Úlfur:
@@ -123,7 +123,7 @@ complete report.
 * Kolbeinn:
     * 
 * Ríkharður:
-    * 
+    * Class diagram finished and worked on the design report.
 * Smári:
     * "Beutifying" Report 
 * Úlfur:
@@ -149,7 +149,7 @@ to Asana, but we will try to relax as well :)
 * Kolbeinn:
     * 
 * Ríkharður:
-    * 
+    * Created and finished employee and contractor logic. Started on report logic.
 * Smári:
     * 
 * Úlfur:
@@ -165,7 +165,7 @@ to Asana, but we will try to relax as well :)
 * Kolbeinn:
     * 
 * Ríkharður:
-    * 
+    * Continued work on report logic. Finsihed by the end of the day.
 * Smári:
     * 
 * Úlfur:
@@ -181,7 +181,7 @@ to Asana, but we will try to relax as well :)
 * Kolbeinn:
     * 
 * Ríkharður:
-    * 
+    * Refinded report logic. Added in contractors. 
 * Smári:
     * Put the window designs into python, focusing on employees and locations. I experimented with a couple of ways of implementing classes and function for the UI, bulding on the code Úlfur wrote.
 * Úlfur:
@@ -197,7 +197,7 @@ to Asana, but we will try to relax as well :)
 * Kolbeinn:
     * 
 * Ríkharður:
-    * 
+    * Added in search function into list method. Added into all but one logic because of missing file. Will be added later.
 * Smári:
     * Continued with python and experimenting ways to implement the UI.
 * Úlfur:
