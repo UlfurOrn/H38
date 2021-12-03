@@ -19,7 +19,7 @@ class EmployeeInfo(InfoModel):
     name: str
     ssn: int
     address: str
-    home_phone: int
+    home_phone: Optional[int]
     work_phone: int
     email: str
     location_id: UUID
@@ -30,7 +30,7 @@ class EmployeeCreate(BaseModel):
     name: str
     ssn: int
     address: str
-    home_phone: int
+    home_phone: Optional[int]
     work_phone: int
     email: str
     location_id: UUID

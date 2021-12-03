@@ -1,6 +1,8 @@
+from typing import Optional
+
 from interface.extra import Button
 from interface.window_types.window import Window
-from logic.helpers import ListItem, Paginator
+from logic.helpers import InfoModel, ListItem, Paginator
 
 
 class ListWindow(Window):
@@ -36,7 +38,7 @@ class ListWindow(Window):
             if index in range(len(items)):
                 return self.view_item(items[index])
 
-    def view_item(self, item: ListItem) -> None:
+    def view_item(self, item: ListItem) -> Optional[InfoModel]:
         raise NotImplementedError()
 
     def display(self) -> None:

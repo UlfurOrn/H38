@@ -1,6 +1,4 @@
-from typing import Optional
-
-from pydantic import BaseModel
+from typing import Any, Optional
 
 from interface.extra import BACK, Button, Return
 
@@ -10,7 +8,7 @@ class Window:
     title: str
     buttons: list[Button]
 
-    def run(self):
+    def run(self) -> Any:
         self.button_setup()
         self.window_setup()
         while True:

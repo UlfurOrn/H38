@@ -1,13 +1,14 @@
 from enum import Enum
-from typing import Any
+from typing import Any, Optional
 from uuid import UUID
 
-from interface.extra import Column, CreateField, Field, Return
+from interface.extra import BACK, Column, CreateField, Field, Return
 from interface.window_types.create_window import CreateWindow
 from interface.window_types.list_window import ListWindow
 from interface.window_types.option_window import OptionWindow
 from interface.window_types.view_window import ViewWindow
 from logic.api import api
+from logic.helpers import InfoModel
 from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeItem
 from logic.logic.location_logic import LocationInfo, LocationItem
 
@@ -52,7 +53,13 @@ class EmployeeListWindow(ListWindow):
         window.run()
 
     def create(self) -> None:
-        EmployeeCreateWindow().run()
+        value = EmployeeCreateWindow().run()
+        if value == BACK:
+            return
+
+        window = EmployeeViewWindow()
+        window.model_id = value
+        window.run()
 
 
 class EmployeeViewWindow(ViewWindow):
@@ -91,9 +98,12 @@ class EmployeeCreateWindow(CreateWindow):
         return employee_id
 
     def submenu(self) -> None:
-        location_id, airport = LocationListWindow().run()
-        self.info["location_id"] = location_id
-        self.info["location"] = airport
+        value = LocationListWindow().run()
+        if value == BACK:
+            return
+
+        self.info["location"] = value.airport
+        self.info["location_id"] = value.location_id
 
 
 class LocationListWindow(ListWindow):
@@ -107,10 +117,14 @@ class LocationListWindow(ListWindow):
     def setup(self) -> None:
         self.paginator = api.locations.all(self.page)
 
-    def view_item(self, item: LocationItem) -> None:
+    def view_item(self, item: LocationItem) -> Optional[LocationInfo]:
         window = LocationViewWindow()
         window.model_id = item.location_id
-        window.run()
+        value = window.run()
+        if value == BACK:
+            return
+
+        return value
 
 
 class LocationViewWindow(ViewWindow):
@@ -128,8 +142,8 @@ class LocationViewWindow(ViewWindow):
     def update(self) -> None:
         print("Update")
 
-    def select(self) -> None:
-        pass
+    def select(self) -> LocationInfo:
+        return self.info
 
     def view(self) -> None:
         print("View")

@@ -35,12 +35,13 @@ class ViewWindow(Window):
     def display_info(self) -> None:
         for field in self.fields:
             value = self.info.get(field.field)
+            value = value or ""
             print(f"|{field.name:>16}: {value:<30}|")
 
     def update(self) -> None:
         raise NotImplementedError()
 
-    def select(self) -> None:
+    def select(self) -> InfoModel:
         raise NotImplementedError()
 
     def view(self) -> None:
