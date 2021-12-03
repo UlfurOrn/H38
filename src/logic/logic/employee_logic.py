@@ -58,12 +58,12 @@ class EmployeeLogic:
         return Paginator.paginate(employee_items, page)
 
     @staticmethod
-    def filter(location_filter:UUID, page: int = 0) -> Paginator:
+    def filter(page: int = 1, location_filter:UUID = None) -> Paginator:
         employees = Employee.all()
 
         filtered_list = [
             EmployeeItem(employee_id=employee.employee_id, name=employee.name, ssn=employee.ssn, phone=employee.work_phone)
-            for employee in employees if employee.location_id == location_filter
+            for employee in employees if location_filter is not None and employee.location_id == location_filter
             ]
             
         return Paginator.paginate(filtered_list, page)
