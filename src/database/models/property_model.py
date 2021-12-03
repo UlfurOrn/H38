@@ -34,6 +34,5 @@ if __name__ == "__main__":
     DatabaseModel._PATH = "../data/"
 
     property = Property(
-        property_number = "property1234",
-        condition = "good",
-        location_id = "cd314c5c-1cc3-4376-9003-6529b14cda8f")
+        property_number="property1234", condition="good", location_id="cd314c5c-1cc3-4376-9003-6529b14cda8f"
+    )

@@ -4,7 +4,7 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from database.models.employee_model import Employee
-from logic.helpers import ListItem, Paginator
+from logic.helpers import InfoModel, ListItem, Paginator
 
 
 class EmployeeItem(ListItem):
@@ -14,15 +14,15 @@ class EmployeeItem(ListItem):
     phone: int
 
 
-class EmployeeInfo(BaseModel):
-    employee_id: str
+class EmployeeInfo(InfoModel):
+    employee_id: UUID
     name: str
     ssn: int
     address: str
-    home_phone: int
+    home_phone: Optional[int]
     work_phone: int
     email: str
-    location_id: str
+    location_id: UUID
     location: str
 
 
@@ -30,7 +30,7 @@ class EmployeeCreate(BaseModel):
     name: str
     ssn: int
     address: str
-    home_phone: int
+    home_phone: Optional[int]
     work_phone: int
     email: str
     location_id: UUID
@@ -60,11 +60,22 @@ class EmployeeLogic:
             employees = filter(check_match, employees)
 
         employee_items = [
-            EmployeeItem(employee_id=employee.id, name=employee.name, ssn=employee.ssn, phone=employee.work_phone)
+            EmployeeItem(employee_id=employee.employee_id, name=employee.name, ssn=employee.ssn, phone=employee.work_phone)
             for employee in employees
         ]
 
         return Paginator.paginate(employee_items, page)
+
+    @staticmethod
+    def filter(location_filter:UUID, page: int = 0) -> Paginator:
+        employees = Employee.all()
+
+        filtered_list = [
+            EmployeeItem(employee_id=employee.employee_id, name=employee.name, ssn=employee.ssn, phone=employee.work_phone)
+            for employee in employees if employee.location_id == location_filter
+            ]
+            
+        return Paginator.paginate(filtered_list, page)
 
     @staticmethod
     def create(data: EmployeeCreate) -> UUID:

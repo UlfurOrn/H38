@@ -5,17 +5,17 @@ from pydantic import BaseModel
 
 from database.models.employee_model import Employee
 from database.models.location_model import Location
-from logic.helpers import ListItem, Paginator
+from logic.helpers import InfoModel, ListItem, Paginator
 
 
 class LocationItem(ListItem):
     location_id: UUID
     country: str
-    airport: int
+    airport: str
 
 
-class LocationInfo(BaseModel):
-    location_id: str
+class LocationInfo(InfoModel):
+    location_id: UUID
     country: str
     airport: str
     supervisor_id: UUID
