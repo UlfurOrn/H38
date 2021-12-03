@@ -3,7 +3,6 @@ from __future__ import annotations
 from uuid import UUID
 
 from database.models.database_model import DatabaseModel
-from database.models.location_model import Location
 
 
 class Facility(DatabaseModel):
