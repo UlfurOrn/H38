@@ -7,7 +7,7 @@ class Button(BaseModel):
     letter: str
     description: str
     function: Optional[Callable]
-    hide: bool = False
+    hidden: bool = False
 
 
 class Return(BaseModel):

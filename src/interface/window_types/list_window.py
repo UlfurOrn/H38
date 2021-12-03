@@ -1,3 +1,4 @@
+from interface.extra import Button
 from interface.window_types.window import Window
 from logic.helpers import ListItem, Paginator
 
@@ -6,6 +7,14 @@ class ListWindow(Window):
     columns: list
     paginator: Paginator
     page: int = 1
+
+    def button_setup(self) -> None:
+        self.buttons = [
+            Button(letter="c", description="create", function=self.create),
+            Button(letter="f", description="filter", function=self.filter),
+            Button(letter="s", description="search", function=self.search),
+            Button(letter="b", description="back", function=None),
+        ]
 
     def window_setup(self) -> None:
         assert sum(column.size for column in self.columns) + len(self.columns) + 1 == self.WINDOW_SIZE
@@ -20,10 +29,12 @@ class ListWindow(Window):
             self.page += 1
 
         if data.isdigit():
-            index = (int(data) - 1) % 10
+            index = int(data) - 1
+            if index < 0:
+                index += 10
             items = self.paginator.items
             if index in range(len(items)):
-                self.view_item(items[index])
+                return self.view_item(items[index])
 
     def view_item(self, item: ListItem) -> None:
         raise NotImplementedError()
@@ -74,3 +85,12 @@ class ListWindow(Window):
         total = self.paginator.total
 
         print(f"| a: prev   page: {page:>03}/{max_page:>03}  total: {total:>04}   d: next |")
+
+    def create(self) -> None:
+        raise NotImplementedError()
+
+    def filter(self) -> None:
+        raise NotImplementedError()
+
+    def search(self) -> None:
+        raise NotImplementedError()

@@ -11,6 +11,7 @@ class Window:
     buttons: list[Button]
 
     def run(self):
+        self.button_setup()
         self.window_setup()
         while True:
             self.setup()
@@ -23,11 +24,14 @@ class Window:
             value = self.check_buttons(data)
             value = value or self.parse_input(data)
 
-            if value and value.levels > 0:
-                value.levels -= 1
+            if value:
                 return value
 
             self.reset()
+            self.clear()
+
+    def button_setup(self) -> None:
+        raise NotImplementedError()
 
     def window_setup(self) -> None:
         pass
@@ -45,28 +49,28 @@ class Window:
     def display_buttons(self) -> None:
         # ToDo: Implement display buttons function
         for button in self.buttons:
-            if not button.hide:
+            if not button.hidden:
                 self.padded(f"{button.letter}: {button.description}", 20)
         self.boundary()
 
     def hide_button(self, letter: str) -> None:
         for button in self.buttons:
             if button.letter == letter:
-                button.hide = True
+                button.hidden = True
 
     def check_buttons(self, data: str) -> Optional[Return]:
         for button in self.buttons:
             if button.letter == "b" and data == "b":
                 return Return(levels=1, data=None)
-            if not button.hide and button.letter == data:
-                return button.function(self)
+            if not button.hidden and button.letter == data:
+                return button.function()
 
     def parse_input(self, data: str) -> Optional[Return]:
         pass
 
     def reset(self) -> None:
         for button in self.buttons:
-            button.hide = False
+            button.hidden = False
 
     def _get_boundary(self) -> str:
         line = "-" * (self.WINDOW_SIZE - 2)

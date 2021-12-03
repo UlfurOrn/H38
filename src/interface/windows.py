@@ -23,7 +23,6 @@ class MainMenuOptions(str, Enum):
 class MainMenu(OptionWindow):
     title = "Main Menu"
     options = list(MainMenuOptions)
-    buttons = [Button(letter="b", description="back", function=None)]
 
     def window_specific(self, option: MainMenuOptions) -> Any:
         options = {MainMenuOptions.Employees: EmployeeListWindow(), MainMenuOptions.Locations: LocationListWindow()}
@@ -55,11 +54,6 @@ class EmployeeListWindow(ListWindow):
     def create(self) -> None:
         EmployeeCreateWindow().run()
 
-    buttons = [
-        Button(letter="c", description="create", function=create),
-        Button(letter="b", description="back", function=None),
-    ]
-
 
 class EmployeeViewWindow(ViewWindow):
     title = "View Employee"
@@ -80,10 +74,11 @@ class EmployeeViewWindow(ViewWindow):
     def update(self) -> None:
         print("Update")
 
-    buttons = [
-        Button(letter="u", description="update", function=update),
-        Button(letter="b", description="back", function=None),
-    ]
+    def select(self) -> None:
+        pass
+
+    def view(self) -> None:
+        print("View")
 
 
 class EmployeeCreateWindow(CreateWindow):
@@ -105,7 +100,9 @@ class EmployeeCreateWindow(CreateWindow):
         return Return(levels=1, data=employee_id)
 
     def submenu(self) -> None:
-        LocationListWindow().run()
+        location_id, airport = LocationListWindow().run()
+        self.info["location_id"] = location_id
+        self.info["location"] = airport
 
     buttons = [
         Button(letter="s", description="submit", function=submit),
@@ -147,7 +144,8 @@ class LocationViewWindow(ViewWindow):
     def update(self) -> None:
         print("Update")
 
-    buttons = [
-        Button(letter="u", description="update", function=update),
-        Button(letter="b", description="back", function=None),
-    ]
+    def select(self) -> None:
+        pass
+
+    def view(self) -> None:
+        print("View")
