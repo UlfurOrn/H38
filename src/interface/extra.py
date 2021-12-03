@@ -2,6 +2,8 @@ from typing import Any, Callable, Optional
 
 from pydantic import BaseModel
 
+BACK = "back"
+
 
 class Button(BaseModel):
     letter: str

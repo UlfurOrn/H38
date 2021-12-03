@@ -7,7 +7,7 @@ class OptionWindow(Window):
     options: list
 
     def button_setup(self) -> None:
-        self.buttons = [Button(letter="b", description="back", function=None)]
+        self.buttons = [Button(letter="b", description="back", function=self.back)]
 
     def display(self) -> None:
         self.boundary()

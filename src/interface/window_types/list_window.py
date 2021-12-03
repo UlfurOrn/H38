@@ -13,7 +13,7 @@ class ListWindow(Window):
             Button(letter="c", description="create", function=self.create),
             Button(letter="f", description="filter", function=self.filter),
             Button(letter="s", description="search", function=self.search),
-            Button(letter="b", description="back", function=None),
+            Button(letter="b", description="back", function=self.back),
         ]
 
     def window_setup(self) -> None:

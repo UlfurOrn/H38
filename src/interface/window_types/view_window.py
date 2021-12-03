@@ -19,7 +19,7 @@ class ViewWindow(Window):
             Button(letter="u", description="update", function=self.update),
             Button(letter="s", description="select", function=self.select),
             Button(letter="v", description="view", function=self.view),
-            Button(letter="b", description="back", function=None),
+            Button(letter="b", description="back", function=self.back),
         ]
 
     def window_setup(self) -> None:

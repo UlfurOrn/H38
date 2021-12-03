@@ -1,13 +1,13 @@
 from enum import Enum
 from typing import Any
+from uuid import UUID
 
-from interface.extra import Button, Column, CreateField, Field, Return
+from interface.extra import Column, CreateField, Field, Return
 from interface.window_types.create_window import CreateWindow
 from interface.window_types.list_window import ListWindow
 from interface.window_types.option_window import OptionWindow
 from interface.window_types.view_window import ViewWindow
 from logic.api import api
-from logic.helpers import ListItem
 from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeItem
 from logic.logic.location_logic import LocationInfo, LocationItem
 
@@ -71,15 +71,6 @@ class EmployeeViewWindow(ViewWindow):
     def window_setup(self) -> None:
         self.info = api.employees.get(self.model_id)
 
-    def update(self) -> None:
-        print("Update")
-
-    def select(self) -> None:
-        pass
-
-    def view(self) -> None:
-        print("View")
-
 
 class EmployeeCreateWindow(CreateWindow):
     title = "Create Employee"
@@ -93,22 +84,16 @@ class EmployeeCreateWindow(CreateWindow):
         CreateField(name="Location", field="location", submenu=True),
     ]
 
-    def submit(self) -> Return:
+    def submit(self) -> UUID:
         data = EmployeeCreate(**self.info)
         employee_id = api.employees.create(data)
 
-        return Return(levels=1, data=employee_id)
+        return employee_id
 
     def submenu(self) -> None:
         location_id, airport = LocationListWindow().run()
         self.info["location_id"] = location_id
         self.info["location"] = airport
-
-    buttons = [
-        Button(letter="s", description="submit", function=submit),
-        Button(letter="f", description="fill", function=submenu),
-        Button(letter="b", description="back", function=None),
-    ]
 
 
 class LocationListWindow(ListWindow):
@@ -118,7 +103,6 @@ class LocationListWindow(ListWindow):
         Column(name="Country", field="country", size=15),
         Column(name="Airport", field="airport", size=28),
     ]
-    buttons = [Button(letter="b", description="back", function=None)]
 
     def setup(self) -> None:
         self.paginator = api.locations.all(self.page)

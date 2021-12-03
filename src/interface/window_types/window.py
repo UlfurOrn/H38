@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from interface.extra import Button, Return
+from interface.extra import BACK, Button, Return
 
 
 class Window:
@@ -101,3 +101,6 @@ class Window:
     def get_input(self, text: str = "Enter Command: ") -> str:
         print()
         return input(text).strip()
+
+    def back(self) -> BACK:
+        return BACK

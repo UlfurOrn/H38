@@ -1,11 +1,21 @@
-from interface.extra import CreateField
+from uuid import UUID
+
+from interface.extra import Button, CreateField
 from interface.window_types.window import Window
+from logic.helpers import InfoModel
 
 
 class CreateWindow(Window):
     info: dict
     fields: list[CreateField]
     current: int
+
+    def button_setup(self) -> None:
+        self.buttons = [
+            Button(letter="s", description="submit", function=self.submit),
+            Button(letter="f", description="fill", function=self.submenu),
+            Button(letter="b", description="back", function=self.back),
+        ]
 
     def window_setup(self) -> None:
         self.current = 0
@@ -40,3 +50,9 @@ class CreateWindow(Window):
             self.info[field.field] = data
 
         self.current = (self.current + 1) % len(self.fields)
+
+    def submit(self) -> UUID:
+        raise NotImplementedError()
+
+    def submenu(self) -> InfoModel:
+        raise NotImplementedError()
