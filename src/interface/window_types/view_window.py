@@ -38,7 +38,7 @@ class ViewWindow(Window):
             value = value or ""
             print(f"|{field.name:>16}: {value:<30}|")
 
-    def update(self) -> None:
+    def update(self) -> UUID:
         raise NotImplementedError()
 
     def select(self) -> InfoModel:

@@ -2,14 +2,15 @@ from enum import Enum
 from typing import Any, Optional
 from uuid import UUID
 
-from interface.extra import BACK, Column, CreateField, Field, Return
+from interface.extra import BACK, Column, Field
 from interface.window_types.create_window import CreateWindow
 from interface.window_types.list_window import ListWindow
 from interface.window_types.option_window import OptionWindow
+from interface.window_types.update_window import UpdateWindow
 from interface.window_types.view_window import ViewWindow
 from logic.api import api
 from logic.helpers import InfoModel
-from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeItem
+from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeItem, EmployeeUpdate
 from logic.logic.location_logic import LocationInfo, LocationItem
 
 
@@ -78,22 +79,60 @@ class EmployeeViewWindow(ViewWindow):
     def window_setup(self) -> None:
         self.info = api.employees.get(self.model_id)
 
+    def update(self) -> UUID:
+        window = EmployeeUpdateWindow()
+        window.model_id = self.model_id
+        window.run()
+
+        self.window_setup()
+
 
 class EmployeeCreateWindow(CreateWindow):
     title = "Create Employee"
     fields = [
-        CreateField(name="Name", field="name"),
-        CreateField(name="SSN", field="ssn"),
-        CreateField(name="Address", field="address"),
-        CreateField(name="Email", field="email"),
-        CreateField(name="Home Phone", field="home_phone", required=False),
-        CreateField(name="Work Phone", field="work_phone"),
-        CreateField(name="Location", field="location", submenu=True),
+        Field(name="Name", field="name"),
+        Field(name="SSN", field="ssn", mutable=False),
+        Field(name="Address", field="address"),
+        Field(name="Email", field="email"),
+        Field(name="Home Phone", field="home_phone", required=False),
+        Field(name="Work Phone", field="work_phone"),
+        Field(name="Location", field="location", submenu=True),
     ]
 
     def submit(self) -> UUID:
         data = EmployeeCreate(**self.info)
         employee_id = api.employees.create(data)
+
+        return employee_id
+
+    def submenu(self) -> None:
+        value = LocationListWindow().run()
+        if value == BACK:
+            return
+
+        self.info["location"] = value.airport
+        self.info["location_id"] = value.location_id
+
+
+class EmployeeUpdateWindow(UpdateWindow):
+    title = "Update Employee"
+    fields = [
+        Field(name="Name", field="name"),
+        Field(name="SSN", field="ssn", mutable=False),
+        Field(name="Address", field="address"),
+        Field(name="Email", field="email"),
+        Field(name="Home Phone", field="home_phone", required=False),
+        Field(name="Work Phone", field="work_phone"),
+        Field(name="Location", field="location", submenu=True),
+    ]
+
+    def window_setup(self) -> None:
+        super().window_setup()
+        self.info = api.employees.get(self.model_id).dict()
+
+    def submit(self) -> UUID:
+        data = EmployeeUpdate(**self.info)
+        employee_id = api.employees.update(self.model_id, data)
 
         return employee_id
 

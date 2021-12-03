@@ -1,6 +1,6 @@
-from typing import Any, Optional
+from typing import Any
 
-from interface.extra import BACK, Button, Return
+from interface.extra import BACK, Button
 
 
 class Window:
@@ -56,12 +56,12 @@ class Window:
             if button.letter == letter:
                 button.hidden = True
 
-    def check_buttons(self, data: str) -> Optional[Return]:
+    def check_buttons(self, data: str) -> Any:
         for button in self.buttons:
             if not button.hidden and button.letter == data:
                 return button.function()
 
-    def parse_input(self, data: str) -> Optional[Return]:
+    def parse_input(self, data: str) -> Any:
         pass
 
     def reset(self) -> None:
