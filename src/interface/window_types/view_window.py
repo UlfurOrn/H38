@@ -1,12 +1,8 @@
 from uuid import UUID
 
-from pydantic import BaseModel
-
 from interface.extra import Field
 from interface.window_types.window import Button, Window
-from logic.api import api
 from logic.helpers import InfoModel
-from logic.logic.employee_logic import EmployeeInfo
 
 
 class ViewWindow(Window):
@@ -38,7 +34,7 @@ class ViewWindow(Window):
             value = value or ""
             print(f"|{field.name:>16}: {value:<30}|")
 
-    def update(self) -> None:
+    def update(self) -> UUID:
         raise NotImplementedError()
 
     def select(self) -> InfoModel:

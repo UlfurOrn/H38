@@ -1,4 +1,4 @@
-from typing import Any, Callable, Optional
+from typing import Callable, Optional
 
 from pydantic import BaseModel
 
@@ -12,11 +12,6 @@ class Button(BaseModel):
     hidden: bool = False
 
 
-class Return(BaseModel):
-    levels: int
-    data: Any
-
-
 class Column(BaseModel):
     name: str
     field: str
@@ -26,8 +21,6 @@ class Column(BaseModel):
 class Field(BaseModel):
     name: str
     field: str
-
-
-class CreateField(Field):
     required: bool = True
+    mutable: bool = True
     submenu: bool = False

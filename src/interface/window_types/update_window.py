@@ -5,7 +5,8 @@ from interface.window_types.window import Window
 from logic.helpers import InfoModel
 
 
-class CreateWindow(Window):
+class UpdateWindow(Window):
+    model_id: UUID
     info: dict
     fields: list[Field]
     current: int
@@ -19,7 +20,6 @@ class CreateWindow(Window):
 
     def window_setup(self) -> None:
         self.current = 0
-        self.info = {}
 
     def setup(self) -> None:
         for field in self.fields:
@@ -28,6 +28,9 @@ class CreateWindow(Window):
 
         if not self.fields[self.current].submenu:
             self.hide_button("f")  # Open submenu button
+
+        while not self.fields[self.current].mutable:
+            self.current = (self.current + 1) % len(self.fields)
 
     def display(self) -> None:
         self.boundary()
@@ -40,6 +43,7 @@ class CreateWindow(Window):
         for field in self.fields:
             value = self.info.get(field.field)
             value = value or ""
+            value = str(value)
             if field == self.fields[self.current]:
                 value = value[:7] + " <---"
             print(f"|{field.name:>16}: {value:<30}|")
