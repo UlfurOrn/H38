@@ -66,9 +66,9 @@ system.
 * Kolbeinn:
     * 
 * Ríkharður:
-    * 
+    * Finished UI Flow and worked on Use Cases
 * Smári:
-    * 
+    * Use cases
 * Úlfur:
     * Created initial draft of the look of many of the screens. Designed
     the database layer and initial draft of the other two.
@@ -94,9 +94,9 @@ throughput in the following weeks.
 * Kolbeinn:
     * 
 * Ríkharður:
-    * 
+    * Worked on Class diagram and Use cases.
 * Smári:
-    * 
+    * State diagram
 * Úlfur:
     * Today I continued a bit with the class diagrams. After getting a
     better idea of it's structure I started work on explaining what each
@@ -123,9 +123,9 @@ complete report.
 * Kolbeinn:
     * 
 * Ríkharður:
-    * 
+    * Class diagram finished and worked on the design report.
 * Smári:
-    * 
+    * "Beutifying" Report 
 * Úlfur:
     * Created all the tasks in Asana. Most of the day went into the last
     design decisions and creating wireframes and details for them. Finished
@@ -135,3 +135,94 @@ Last design day finished!! The week went mostly well, some days better than othe
 We have a finished product that should (hopefully) not need to be changed all that
 much. We will possibly do some more prep work over the weekend, like adding tickets
 to Asana, but we will try to relax as well :)
+
+
+## Week 2:
+
+### Monday, 29 November:
+
+
+* Guðmundur:
+    * 
+* Kristófer:
+    * 
+* Kolbeinn:
+    * 
+* Ríkharður:
+    * Created and finished employee and contractor logic. Started on report logic.
+* Smári:
+    * 
+* Úlfur:
+
+
+### Tuesday, 30 November:
+
+
+* Guðmundur:
+    * 
+* Kristófer:
+    * 
+* Kolbeinn:
+    * 
+* Ríkharður:
+    * Continued work on report logic. Finished by the end of the day.
+* Smári:
+    * 
+* Úlfur:
+
+
+### Wednesday, 1 December:
+
+
+* Guðmundur:
+    * 
+* Kristófer:
+    * 
+* Kolbeinn:
+    * 
+* Ríkharður:
+    * Refinded report logic. Added in contractors. 
+* Smári:
+    * Put the window designs into python, focusing on employees and locations. I experimented with a couple of ways of implementing classes and function for the UI, bulding on the code Úlfur wrote.
+* Úlfur:
+
+
+### Thursday, 2 December:
+
+
+* Guðmundur:
+    * 
+* Kristófer:
+    * 
+* Kolbeinn:
+    * 
+* Ríkharður:
+    * Added in search function into list method. Added into all but one logic because of missing file. Will be added later.
+* Smári:
+    * Continued with python and experimenting ways to implement the UI.
+* Úlfur:
+
+
+### Friday, 3 December:
+
+
+* Guðmundur:
+    * 
+* Kristófer:
+    * 
+* Kolbeinn:
+    * 
+* Ríkharður:
+    * 
+* Smári:
+    * 
+* Úlfur:
+
+
+
+
+
+## Week 3:
+
+
+

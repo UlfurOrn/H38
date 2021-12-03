@@ -57,7 +57,6 @@ class PropertyLogic:
     @staticmethod
     def get(property_id: UUID) -> PropertyInfo:
         property = Property.get(property_id)
-        #location = property.location
 
         return PropertyInfo(
             property_id=property.property_id,
@@ -66,7 +65,6 @@ class PropertyLogic:
             condition=property.condition,
             facilities=property.facilities
         )
-
 
     @staticmethod
     def update(property_id: UUID, data: PropertyUpdate) -> UUID:
