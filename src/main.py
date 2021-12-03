@@ -1,4 +1,4 @@
-from interface.windows.option_window import MainMenu
+from interface.windows import MainMenu
 
 #print("Here:", os.path.relpath(__file__))
 
