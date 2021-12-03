@@ -47,26 +47,18 @@ class EmployeeUpdate(BaseModel):
 
 class EmployeeLogic:
     @staticmethod
-    def all(page: int) -> Paginator:
+    def all(page: int, location_filter: Optional[UUID] = None) -> Paginator:
         employees = Employee.all()
 
+        if location_filter:
+            employees = filter(lambda employee: employee.location_id == location_filter, employees)
+
         employee_items = [
-            EmployeeItem(employee_id=employee.employee_id, name=employee.name, ssn=employee.ssn, phone=employee.work_phone)
+            EmployeeItem(employee_id=employee.id, name=employee.name, ssn=employee.ssn, phone=employee.work_phone)
             for employee in employees
         ]
 
         return Paginator.paginate(employee_items, page)
-
-    @staticmethod
-    def filter(location_filter:UUID, page: int = 0) -> Paginator:
-        employees = Employee.all()
-
-        filtered_list = [
-            EmployeeItem(employee_id=employee.employee_id, name=employee.name, ssn=employee.ssn, phone=employee.work_phone)
-            for employee in employees if employee.location_id == location_filter
-            ]
-            
-        return Paginator.paginate(filtered_list, page)
 
     @staticmethod
     def create(data: EmployeeCreate) -> UUID:
@@ -99,7 +91,7 @@ class EmployeeLogic:
 
         employee.name = data.name or employee.name
         employee.address = data.address or employee.address
-        employee.home_phone = data.home_phone or employee.home_phone
+        employee.home_phone = data.home_phone
         employee.work_phone = data.work_phone or employee.work_phone
         employee.email = data.email or employee.email
         employee.location_id = data.location_id or employee.location_id

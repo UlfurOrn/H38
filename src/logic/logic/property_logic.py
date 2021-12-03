@@ -28,6 +28,7 @@ class PropertyCreate(BaseModel):
     condition: str
     facilities: str
 
+
 class PropertyUpdate(BaseModel):
     location_id: Optional[UUID] = None
     condition: Optional[str] = None
@@ -63,7 +64,7 @@ class PropertyLogic:
             property_number=property.property_number,
             location=property.location,
             condition=property.condition,
-            facilities=property.facilities
+            facilities=property.facilities,
         )
 
     @staticmethod
@@ -73,7 +74,7 @@ class PropertyLogic:
         property.location_id = data.location_id or property.location_id
         property.condition = data.condition or property.condition
         property.facilities = data.facilities or property.facilities
-        
+
         property.update()
 
         return property.property_id
