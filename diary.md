@@ -135,3 +135,94 @@ Last design day finished!! The week went mostly well, some days better than othe
 We have a finished product that should (hopefully) not need to be changed all that
 much. We will possibly do some more prep work over the weekend, like adding tickets
 to Asana, but we will try to relax as well :)
+
+
+## Week 2:
+
+### Monday, 29 November:
+
+
+* Guðmundur:
+    * 
+* Kristófer:
+    * 
+* Kolbeinn:
+    * 
+* Ríkharður:
+    * 
+* Smári:
+    * 
+* Úlfur:
+
+
+### Tuesday, 30 November:
+
+
+* Guðmundur:
+    * 
+* Kristófer:
+    * 
+* Kolbeinn:
+    * 
+* Ríkharður:
+    * 
+* Smári:
+    * 
+* Úlfur:
+
+
+### Wednesday, 1 December:
+
+
+* Guðmundur:
+    * 
+* Kristófer:
+    * 
+* Kolbeinn:
+    * 
+* Ríkharður:
+    * 
+* Smári:
+    * 
+* Úlfur:
+
+
+### Thursday, 2 December:
+
+
+* Guðmundur:
+    * 
+* Kristófer:
+    * 
+* Kolbeinn:
+    * 
+* Ríkharður:
+    * 
+* Smári:
+    * 
+* Úlfur:
+
+
+### Friday, 3 December:
+
+
+* Guðmundur:
+    * 
+* Kristófer:
+    * 
+* Kolbeinn:
+    * 
+* Ríkharður:
+    * 
+* Smári:
+    * 
+* Úlfur:
+
+
+
+
+
+## Week 3:
+
+
+
