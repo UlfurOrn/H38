@@ -165,7 +165,7 @@ to Asana, but we will try to relax as well :)
 * Kolbeinn:
     * 
 * Ríkharður:
-    * Continued work on report logic. Finsihed by the end of the day.
+    * Continued work on report logic. Finished by the end of the day.
 * Smári:
     * 
 * Úlfur:
