@@ -51,11 +51,22 @@ class EmployeeLogic:
         employees = Employee.all()
 
         employee_items = [
-            EmployeeItem(employee_id=employee.id, name=employee.name, ssn=employee.ssn, phone=employee.work_phone)
+            EmployeeItem(employee_id=employee.employee_id, name=employee.name, ssn=employee.ssn, phone=employee.work_phone)
             for employee in employees
         ]
 
         return Paginator.paginate(employee_items, page)
+
+    @staticmethod
+    def filter(location_filter:UUID, page: int = 0) -> Paginator:
+        employees = Employee.all()
+
+        filtered_list = [
+            EmployeeItem(employee_id=employee.employee_id, name=employee.name, ssn=employee.ssn, phone=employee.work_phone)
+            for employee in employees if employee.location_id == location_filter
+            ]
+            
+        return Paginator.paginate(filtered_list, page)
 
     @staticmethod
     def create(data: EmployeeCreate) -> UUID:
