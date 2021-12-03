@@ -1,12 +1,6 @@
-from typing import Callable, Optional
+from typing import Any, Optional
 
-from pydantic import BaseModel
-
-
-class Button(BaseModel):
-    letter: str
-    description: str
-    function: Optional[Callable]
+from interface.extra import BACK, Button, Return
 
 
 class Window:
@@ -14,7 +8,8 @@ class Window:
     title: str
     buttons: list[Button]
 
-    def run(self):
+    def run(self) -> Any:
+        self.button_setup()
         self.window_setup()
         while True:
             self.setup()
@@ -24,11 +19,17 @@ class Window:
 
             data = self.get_input()
 
-            if data == "b":
-                return
+            value = self.check_buttons(data)
+            value = value or self.parse_input(data)
 
-            self.check_buttons(data)
-            self.parse_input(data)
+            if value:
+                return value
+
+            self.reset()
+            self.clear()
+
+    def button_setup(self) -> None:
+        raise NotImplementedError()
 
     def window_setup(self) -> None:
         pass
@@ -46,16 +47,26 @@ class Window:
     def display_buttons(self) -> None:
         # ToDo: Implement display buttons function
         for button in self.buttons:
-            self.padded(f"{button.letter}: {button.description}", 20)
+            if not button.hidden:
+                self.padded(f"{button.letter}: {button.description}", 20)
         self.boundary()
 
-    def check_buttons(self, data: str) -> None:
+    def hide_button(self, letter: str) -> None:
         for button in self.buttons:
-            if button.letter == data:
-                return button.function(self)
+            if button.letter == letter:
+                button.hidden = True
 
-    def parse_input(self, data: str) -> None:
+    def check_buttons(self, data: str) -> Optional[Return]:
+        for button in self.buttons:
+            if not button.hidden and button.letter == data:
+                return button.function()
+
+    def parse_input(self, data: str) -> Optional[Return]:
         pass
+
+    def reset(self) -> None:
+        for button in self.buttons:
+            button.hidden = False
 
     def _get_boundary(self) -> str:
         line = "-" * (self.WINDOW_SIZE - 2)
@@ -86,3 +97,6 @@ class Window:
     def get_input(self, text: str = "Enter Command: ") -> str:
         print()
         return input(text).strip()
+
+    def back(self) -> BACK:
+        return BACK

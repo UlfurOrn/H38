@@ -1,23 +1,22 @@
-from pydantic import BaseModel
+from typing import Optional
 
-from interface.windows.create_window import EmployeeCreateWindow
-from interface.windows.view_window import EmployeeViewWindow
-from interface.windows.window import Button, Window
-from logic.api import api
-from logic.helpers import ListItem, Paginator
-from logic.logic.employee_logic import EmployeeItem
-
-
-class Column(BaseModel):
-    name: str
-    field: str
-    size: int
+from interface.extra import Button
+from interface.window_types.window import Window
+from logic.helpers import InfoModel, ListItem, Paginator
 
 
 class ListWindow(Window):
     columns: list
     paginator: Paginator
     page: int = 1
+
+    def button_setup(self) -> None:
+        self.buttons = [
+            Button(letter="c", description="create", function=self.create),
+            Button(letter="f", description="filter", function=self.filter),
+            Button(letter="s", description="search", function=self.search),
+            Button(letter="b", description="back", function=self.back),
+        ]
 
     def window_setup(self) -> None:
         assert sum(column.size for column in self.columns) + len(self.columns) + 1 == self.WINDOW_SIZE
@@ -32,12 +31,14 @@ class ListWindow(Window):
             self.page += 1
 
         if data.isdigit():
-            index = int(data)
+            index = int(data) - 1
+            if index < 0:
+                index += 10
             items = self.paginator.items
             if index in range(len(items)):
-                self.view_item(items[index])
+                return self.view_item(items[index])
 
-    def view_item(self, item: ListItem) -> None:
+    def view_item(self, item: ListItem) -> Optional[InfoModel]:
         raise NotImplementedError()
 
     def display(self) -> None:
@@ -67,7 +68,7 @@ class ListWindow(Window):
 
     def list_items(self) -> None:
         for index, item in enumerate(self.paginator.items):
-            string = f"| {index} |"
+            string = f"| {(index + 1) % 10} |"
             for column in self.columns[1:]:
                 string += " "
                 value = item.get(column.field)
@@ -87,44 +88,11 @@ class ListWindow(Window):
 
         print(f"| a: prev   page: {page:>03}/{max_page:>03}  total: {total:>04}   d: next |")
 
-
-class EmployeeListWindow(ListWindow):
-    title = "Employee List"
-    columns = [
-        Column(name="#", field="", size=3),
-        Column(name="Name", field="name", size=21),
-        Column(name="SSN", field="ssn", size=12),
-        Column(name="Phone", field="phone", size=9),
-    ]
-
-    def setup(self) -> None:
-        self.paginator = api.employees.all(self.page)
-
-    def view_item(self, item: EmployeeItem) -> None:
-        window = EmployeeViewWindow()
-        window.model_id = item.employee_id
-        window.run()
-
     def create(self) -> None:
-        EmployeeCreateWindow().run()
+        raise NotImplementedError()
 
-    buttons = [
-        Button(letter="c", description="create", function=create),
-        Button(letter="b", description="back", function=None),
-    ]
+    def filter(self) -> None:
+        raise NotImplementedError()
 
-
-class LocationListWindow(ListWindow):
-    title = "Location List"
-    columns = [
-        Column(name="#", field="", size=3),
-        Column(name="Country", field="country", size=15),
-        Column(name="Airport", field="airport", size=28),
-    ]
-    buttons = [Button(letter="b", description="back", function=None)]
-
-    def setup(self) -> None:
-        self.paginator = api.locations.all(self.page)
-
-    def view_item(self, item: ListItem) -> None:
+    def search(self) -> None:
         raise NotImplementedError()
