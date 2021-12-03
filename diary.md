@@ -68,7 +68,7 @@ system.
 * Ríkharður:
     * 
 * Smári:
-    * 
+    * Use cases
 * Úlfur:
     * Created initial draft of the look of many of the screens. Designed
     the database layer and initial draft of the other two.
@@ -96,7 +96,7 @@ throughput in the following weeks.
 * Ríkharður:
     * 
 * Smári:
-    * 
+    * State diagram
 * Úlfur:
     * Today I continued a bit with the class diagrams. After getting a
     better idea of it's structure I started work on explaining what each
@@ -125,7 +125,7 @@ complete report.
 * Ríkharður:
     * 
 * Smári:
-    * 
+    * "Beutifying" Report 
 * Úlfur:
     * Created all the tasks in Asana. Most of the day went into the last
     design decisions and creating wireframes and details for them. Finished
@@ -183,7 +183,7 @@ to Asana, but we will try to relax as well :)
 * Ríkharður:
     * 
 * Smári:
-    * 
+    * Put the window designs into python, focusing on employees and locations. I experimented with a couple of ways of implementing classes and function for the UI, bulding on the code Úlfur wrote.
 * Úlfur:
 
 
@@ -199,7 +199,7 @@ to Asana, but we will try to relax as well :)
 * Ríkharður:
     * 
 * Smári:
-    * 
+    * Continued with python and experimenting ways to implement the UI.
 * Úlfur:
 
 
