@@ -1,23 +1,19 @@
-import enum
+from datetime import date
 from typing import Optional
 from uuid import UUID
-from datetime import date
-from enum import Enum
 
 from pydantic import BaseModel
 
-from database.models.report_model import *
-from database.models.property_model import Property
-from database.models.employee_model import Employee
-from database.models.contractor_model import *
-from src.utils.exceptions import NotFoundException
-from Verklegt_1.H38.src.logic.helpers import ListItem, Paginator
+from database.models.report_model import Report
+from logic.helpers import ListItem, Paginator
+
 
 class ReportItem(ListItem):
     report_id: UUID
     property_id: UUID
     status: str
     date: date
+
 
 class ReportInfo(BaseModel):
     report_id: UUID
@@ -29,6 +25,7 @@ class ReportInfo(BaseModel):
     date: date
     contractor_id: UUID
 
+
 class ReportCreate(BaseModel):
     property_id: UUID
     employee_id: UUID
@@ -38,6 +35,7 @@ class ReportCreate(BaseModel):
     date: date
     contractor_id: UUID
 
+
 class ReportUpdate(BaseModel):
     property_id: Optional[UUID] = None
     employee_id: Optional[UUID] = None
@@ -46,14 +44,14 @@ class ReportUpdate(BaseModel):
     date: Optional[date] = None
     contractor_id: Optional[UUID] = None
 
+
 class ReportLogic:
     @staticmethod
     def all(page: int) -> Paginator:
         reports = Report.all()
 
         report_items = [
-            ReportItem(report_id = report.id, property_id = report.propert_id, 
-                       status = report.status, date = report.date)
+            ReportItem(report_id=report.id, property_id=report.propert_id, status=report.status, date=report.date)
             for report in reports
         ]
 
@@ -66,22 +64,22 @@ class ReportLogic:
         report.create()
 
         return report.id
-    
+
     @staticmethod
     def get(report_id: UUID) -> ReportInfo:
         report = Report.get(report_id)
-        
+
         return ReportInfo(
-            report_id = report.id,
-            property_id = report.property_id,
-            employee_id = report.employee_id,
-            description = report.description,
-            cost = report.cost,
-            status = report.status,
-            date = report.date,
-            contractor_id = report.contractor_id
+            report_id=report.id,
+            property_id=report.property_id,
+            employee_id=report.employee_id,
+            description=report.description,
+            cost=report.cost,
+            status=report.status,
+            date=report.date,
+            contractor_id=report.contractor_id,
         )
-    
+
     @staticmethod
     def update(report_id: UUID, data: ReportUpdate) -> UUID:
         report = Report.get(report_id)
@@ -101,7 +99,7 @@ class ReportLogic:
     @staticmethod
     def approve(report_id: UUID) -> UUID:
         report = Report.get(report_id)
-        
+
         if report.status == Status.unapprove:
             report.status = Status.approve
         else:

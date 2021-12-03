@@ -1,10 +1,10 @@
+from datetime import date
 from typing import Optional
 from uuid import UUID
-from datetime import date
+
 from pydantic import BaseModel
 
 from database.models.request_model import Request
-from database.models.contractor_model import Contractor
 from logic.helpers import ListItem, Paginator
 
 
@@ -17,7 +17,7 @@ class RequestItem(ListItem):
 class RequestInfo(BaseModel):
     property_id: UUID
     location: str
-    facility:str
+    facility: str
     date: date
     priority: str
 
@@ -31,6 +31,7 @@ class RequestCreate(BaseModel):
     location: str
     facility: str
     priority: str
+
 
 class RequestUpdate(BaseModel):
     location: Optional[str] = None
@@ -68,9 +69,8 @@ class RequestLogic:
             location=request.location,
             facility=request.facility,
             date=request.date,
-            priority=request.priority
+            priority=request.priority,
         )
-
 
     @staticmethod
     def update(property_id: UUID, data: RequestUpdate) -> UUID:
@@ -79,7 +79,7 @@ class RequestLogic:
         request.location = data.location or request.location
         request.facility = data.facility or request.facility
         request.date = data.date or request.date
-        
+
         request.update()
 
         return request.property_id

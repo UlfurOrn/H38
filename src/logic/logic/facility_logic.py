@@ -1,6 +1,6 @@
 from typing import Optional
 from uuid import UUID
-from datetime import date
+
 from pydantic import BaseModel
 
 from database.models.facility_model import Facility
@@ -34,8 +34,7 @@ class FacilityLogic:
         facilities = Facility.all(property_id)
 
         facility_items = [
-            FacilityItem(facility_name=facility.facility_name, condition=facility.condition)
-            for facility in facilities
+            FacilityItem(facility_name=facility.facility_name, condition=facility.condition) for facility in facilities
         ]
 
         return Paginator.paginate(facility_items, page)
@@ -53,11 +52,8 @@ class FacilityLogic:
         facility = Facility.get(property_id)
 
         return FacilityInfo(
-            property_id=facility.property_id,
-            facility_name=facility.facility_name,
-            condition=facility.condition
+            property_id=facility.property_id, facility_name=facility.facility_name, condition=facility.condition
         )
-
 
     @staticmethod
     def update(property_id: UUID, data: FacilityUpdate) -> UUID:
@@ -65,7 +61,7 @@ class FacilityLogic:
 
         facility.facility_name = data.facility_name or facility.facility_name
         facility.condition = data.condition or facility.condition
-        
+
         facility.update()
 
         return facility.property_id
