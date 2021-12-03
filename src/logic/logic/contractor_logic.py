@@ -37,7 +37,6 @@ class ContractorUpdate(BaseModel):
     location_id: Optional[int] = None
 
 class ContracatorLogic:
-<<<<<<< HEAD
     @staticmethod
     def all(page: int, search=None) -> Paginator:
         contractors = Contractor.all()
@@ -94,52 +93,3 @@ class ContracatorLogic:
         contractor.update()
 
         return contractor.id
-=======
-        @staticmethod
-        def all(page: int) -> Paginator:
-            contractors = Contractor.all()
-
-            contractor_items = [
-                ContractorItem(contractor_id = contractor.id, name = contractor.name, phone = contractor.phone)
-                for contractor in contractors
-            ]
-
-            return Paginator.paginate(contractor_items, page)
-
-        @staticmethod
-        def create(data: ContractorCreate) -> UUID:
-            contractor = Contractor(**data.dict())
-
-            contractor.create()
-
-            return contractor.id
-
-        @staticmethod
-        def get(contractor_id: UUID) -> ContractorInfo:
-            contractor = Contractor.get(contractor_id)
-            location = contractor.location
-
-            return ContractorInfo(
-                contractor_id = contractor.id,
-                name = contractor.name,
-                phone = contractor.phone,
-                email = contractor.email,
-                opening_hours = contractor.opening_hours,
-                location_id = location.id,
-                location = location.countr
-            )
-        
-        @staticmethod
-        def update(contractor_id: UUID, data: ContractorUpdate) -> UUID:
-            contractor = Contractor.get(contractor_id)
-
-            contractor.name = data.name or contractor.name
-            contractor.phone = data.phone or contractor.phone
-            contractor.email = data.email or contractor.email
-            contractor.opening_hours = data.opening_hours or contractor.opening_hours
-            contractor.location_id = data.location_id or contractor.location_id
-
-            contractor.update()
-
-            return contractor.id
->>>>>>> main

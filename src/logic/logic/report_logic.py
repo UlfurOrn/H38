@@ -48,7 +48,6 @@ class ReportUpdate(BaseModel):
 
 class ReportLogic:
     @staticmethod
-<<<<<<< HEAD
     def all(page: int, search=None) -> Paginator:
         reports = Report.all()
 
@@ -61,11 +60,6 @@ class ReportLogic:
         if search is not None:
             reports = filter(check_match, reports)
 
-=======
-    def all(page: int) -> Paginator:
-        reports = Report.all()
-
->>>>>>> main
         report_items = [
             ReportItem(report_id = report.id, property_id = report.propert_id, 
                        status = report.status, date = report.date)
