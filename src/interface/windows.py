@@ -9,7 +9,6 @@ from interface.window_types.option_window import OptionWindow
 from interface.window_types.update_window import UpdateWindow
 from interface.window_types.view_window import ViewWindow
 from logic.api import api
-from logic.helpers import InfoModel
 from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeItem, EmployeeUpdate
 from logic.logic.location_logic import LocationInfo, LocationItem
 
