@@ -1,11 +1,5 @@
-from pydantic import BaseModel
-
-from interface.window_types.create_window import EmployeeCreateWindow
-from interface.window_types.view_window import EmployeeViewWindow
-from interface.window_types.window import Button, Window
-from logic.api import api
+from interface.window_types.window import Window
 from logic.helpers import ListItem, Paginator
-from logic.logic.employee_logic import EmployeeItem
 
 
 class ListWindow(Window):
@@ -26,7 +20,7 @@ class ListWindow(Window):
             self.page += 1
 
         if data.isdigit():
-            index = int(data)
+            index = (int(data) - 1) % 10
             items = self.paginator.items
             if index in range(len(items)):
                 self.view_item(items[index])
@@ -61,7 +55,7 @@ class ListWindow(Window):
 
     def list_items(self) -> None:
         for index, item in enumerate(self.paginator.items):
-            string = f"| {index} |"
+            string = f"| {(index + 1) % 10} |"
             for column in self.columns[1:]:
                 string += " "
                 value = item.get(column.field)

@@ -1,29 +1,23 @@
 from interface.extra import CreateField
-from interface.window_types.view_window import Field
-from interface.window_types.window import Button, Return, Window
-from logic.api import api
-from logic.logic.employee_logic import EmployeeCreate
+from interface.window_types.window import Window
 
 
 class CreateWindow(Window):
-    info: dict = {}
+    info: dict
     fields: list[CreateField]
     current: int
 
     def window_setup(self) -> None:
         self.current = 0
+        self.info = {}
 
     def setup(self) -> None:
-        submit_button = self.get_button("s")
-
         for field in self.fields:
             if field.required and self.info.get(field.field) is None:
-                submit_button.hide = True
-                break
+                self.hide_button("s")  # Submit
 
-        submenu_button = self.get_button("f")
         if not self.fields[self.current].submenu:
-            submenu_button.hide = True
+            self.hide_button("f")  # Open submenu
 
     def display(self) -> None:
         self.boundary()

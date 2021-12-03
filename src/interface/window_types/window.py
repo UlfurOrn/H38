@@ -49,10 +49,10 @@ class Window:
                 self.padded(f"{button.letter}: {button.description}", 20)
         self.boundary()
 
-    def get_button(self, letter: str) -> Button:
+    def hide_button(self, letter: str) -> None:
         for button in self.buttons:
             if button.letter == letter:
-                return button
+                button.hide = True
 
     def check_buttons(self, data: str) -> Optional[Return]:
         for button in self.buttons:

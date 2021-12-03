@@ -1,6 +1,5 @@
 from typing import Any
 
-from interface.window_types.list_window import EmployeeListWindow, LocationListWindow
 from interface.window_types.window import Button, Window
 
 

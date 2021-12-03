@@ -9,6 +9,7 @@ from interface.window_types.view_window import ViewWindow
 from logic.api import api
 from logic.helpers import ListItem
 from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeItem
+from logic.logic.location_logic import LocationInfo, LocationItem
 
 
 class MainMenuOptions(str, Enum):
@@ -125,5 +126,28 @@ class LocationListWindow(ListWindow):
     def setup(self) -> None:
         self.paginator = api.locations.all(self.page)
 
-    def view_item(self, item: ListItem) -> None:
-        raise NotImplementedError()
+    def view_item(self, item: LocationItem) -> None:
+        window = LocationViewWindow()
+        window.model_id = item.location_id
+        window.run()
+
+
+class LocationViewWindow(ViewWindow):
+    title = "View Location"
+    info: LocationInfo
+    fields = [
+        Field(name="Country", field="country"),
+        Field(name="Airport", field="airport"),
+        Field(name="Supervisor", field="supervisor"),
+    ]
+
+    def window_setup(self) -> None:
+        self.info = api.locations.get(self.model_id)
+
+    def update(self) -> None:
+        print("Update")
+
+    buttons = [
+        Button(letter="u", description="update", function=update),
+        Button(letter="b", description="back", function=None),
+    ]
