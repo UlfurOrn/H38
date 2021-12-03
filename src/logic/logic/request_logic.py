@@ -4,7 +4,6 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from database.models.contractor_model import Contractor
 from database.models.request_model import Request
 from logic.helpers import ListItem, Paginator
 

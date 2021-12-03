@@ -10,7 +10,7 @@ from interface.window_types.update_window import UpdateWindow
 from interface.window_types.view_window import ViewWindow
 from logic.api import api
 from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeItem, EmployeeUpdate
-from logic.logic.location_logic import LocationCreate, LocationInfo, LocationItem
+from logic.logic.location_logic import LocationCreate, LocationInfo, LocationItem, LocationUpdate
 
 
 class MainMenuOptions(str, Enum):
@@ -207,7 +207,11 @@ class LocationViewWindow(ViewWindow):
         self.info = api.locations.get(self.model_id)
 
     def update(self) -> None:
-        print("Update")
+        window = LocationUpdateWindow()
+        window.model_id = self.model_id
+        window.run()
+
+        self.window_setup()
 
     def select(self) -> LocationInfo:
         return self.info
@@ -245,3 +249,37 @@ class LocationCreateWindow(CreateWindow):
         field = self.fields[self.current]
         if field.field == "supervisor":
             self.info["supervisor_id"] = None
+
+
+class LocationUpdateWindow(UpdateWindow):
+    title = "Update Location"
+    fields = [
+        Field(name="Country", field="country", mutable=False),
+        Field(name="Airport", field="airport"),
+        Field(name="Phone", field="phone"),
+        Field(name="Opening Hours", field="opening_hours"),
+        Field(name="Supervisor", field="supervisor", required=False, submenu=True),
+    ]
+
+    def window_setup(self) -> None:
+        self.info = api.locations.get(self.model_id).dict()
+
+    def submit(self) -> UUID:
+        data = LocationUpdate(**self.info)
+        employee_id = api.locations.update(self.model_id, data)
+
+        return employee_id
+
+    def submenu(self) -> None:
+        value: Union[BACK, EmployeeInfo] = EmployeeListWindow().run()
+        if value == BACK:
+            return
+
+        self.info["supervisor"] = value.name
+        self.info["supervisor_id"] = value.employee_id
+
+    def clear(self) -> None:
+        super().clear()
+        field = self.fields[self.current]
+        if field.field == "location":
+            self.info["location_id"] = None
