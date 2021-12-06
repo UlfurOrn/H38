@@ -18,6 +18,7 @@ class PropertyInfo(InfoModel):
     property_id: UUID
     property_number: str
     area: int
+    location_id: UUID
     location: str
     condition: str
     facilities: int
@@ -69,6 +70,7 @@ class PropertyLogic:
             property_id=property.id,
             property_number=property.property_number,
             area=property.area,
+            location_id=property.location.id,
             location=property.location.airport,
             condition=property.condition,
             facilities=len(property.facilities),

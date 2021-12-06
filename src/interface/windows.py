@@ -340,7 +340,7 @@ class PropertyViewWindow(ViewWindow):
     info: PropertyInfo
     fields = [
         Field(name="Property Number", field="property_number"),
-        Field(name="Area", field="area"),
+        Field(name="Area (m^2)", field="area"),
         Field(name="Location", field="location"),
         Field(name="Condition", field="condition"),
         Field(name="Facilities", field="facilities"),
@@ -352,12 +352,25 @@ class PropertyViewWindow(ViewWindow):
     def select(self) -> PropertyInfo:
         return self.info
 
+    def view(self) -> None:
+        value: Union[BACK, PropertyViewOptions] = PropertyViewOptionsWindow().run()
+        if value == BACK:
+            return
+
+        if value == PropertyViewOptions.Location:
+            window = LocationViewWindow()
+            window.model_id = self.info.location_id
+            window.run()
+
+        if value == PropertyViewOptions.Facilities:
+            pass
+
 
 class PropertyCreateWindow(CreateWindow):
     title = "Create Property"
     fields = [
         Field(name="Property Number", field="property_number"),
-        Field(name="Area", field="area"),
+        Field(name="Area (m^2)", field="area"),
         Field(name="Location", field="location", submenu=True),
         Field(name="Condition", field="condition", submenu=True),
     ]
@@ -391,6 +404,24 @@ class PropertyCreateWindow(CreateWindow):
             self.info["location_id"] = None
 
 
+class PropertyViewOptions(str, Enum):
+    Location = "Location"
+    Facilities = "Facilities"
+
+
+class PropertyViewOptionsWindow(OptionWindow):
+    title = "Choose Option to View"
+    options = list(PropertyViewOptions)
+
+    def window_specific(self, data: PropertyViewOptions) -> PropertyViewOptions:
+        return data
+
+
+###############################################################################
+
+
+# Extra Windows:
+###############################################################################
 class ChooseConditionWindow(OptionWindow):
     title = "Choose Condition"
     options = list(Condition)
