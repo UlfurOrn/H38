@@ -1,5 +1,4 @@
-from uuid import UUID
-from Verklegt_1.H38.src.database.models.employee_model import Employee
+from src.database.models.employee_model import Employee
 from utils.authentication import AuthManager
 
 
@@ -24,3 +23,13 @@ class Verification:
         user = Employee.get(user_id)
         if not user.is_supervisor:
             raise Exception("User is not a supervisor")
+
+    def supervisor_verify():
+        """Checks if the user is a supervisor and returns True if he is, 
+        false otherwise"""
+        user_id = AuthManager.logged_in_user
+        user = Employee.get(user_id)
+        if not user.is_supervisor:
+            return False
+        else: 
+            return True

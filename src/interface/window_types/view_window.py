@@ -3,6 +3,7 @@ from uuid import UUID
 from interface.extra import Field
 from interface.window_types.window import Button, Window
 from logic.helpers import InfoModel
+from utils.verification import Verification
 
 
 class ViewWindow(Window):
@@ -12,12 +13,11 @@ class ViewWindow(Window):
 
     def button_setup(self) -> None:
         self.buttons = [
-            Button(letter="u", description="update", function=self.update),
+            Button(letter="u", description="update", function=self.update, supervisor=True),
             Button(letter="s", description="select", function=self.select),
             Button(letter="v", description="view", function=self.view),
             Button(letter="b", description="back", function=self.back),
         ]
-
     def window_setup(self) -> None:
         raise NotImplementedError()
 

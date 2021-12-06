@@ -1,4 +1,6 @@
 from typing import Any
+from uuid import UUID
+from Verklegt_1.H38.src.database.models.employee_model import Employee
 
 from interface.extra import BACK, Button
 
@@ -54,8 +56,11 @@ class Window:
                 button.hidden = True
 
     def check_buttons(self, data: str) -> Any:
+        user = Employee.get(id)
         for button in self.buttons:
-            if not button.hidden and button.letter == data:
+            if button.supervisor and not user.is_supervisor():
+                return
+            elif not button.hidden and button.letter == data:
                 return button.function()
 
     def parse_input(self, data: str) -> Any:

@@ -3,6 +3,7 @@ from typing import Optional
 from interface.extra import Button
 from interface.window_types.window import Window
 from logic.helpers import InfoModel, ListItem, Paginator
+from utils.verification import Verification
 
 
 class ListWindow(Window):
@@ -12,7 +13,7 @@ class ListWindow(Window):
 
     def button_setup(self) -> None:
         self.buttons = [
-            Button(letter="c", description="create", function=self.create),
+            Button(letter="c", description="create", function=self.create, supervisor=True),
             Button(letter="f", description="filter", function=self.filter),
             Button(letter="s", description="search", function=self.search),
             Button(letter="b", description="back", function=self.back),
