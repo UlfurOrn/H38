@@ -29,7 +29,7 @@ class FacilityCreate(BaseModel):
 
 class FacilityUpdate(BaseModel):
     name: Optional[str] = None
-    condition: Optional[str] = None
+    condition: Optional[Condition] = None
 
 
 class FacilityLogic:

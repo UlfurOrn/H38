@@ -11,7 +11,7 @@ from interface.window_types.update_window import UpdateWindow
 from interface.window_types.view_window import ViewWindow
 from logic.api import api
 from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeItem, EmployeeUpdate
-from logic.logic.facility_logic import FacilityCreate, FacilityInfo, FacilityItem
+from logic.logic.facility_logic import FacilityCreate, FacilityInfo, FacilityItem, FacilityUpdate
 from logic.logic.location_logic import LocationCreate, LocationInfo, LocationItem, LocationUpdate
 from logic.logic.property_logic import PropertyCreate, PropertyInfo, PropertyItem, PropertyUpdate
 
@@ -472,6 +472,10 @@ class FacilityViewWindow(ViewWindow):
     def window_setup(self) -> None:
         self.info = api.facilities.get(self.model_id)
 
+    def update(self) -> None:
+        FacilityUpdateWindow(self.model_id).run()
+        self.window_setup()
+
     def select(self) -> FacilityInfo:
         return self.info
 
@@ -491,6 +495,27 @@ class FacilityCreateWindow(CreateWindow):
         facility_id = api.facilities.create(self.property_id, data)
 
         return facility_id
+
+    def submenu(self) -> None:
+        value: Union[BACK, Condition] = ChooseConditionWindow().run()
+        if value == BACK:
+            return
+
+        self.info["condition"] = value.value
+
+
+class FacilityUpdateWindow(UpdateWindow):
+    title = "Update Facility"
+    fields = [Field(name="Name", field="name"), Field(name="Condition", field="condition", submenu=True)]
+
+    def window_setup(self) -> None:
+        self.info = api.facilities.get(self.model_id).dict()
+
+    def submit(self) -> UUID:
+        data = FacilityUpdate(**self.info)
+        property_id = api.facilities.update(self.model_id, data)
+
+        return property_id
 
     def submenu(self) -> None:
         value: Union[BACK, Condition] = ChooseConditionWindow().run()
