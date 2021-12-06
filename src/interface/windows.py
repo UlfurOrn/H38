@@ -13,7 +13,7 @@ from logic.api import api
 from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeItem, EmployeeUpdate
 from logic.logic.facility_logic import FacilityCreate, FacilityInfo, FacilityItem
 from logic.logic.location_logic import LocationCreate, LocationInfo, LocationItem, LocationUpdate
-from logic.logic.property_logic import PropertyCreate, PropertyInfo, PropertyItem
+from logic.logic.property_logic import PropertyCreate, PropertyInfo, PropertyItem, PropertyUpdate
 
 
 class MainMenuOptions(str, Enum):
@@ -89,7 +89,6 @@ class EmployeeViewWindow(ViewWindow):
 
     def update(self) -> None:
         EmployeeUpdateWindow(self.model_id).run()
-
         self.window_setup()
 
     def select(self) -> EmployeeInfo:
@@ -211,7 +210,6 @@ class LocationViewWindow(ViewWindow):
 
     def update(self) -> None:
         LocationUpdateWindow(self.model_id).run()
-
         self.window_setup()
 
     def select(self) -> LocationInfo:
@@ -267,9 +265,9 @@ class LocationUpdateWindow(UpdateWindow):
 
     def submit(self) -> UUID:
         data = LocationUpdate(**self.info)
-        employee_id = api.locations.update(self.model_id, data)
+        location_id = api.locations.update(self.model_id, data)
 
-        return employee_id
+        return location_id
 
     def submenu(self) -> None:
         value: Union[BACK, EmployeeInfo] = EmployeeListWindow().run()
@@ -332,6 +330,10 @@ class PropertyViewWindow(ViewWindow):
     def window_setup(self) -> None:
         self.info = api.properties.get(self.model_id)
 
+    def update(self) -> None:
+        PropertyUpdateWindow(self.model_id).run()
+        self.window_setup()
+
     def select(self) -> PropertyInfo:
         return self.info
 
@@ -345,6 +347,7 @@ class PropertyViewWindow(ViewWindow):
 
         if value == PropertyViewOptions.Facilities:
             FacilityListWindow(property_id=self.info.property_id).run()
+            self.window_setup()
 
 
 class PropertyCreateWindow(CreateWindow):
@@ -383,6 +386,32 @@ class PropertyCreateWindow(CreateWindow):
         field = self.fields[self.current]
         if field.field == "location":
             self.info["location_id"] = None
+
+
+class PropertyUpdateWindow(UpdateWindow):
+    title = "Update Property"
+    fields = [
+        Field(name="Property Number", field="property_number", mutable=False),
+        Field(name="Area (m^2)", field="area"),
+        Field(name="Location", field="location", submenu=True, mutable=False),
+        Field(name="Condition", field="condition", submenu=True),
+    ]
+
+    def window_setup(self) -> None:
+        self.info = api.properties.get(self.model_id).dict()
+
+    def submit(self) -> UUID:
+        data = PropertyUpdate(**self.info)
+        property_id = api.properties.update(self.model_id, data)
+
+        return property_id
+
+    def submenu(self) -> None:
+        value: Union[BACK, Condition] = ChooseConditionWindow().run()
+        if value == BACK:
+            return
+
+        self.info["condition"] = value.value
 
 
 class PropertyViewOptions(str, Enum):
