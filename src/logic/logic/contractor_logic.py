@@ -10,7 +10,7 @@ from logic.helpers import InfoModel, ListItem, Paginator
 class ContractorItem(ListItem):
     contractor_id: UUID
     name: str
-    location_id: UUID
+    location: str
     phone: int
 
 
@@ -46,7 +46,12 @@ class ContractorLogic:
         contractors = Contractor.all()
 
         contractor_items = [
-            ContractorItem(contractor_id=contractor.id, name=contractor.name, phone=contractor.phone)
+            ContractorItem(
+                contractor_id=contractor.id,
+                name=contractor.name,
+                location=contractor.location.country,
+                phone=contractor.phone,
+            )
             for contractor in contractors
         ]
 

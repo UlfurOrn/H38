@@ -10,6 +10,7 @@ from interface.window_types.option_window import OptionWindow
 from interface.window_types.update_window import UpdateWindow
 from interface.window_types.view_window import ViewWindow
 from logic.api import api
+from logic.logic.contractor_logic import ContractorInfo
 from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeItem, EmployeeUpdate
 from logic.logic.facility_logic import FacilityCreate, FacilityInfo, FacilityItem, FacilityUpdate
 from logic.logic.location_logic import LocationCreate, LocationInfo, LocationItem, LocationUpdate
@@ -34,6 +35,7 @@ class MainMenu(OptionWindow):
             MainMenuOptions.Employees: EmployeeListWindow(),
             MainMenuOptions.Locations: LocationListWindow(),
             MainMenuOptions.Properties: PropertyListWindow(),
+            MainMenuOptions.Contractors: ContractorListWindow(),
         }
 
         if option not in options:
@@ -506,6 +508,104 @@ class FacilityCreateWindow(CreateWindow):
 
 class FacilityUpdateWindow(UpdateWindow):
     title = "Update Facility"
+    fields = [Field(name="Name", field="name"), Field(name="Condition", field="condition", submenu=True)]
+
+    def window_setup(self) -> None:
+        self.info = api.facilities.get(self.model_id).dict()
+
+    def submit(self) -> UUID:
+        data = FacilityUpdate(**self.info)
+        property_id = api.facilities.update(self.model_id, data)
+
+        return property_id
+
+    def submenu(self) -> None:
+        value: Union[BACK, Condition] = ChooseConditionWindow().run()
+        if value == BACK:
+            return
+
+        self.info["condition"] = value.value
+
+
+###############################################################################
+
+
+# Contractor Windows:
+###############################################################################
+class ContractorListWindow(ListWindow):
+    title = "Contractor List"
+    columns = [
+        Column(name="#", field="", size=3),
+        Column(name="Name", field="name", size=20),
+        Column(name="Location", field="location", size=13),
+        Column(name="Phone", field="phone", size=9),
+    ]
+
+    def setup(self) -> None:
+        self.paginator = api.contractors.all(self.page)
+
+    def view_item(self, item: FacilityItem) -> None:
+        pass
+        # value = FacilityViewWindow(item.facility_id).run()
+        # if value == BACK:
+        #     return
+        # return value
+
+    def create(self) -> None:
+        pass
+        # value = FacilityCreateWindow(self.property_id).run()
+        # if value == BACK:
+        #     return
+        #
+        # FacilityViewWindow(value).run()
+
+
+class ContractorViewWindow(ViewWindow):
+    title = "View Contractor"
+    info: ContractorInfo
+    fields = [
+        Field(name="Name", field="name"),
+        Field(name="Condition", field="condition"),
+        Field(name="Property", field="property"),
+    ]
+
+    def window_setup(self) -> None:
+        self.info = api.facilities.get(self.model_id)
+
+    def update(self) -> None:
+        FacilityUpdateWindow(self.model_id).run()
+        self.window_setup()
+
+    def select(self) -> ContractorInfo:
+        return self.info
+
+    def view(self) -> None:
+        pass
+
+
+class ContractorCreateWindow(CreateWindow):
+    title = "Create Contractor"
+    fields = [Field(name="Name", field="name"), Field(name="Condition", field="condition", submenu=True)]
+
+    def __init__(self, property_id: UUID):
+        self.property_id = property_id
+
+    def submit(self) -> UUID:
+        data = FacilityCreate(**self.info)
+        facility_id = api.facilities.create(self.property_id, data)
+
+        return facility_id
+
+    def submenu(self) -> None:
+        value: Union[BACK, Condition] = ChooseConditionWindow().run()
+        if value == BACK:
+            return
+
+        self.info["condition"] = value.value
+
+
+class ContractorUpdateWindow(UpdateWindow):
+    title = "Update Contractor"
     fields = [Field(name="Name", field="name"), Field(name="Condition", field="condition", submenu=True)]
 
     def window_setup(self) -> None:
