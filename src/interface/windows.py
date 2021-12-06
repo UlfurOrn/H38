@@ -340,12 +340,10 @@ class PropertyViewWindow(ViewWindow):
             return
 
         if value == PropertyViewOptions.Location:
-            window = LocationViewWindow()
-            window.model_id = self.info.location_id
-            window.run()
+            LocationViewWindow(self.info.location_id).run()
 
         if value == PropertyViewOptions.Facilities:
-            pass
+            FacilityListWindow(property_id=self.info.property_id).run()
 
 
 class PropertyCreateWindow(CreateWindow):
@@ -416,7 +414,7 @@ class FacilityListWindow(ListWindow):
         self.property_id = property_id
 
     def setup(self) -> None:
-        self.paginator = api.facilities.all(self.page)
+        self.paginator = api.facilities.all(self.property_id, self.page)
 
     # def view_item(self, item: PropertyItem) -> None:
     #     window = PropertyViewWindow()
