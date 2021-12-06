@@ -418,7 +418,7 @@ class FacilityListWindow(ListWindow):
         self.paginator = api.facilities.all(self.property_id, self.page)
 
     def view_item(self, item: FacilityItem) -> None:
-        value = PropertyViewWindow(item.facility_id).run()
+        value = FacilityViewWindow(item.facility_id).run()
         if value == BACK:
             return
         return value
@@ -459,7 +459,7 @@ class FacilityCreateWindow(CreateWindow):
 
     def submit(self) -> UUID:
         data = FacilityCreate(**self.info)
-        facility_id = api.facilities.create(data)
+        facility_id = api.facilities.create(self.property_id, data)
 
         return facility_id
 

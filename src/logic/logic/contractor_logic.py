@@ -4,7 +4,7 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from database.models.contractor_model import Contractor
-from logic.helpers import ListItem, Paginator
+from logic.helpers import InfoModel, ListItem, Paginator
 
 
 class ContractorItem(ListItem):
@@ -14,7 +14,7 @@ class ContractorItem(ListItem):
     phone: int
 
 
-class ContractorInfo(BaseModel):
+class ContractorInfo(InfoModel):
     contractor_id: UUID
     name: str
     phone: int
@@ -40,7 +40,7 @@ class ContractorUpdate(BaseModel):
     location_id: Optional[int] = None
 
 
-class ContracatorLogic:
+class ContractorLogic:
     @staticmethod
     def all(page: int) -> Paginator:
         contractors = Contractor.all()

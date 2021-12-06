@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 from database.models.facility_model import Facility
 from database.models.property_model import Condition, Property
-from logic.helpers import ListItem, Paginator
+from logic.helpers import InfoModel, ListItem, Paginator
 
 
 class FacilityItem(ListItem):
@@ -14,12 +14,12 @@ class FacilityItem(ListItem):
     condition: str
 
 
-class FacilityInfo(BaseModel):
+class FacilityInfo(InfoModel):
     facility_id: UUID
+    name: str
+    condition: str
     property_id: UUID
     property: str
-    facility_name: str
-    condition: str
 
 
 class FacilityCreate(BaseModel):
@@ -61,10 +61,10 @@ class FacilityLogic:
 
         return FacilityInfo(
             facility_id=facility.id,
+            name=facility.name,
+            condition=facility.condition,
             property_id=property.id,
             property=property.property_number,
-            facility_name=facility.name,
-            condition=facility.condition,
         )
 
     @staticmethod
