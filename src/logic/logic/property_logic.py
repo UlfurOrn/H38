@@ -3,22 +3,24 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from database.models.property_model import Property
-from logic.helpers import ListItem, Paginator
+from database.models.property_model import Condition, Property
+from logic.helpers import InfoModel, ListItem, Paginator
 
 
 class PropertyItem(ListItem):
     property_id: UUID
-    name: str
-    condition: str
-
-
-class PropertyInfo(BaseModel):
-    property_id: UUID
     property_number: str
     location: str
     condition: str
-    facilities: str
+
+
+class PropertyInfo(InfoModel):
+    property_id: UUID
+    property_number: str
+    area: int
+    location: str
+    condition: str
+    facilities: int
 
 
 class PropertyCreate(BaseModel):
@@ -41,7 +43,12 @@ class PropertyLogic:
         properties = Property.all()
 
         property_items = [
-            PropertyItem(property_id=property.id, name=property.name, condition=property.condition)
+            PropertyItem(
+                property_id=property.id,
+                property_number=property.property_number,
+                location=property.location.airport,
+                condition=property.condition,
+            )
             for property in properties
         ]
 
@@ -62,9 +69,10 @@ class PropertyLogic:
         return PropertyInfo(
             property_id=property.id,
             property_number=property.property_number,
-            location=property.location,
+            area=property.area,
+            location=property.location.airport,
             condition=property.condition,
-            facilities=property.facilities,
+            facilities=len(property.facilities),
         )
 
     @staticmethod

@@ -11,7 +11,7 @@ from interface.window_types.view_window import ViewWindow
 from logic.api import api
 from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeItem, EmployeeUpdate
 from logic.logic.location_logic import LocationCreate, LocationInfo, LocationItem, LocationUpdate
-from logic.logic.property_logic import PropertyItem
+from logic.logic.property_logic import PropertyInfo, PropertyItem
 
 
 class MainMenuOptions(str, Enum):
@@ -307,19 +307,37 @@ class PropertyListWindow(ListWindow):
     title = "Property List"
     columns = [
         Column(name="#", field="", size=3),
-        Column(name="Name", field="name", size=32),
-        Column(name="Condition", field="ssn", size=11),
+        Column(name="Property Number", field="property_number", size=17),
+        Column(name="Location", field="location", size=14),
+        Column(name="Condition", field="condition", size=11),
     ]
 
     def setup(self) -> None:
         self.paginator = api.properties.all(self.page)
 
     def view_item(self, item: PropertyItem) -> None:
-        pass
-        # window = EmployeeViewWindow()
-        # window.model_id = item.property_id
-        # value = window.run()
-        # if value == BACK:
-        #     return
+        window = PropertyViewWindow()
+        window.model_id = item.property_id
+        value = window.run()
+        if value == BACK:
+            return
 
-        # return value
+        return value
+
+
+class PropertyViewWindow(ViewWindow):
+    title = "View Property"
+    info: PropertyInfo
+    fields = [
+        Field(name="Property Number", field="property_number"),
+        Field(name="Area", field="area"),
+        Field(name="Location", field="location"),
+        Field(name="Condition", field="condition"),
+        Field(name="Facilities", field="facilities"),
+    ]
+
+    def window_setup(self) -> None:
+        self.info = api.properties.get(self.model_id)
+
+    def select(self) -> PropertyInfo:
+        return self.info

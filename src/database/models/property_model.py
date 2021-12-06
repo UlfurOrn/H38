@@ -4,6 +4,7 @@ from enum import Enum
 from uuid import UUID
 
 from database.models.database_model import DatabaseModel
+from database.models.facility_model import Facility
 from database.models.location_model import Location
 
 
@@ -28,8 +29,9 @@ class Property(DatabaseModel):
     def location(self) -> Location:
         return Location.get(model_id=self.location_id)
 
+    @property
     def facilities(self):
-        pass
+        return [facility for facility in Facility.all() if facility.property_id == self.id]
 
     @classmethod
     def serialize(cls, model: Property) -> dict:
