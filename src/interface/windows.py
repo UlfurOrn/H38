@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Any, Optional, Union
 from uuid import UUID
 
+from database.models.property_model import Condition
 from interface.extra import BACK, Column, Field
 from interface.window_types.create_window import CreateWindow
 from interface.window_types.list_window import ListWindow
@@ -11,7 +12,7 @@ from interface.window_types.view_window import ViewWindow
 from logic.api import api
 from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeItem, EmployeeUpdate
 from logic.logic.location_logic import LocationCreate, LocationInfo, LocationItem, LocationUpdate
-from logic.logic.property_logic import PropertyInfo, PropertyItem
+from logic.logic.property_logic import PropertyCreate, PropertyInfo, PropertyItem
 
 
 class MainMenuOptions(str, Enum):
@@ -324,6 +325,15 @@ class PropertyListWindow(ListWindow):
 
         return value
 
+    def create(self) -> None:
+        value = PropertyCreateWindow().run()
+        if value == BACK:
+            return
+
+        window = PropertyViewWindow()
+        window.model_id = value
+        window.run()
+
 
 class PropertyViewWindow(ViewWindow):
     title = "View Property"
@@ -341,3 +351,49 @@ class PropertyViewWindow(ViewWindow):
 
     def select(self) -> PropertyInfo:
         return self.info
+
+
+class PropertyCreateWindow(CreateWindow):
+    title = "Create Property"
+    fields = [
+        Field(name="Property Number", field="property_number"),
+        Field(name="Area", field="area"),
+        Field(name="Location", field="location", submenu=True),
+        Field(name="Condition", field="condition", submenu=True),
+    ]
+
+    def submit(self) -> UUID:
+        data = PropertyCreate(**self.info)
+        property_id = api.properties.create(data)
+
+        return property_id
+
+    def submenu(self) -> None:
+        field = self.fields[self.current]
+        if field.field == "location":
+            value: Union[BACK, LocationInfo] = LocationListWindow().run()
+            if value == BACK:
+                return
+
+            self.info["location"] = value.airport
+            self.info["location_id"] = value.location_id
+        else:
+            value: Union[BACK, Condition] = ChooseConditionWindow().run()
+            if value == BACK:
+                return
+
+            self.info["condition"] = value.value
+
+    def clear(self) -> None:
+        super().clear()
+        field = self.fields[self.current]
+        if field.field == "location":
+            self.info["location_id"] = None
+
+
+class ChooseConditionWindow(OptionWindow):
+    title = "Choose Condition"
+    options = list(Condition)
+
+    def window_specific(self, data: Condition) -> Condition:
+        return data

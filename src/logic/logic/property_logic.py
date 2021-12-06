@@ -24,11 +24,10 @@ class PropertyInfo(InfoModel):
 
 
 class PropertyCreate(BaseModel):
-    property_id: UUID
     property_number: str
+    area: int
     location_id: UUID
     condition: str
-    facilities: str
 
 
 class PropertyUpdate(BaseModel):

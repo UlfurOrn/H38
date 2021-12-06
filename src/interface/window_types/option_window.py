@@ -25,7 +25,7 @@ class OptionWindow(Window):
         if index not in range(len(self.options)):
             raise Exception("Invalid Input: Input must be a valid option")
 
-        self.window_specific(self.options[index])
+        return self.window_specific(self.options[index])
 
     def window_specific(self, data: Any) -> Any:
         raise NotImplementedError()
