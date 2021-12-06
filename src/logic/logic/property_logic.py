@@ -9,7 +9,7 @@ from logic.helpers import ListItem, Paginator
 
 class PropertyItem(ListItem):
     property_id: UUID
-    location: str
+    name: str
     condition: str
 
 
@@ -41,7 +41,7 @@ class PropertyLogic:
         properties = Property.all()
 
         property_items = [
-            PropertyItem(property_id=property.property_id, location=property.location, condition=property.condition)
+            PropertyItem(property_id=property.id, name=property.name, condition=property.condition)
             for property in properties
         ]
 
@@ -53,14 +53,14 @@ class PropertyLogic:
 
         property.create()
 
-        return property.property_id
+        return property.id
 
     @staticmethod
     def get(property_id: UUID) -> PropertyInfo:
         property = Property.get(property_id)
 
         return PropertyInfo(
-            property_id=property.property_id,
+            property_id=property.id,
             property_number=property.property_number,
             location=property.location,
             condition=property.condition,

@@ -11,11 +11,13 @@ from interface.window_types.view_window import ViewWindow
 from logic.api import api
 from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeItem, EmployeeUpdate
 from logic.logic.location_logic import LocationCreate, LocationInfo, LocationItem, LocationUpdate
+from logic.logic.property_logic import PropertyItem
 
 
 class MainMenuOptions(str, Enum):
     Employees = "Employees"
     Locations = "Locations"
+    Properties = "Properties"
     Contractors = "Contractors"
     Requests = "Requests"
     Reports = "Reports"
@@ -26,7 +28,11 @@ class MainMenu(OptionWindow):
     options = list(MainMenuOptions)
 
     def window_specific(self, option: MainMenuOptions) -> Any:
-        options = {MainMenuOptions.Employees: EmployeeListWindow(), MainMenuOptions.Locations: LocationListWindow()}
+        options = {
+            MainMenuOptions.Employees: EmployeeListWindow(),
+            MainMenuOptions.Locations: LocationListWindow(),
+            MainMenuOptions.Properties: PropertyListWindow(),
+        }
 
         if option not in options:
             raise Exception(f"Add option for: {option}")
@@ -35,6 +41,8 @@ class MainMenu(OptionWindow):
         window.run()
 
 
+# Employee Windows:
+###############################################################################
 class EmployeeListWindow(ListWindow):
     title = "Employee List"
     columns = [
@@ -162,6 +170,11 @@ class EmployeeUpdateWindow(UpdateWindow):
             self.info["location_id"] = None
 
 
+###############################################################################
+
+
+# Location Windows:
+###############################################################################
 class LocationListWindow(ListWindow):
     title = "Location List"
     columns = [
@@ -283,3 +296,30 @@ class LocationUpdateWindow(UpdateWindow):
         field = self.fields[self.current]
         if field.field == "location":
             self.info["location_id"] = None
+
+
+###############################################################################
+
+
+# Property Windows:
+###############################################################################
+class PropertyListWindow(ListWindow):
+    title = "Property List"
+    columns = [
+        Column(name="#", field="", size=3),
+        Column(name="Name", field="name", size=32),
+        Column(name="Condition", field="ssn", size=11),
+    ]
+
+    def setup(self) -> None:
+        self.paginator = api.properties.all(self.page)
+
+    def view_item(self, item: PropertyItem) -> None:
+        pass
+        # window = EmployeeViewWindow()
+        # window.model_id = item.property_id
+        # value = window.run()
+        # if value == BACK:
+        #     return
+
+        # return value

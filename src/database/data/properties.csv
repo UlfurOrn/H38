@@ -1,2 +1,2 @@
-id,property_number,condition,location_id
-18376c79-7472-4feb-bffb-fc07acc20c39,property1234,good,cd314c5c-1cc3-4376-9003-6529b14cda8f
+id,property_number,area,condition,location_id
+f125c433-8793-4e10-a9ab-2545cb41ee65,property1234,100,Good,cd314c5c-1cc3-4376-9003-6529b14cda8f
