@@ -11,6 +11,7 @@ from interface.window_types.update_window import UpdateWindow
 from interface.window_types.view_window import ViewWindow
 from logic.api import api
 from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeItem, EmployeeUpdate
+from logic.logic.facility_logic import FacilityCreate, FacilityInfo, FacilityItem
 from logic.logic.location_logic import LocationCreate, LocationInfo, LocationItem, LocationUpdate
 from logic.logic.property_logic import PropertyCreate, PropertyInfo, PropertyItem
 
@@ -416,23 +417,58 @@ class FacilityListWindow(ListWindow):
     def setup(self) -> None:
         self.paginator = api.facilities.all(self.property_id, self.page)
 
-    # def view_item(self, item: PropertyItem) -> None:
-    #     window = PropertyViewWindow()
-    #     window.model_id = item.property_id
-    #     value = window.run()
-    #     if value == BACK:
-    #         return
-    #
-    #     return value
-    #
-    # def create(self) -> None:
-    #     value = PropertyCreateWindow().run()
-    #     if value == BACK:
-    #         return
-    #
-    #     window = PropertyViewWindow()
-    #     window.model_id = value
-    #     window.run()
+    def view_item(self, item: FacilityItem) -> None:
+        value = PropertyViewWindow(item.facility_id).run()
+        if value == BACK:
+            return
+        return value
+
+    def create(self) -> None:
+        value = FacilityCreateWindow(self.property_id).run()
+        if value == BACK:
+            return
+
+        FacilityViewWindow(value).run()
+
+
+class FacilityViewWindow(ViewWindow):
+    title = "View Facility"
+    info: FacilityInfo
+    fields = [
+        Field(name="Name", field="name"),
+        Field(name="Condition", field="condition"),
+        Field(name="Property", field="property"),
+    ]
+
+    def window_setup(self) -> None:
+        self.info = api.facilities.get(self.model_id)
+
+    def select(self) -> FacilityInfo:
+        return self.info
+
+    def view(self) -> None:
+        pass
+
+
+class FacilityCreateWindow(CreateWindow):
+    title = "Create Facility"
+    fields = [Field(name="Name", field="name"), Field(name="Condition", field="condition", submenu=True)]
+
+    def __init__(self, property_id: UUID):
+        self.property_id = property_id
+
+    def submit(self) -> UUID:
+        data = FacilityCreate(**self.info)
+        facility_id = api.facilities.create(data)
+
+        return facility_id
+
+    def submenu(self) -> None:
+        value: Union[BACK, Condition] = ChooseConditionWindow().run()
+        if value == BACK:
+            return
+
+        self.info["condition"] = value.value
 
 
 ###############################################################################
