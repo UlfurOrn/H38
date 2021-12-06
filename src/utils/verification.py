@@ -29,7 +29,4 @@ class Verification:
         false otherwise"""
         user_id = AuthManager.logged_in_user
         user = Employee.get(user_id)
-        if not user.is_supervisor:
-            return False
-        else: 
-            return True
+        return user.is_supervisor()

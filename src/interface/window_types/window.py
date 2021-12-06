@@ -56,7 +56,7 @@ class Window:
                 button.hidden = True
 
     def check_buttons(self, data: str) -> Any:
-        user = Employee.get(id)
+        user = Employee.get(UUID)
         for button in self.buttons:
             if button.supervisor and not user.is_supervisor():
                 return
