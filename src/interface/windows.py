@@ -57,12 +57,9 @@ class EmployeeListWindow(ListWindow):
         self.paginator = api.employees.all(self.page)
 
     def view_item(self, item: EmployeeItem) -> None:
-        window = EmployeeViewWindow()
-        window.model_id = item.employee_id
-        value = window.run()
+        value = EmployeeViewWindow(item.employee_id).run()
         if value == BACK:
             return
-
         return value
 
     def create(self) -> None:
@@ -70,9 +67,7 @@ class EmployeeListWindow(ListWindow):
         if value == BACK:
             return
 
-        window = EmployeeViewWindow()
-        window.model_id = value
-        window.run()
+        EmployeeViewWindow(value).run()
 
 
 class EmployeeViewWindow(ViewWindow):
@@ -92,9 +87,7 @@ class EmployeeViewWindow(ViewWindow):
         self.info = api.employees.get(self.model_id)
 
     def update(self) -> None:
-        window = EmployeeUpdateWindow()
-        window.model_id = self.model_id
-        window.run()
+        EmployeeUpdateWindow(self.model_id).run()
 
         self.window_setup()
 
@@ -188,12 +181,9 @@ class LocationListWindow(ListWindow):
         self.paginator = api.locations.all(self.page)
 
     def view_item(self, item: LocationItem) -> Optional[LocationInfo]:
-        window = LocationViewWindow()
-        window.model_id = item.location_id
-        value = window.run()
+        value = LocationViewWindow(item.location_id).run()
         if value == BACK:
             return
-
         return value
 
     def create(self) -> None:
@@ -201,9 +191,7 @@ class LocationListWindow(ListWindow):
         if value == BACK:
             return
 
-        window = LocationViewWindow()
-        window.model_id = value
-        window.run()
+        LocationViewWindow(value).run()
 
 
 class LocationViewWindow(ViewWindow):
@@ -221,9 +209,7 @@ class LocationViewWindow(ViewWindow):
         self.info = api.locations.get(self.model_id)
 
     def update(self) -> None:
-        window = LocationUpdateWindow()
-        window.model_id = self.model_id
-        window.run()
+        LocationUpdateWindow(self.model_id).run()
 
         self.window_setup()
 
@@ -317,22 +303,18 @@ class PropertyListWindow(ListWindow):
         self.paginator = api.properties.all(self.page)
 
     def view_item(self, item: PropertyItem) -> None:
-        window = PropertyViewWindow()
-        window.model_id = item.property_id
-        value = window.run()
+        value = PropertyViewWindow(item.property_id).run()
         if value == BACK:
             return
 
         return value
 
     def create(self) -> None:
-        value = PropertyCreateWindow().run()
+        value: Union[BACK, UUID] = PropertyCreateWindow().run()
         if value == BACK:
             return
 
-        window = PropertyViewWindow()
-        window.model_id = value
-        window.run()
+        PropertyViewWindow(value).run()
 
 
 class PropertyViewWindow(ViewWindow):
@@ -415,6 +397,44 @@ class PropertyViewOptionsWindow(OptionWindow):
 
     def window_specific(self, data: PropertyViewOptions) -> PropertyViewOptions:
         return data
+
+
+###############################################################################
+
+
+# Facility Windows:
+###############################################################################
+class FacilityListWindow(ListWindow):
+    title = "Facility List"
+    columns = [
+        Column(name="#", field="", size=3),
+        Column(name="Name", field="name", size=32),
+        Column(name="Condition", field="condition", size=11),
+    ]
+
+    def __init__(self, property_id: UUID):
+        self.property_id = property_id
+
+    def setup(self) -> None:
+        self.paginator = api.facilities.all(self.page)
+
+    # def view_item(self, item: PropertyItem) -> None:
+    #     window = PropertyViewWindow()
+    #     window.model_id = item.property_id
+    #     value = window.run()
+    #     if value == BACK:
+    #         return
+    #
+    #     return value
+    #
+    # def create(self) -> None:
+    #     value = PropertyCreateWindow().run()
+    #     if value == BACK:
+    #         return
+    #
+    #     window = PropertyViewWindow()
+    #     window.model_id = value
+    #     window.run()
 
 
 ###############################################################################

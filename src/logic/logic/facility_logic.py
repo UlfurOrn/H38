@@ -31,7 +31,9 @@ class FacilityUpdate(BaseModel):
 class FacilityLogic:
     @staticmethod
     def all(property_id: UUID, page: int) -> Paginator:
-        facilities = Facility.all(property_id)
+        facilities = Facility.all()
+
+        facilities = filter(lambda facility: facility.property_id == property_id, facilities)
 
         facility_items = [
             FacilityItem(facility_name=facility.facility_name, condition=facility.condition) for facility in facilities
