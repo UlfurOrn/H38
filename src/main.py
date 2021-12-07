@@ -1,10 +1,11 @@
-from uuid import UUID
-
-from database.models.employee_model import Employee
+from interface.extra import Button
+from interface.window_types.login import Login
 from interface.windows import MainMenu
-from utils.authentication import AuthManager
+from interface.window_types.window import Window
+from logic.api import api
+from utils.exceptions import NotFoundException
+
 
 if __name__ == "__main__":
-    user = Employee.get(UUID("991f4dc9-b293-409d-aaac-68467aecfc2e"))
-    AuthManager.set_user(user)
-    MainMenu().run()
+    #MainMenu().run()
+    Login().run()
