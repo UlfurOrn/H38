@@ -59,8 +59,9 @@ class Window:
         user = Employee.get(UUID)
         for button in self.buttons:
             if button.supervisor and not user.is_supervisor():
-                return
-            elif not button.hidden and button.letter == data:
+                continue
+            
+            if not button.hidden and button.letter == data:
                 return button.function()
 
     def parse_input(self, data: str) -> Any:
