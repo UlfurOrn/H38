@@ -43,10 +43,7 @@ class Window:
         self.centered(self.title)
 
     def display_buttons(self) -> None:
-        # ToDo: Implement display buttons function
-        for button in self.buttons:
-            if not button.hidden:
-                self.padded(f"{button.letter}: {button.description}", 20)
+        self.padded()
         self.boundary()
 
     def hide_button(self, letter: str) -> None:
@@ -75,13 +72,16 @@ class Window:
     def centered(self, text: str) -> None:
         print(f"|{text.center(self.WINDOW_SIZE - 2)}|")
 
-    def padded(self, text: str, padding: int = 10) -> None:
+    def padded(self) -> None:
+        len_per_button = (self.WINDOW_SIZE - 2) / len(self.buttons)
         string = "|"
-        string += " " * padding
-        string += text
-        if len(string) > self.WINDOW_SIZE:
-            string = string[0 : self.WINDOW_SIZE - 2]  # noqa: E203
-        string += " " * (self.WINDOW_SIZE - len(string) - 1)
+
+        for button in self.buttons:
+            if not button.hidden:
+                button_string = f"{button.letter}: {button.description}"
+                formatted_butt_string = "{:^{}}".format(button_string, round(len_per_button))
+                string += formatted_butt_string
+
         string += "|"
         print(string)
 
