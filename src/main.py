@@ -5,7 +5,6 @@ from interface.window_types.window import Window
 from logic.api import api
 from utils.exceptions import NotFoundException
 
-
 if __name__ == "__main__":
     #MainMenu().run()
     Login().run()

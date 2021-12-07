@@ -1,4 +1,5 @@
 from interface.extra import Button
+from interface.window_types.error_window import ErrorMessage
 from interface.windows import MainMenu
 from interface.window_types.window import Window
 from logic.api import api
@@ -43,8 +44,9 @@ class Login(Window):
             print()
             print("Succesfully logged in")
             MainMenu().run()
-        except NotFoundException:
+        except Exception as e:
             print("User not found")
+            ErrorMessage(e).run()
         
         
 
