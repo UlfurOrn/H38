@@ -4,6 +4,8 @@ from uuid import UUID
 
 from pydantic import BaseModel
 from pydantic.class_validators import validator
+from utils.exceptions import BadRequest
+from database.models.report_model import Status
 
 from database.models.report_model import Report
 from logic.helpers import InfoModel, ListItem, Paginator
@@ -39,9 +41,9 @@ class ReportCreate(BaseModel):
     contractor_id: UUID
 
     @validator('date', pre=True)
-    def validate_date(cls, input):
+    def validate_date(cls, value):
         try:
-            date_list = input.split("-")
+            date_list = value.split("-")
             for date in date_list:
                 date = date.strip(" ")
                 return datetime.strptime(date, "%d/%m/%Y").date()
@@ -56,6 +58,16 @@ class ReportUpdate(BaseModel):
     cost: Optional[str] = None
     date: Optional[date] = None
     contractor_id: Optional[UUID] = None
+
+    @validator('date', pre=True)
+    def validate_date(cls, value):
+        try:
+            date_list = value.split("-")
+            for date in date_list:
+                date = date.strip(" ")
+                return datetime.strptime(date, "%d/%m/%Y").date()
+        except ValueError:
+            raise ValueError('Date should be the format of: DD/MM/YYYY')
 
 
 class ReportLogic:

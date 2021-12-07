@@ -39,19 +39,19 @@ class EmployeeCreate(BaseModel):
     location_id: UUID
 
     @validator('home_phone', 'work_phone')
-    def validate_phone(cls, input):
-        if not input:
+    def validate_phone(cls, value):
+        if not value:
             pass
         else:
-            if not len(input) == 7:
-                raise ValueError('Phone number should be the length of 7!')
-        return input
+            if not len(value) == 7 or not value.isadigit():
+                raise ValueError('Phone number is incvalid! It should be the length of 7 numbers!')
+        return value
     
     @validator('ssn')
-    def validate_ssn(cls, input):
-        if not len(input) == 10:
-            raise ValueError('SSN should be the length of 10!')
-        return input
+    def validate_ssn(cls, value):
+        if not len(value) == 10 or not value.isadigit():
+            raise ValueError('SSN is invalid! It should be the length of 10 numbers!')
+        return value
 
 class EmployeeUpdate(BaseModel):
     name: Optional[str] = None
@@ -60,6 +60,15 @@ class EmployeeUpdate(BaseModel):
     work_phone: Optional[int] = None
     email: Optional[str] = None
     location_id: Optional[UUID] = None
+
+    @validator('home_phone', 'work_phone')
+    def validate_phone(cls, value):
+        if not value:
+            pass
+        else:
+            if not len(value) == 7 or not value.isadigit():
+                raise ValueError('Phone number is incvalid! It should be the length of 7 numbers!')
+        return value
 
 
 class EmployeeLogic:

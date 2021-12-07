@@ -35,17 +35,25 @@ class ContractorCreate(BaseModel):
     opening_hours: str
     location_id: UUID
 
+    @validator('phone')
+    def validate_phone(cls, value):
+        if not value:
+            pass
+        else:
+            if not len(value) == 7 or not value.isadigit():
+                raise ValueError('Phone number is incvalid! It should be the length of 7 numbers!')
+        return value
 
     @validator('opening_hours')
-    def validate_open_hours(cls, input):
+    def validate_open_hours(cls, value):
         try:
-            time_list = input.split("-")
+            time_list = value.split("-")
             for time in time_list:
                 time = time.strip(" ")
                 datetime.strptime(time, "%H:%M")
         except ValueError:
             raise ValueError('Opening hours should be the format of: HH:MM - HH:MM')
-        return input
+        return value
 
 
 class ContractorUpdate(BaseModel):
@@ -54,6 +62,26 @@ class ContractorUpdate(BaseModel):
     email: Optional[str] = None
     opening_hours: Optional[str] = None
     location_id: Optional[UUID] = None
+
+    @validator('phone')
+    def validate_phone(cls, value):
+        if not value:
+            pass
+        else:
+            if not len(value) == 7 or not value.isadigit():
+                raise ValueError('Phone number is incvalid! It should be the length of 7 numbers!')
+        return value
+
+    @validator('opening_hours')
+    def validate_open_hours(cls, value):
+        try:
+            time_list = value.split("-")
+            for time in time_list:
+                time = time.strip(" ")
+                datetime.strptime(time, "%H:%M")
+        except ValueError:
+            raise ValueError('Opening hours should be the format of: HH:MM - HH:MM')
+        return value
 
 
 class ContractorLogic:

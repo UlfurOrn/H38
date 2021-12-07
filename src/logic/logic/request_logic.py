@@ -3,9 +3,12 @@ from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel
+from pydantic.class_validators import validator
 
 from database.models.request_model import Request
 from logic.helpers import InfoModel, ListItem, Paginator
+
+from datetime import datetime
 
 
 class RequestItem(ListItem):
@@ -32,12 +35,32 @@ class RequestCreate(BaseModel):
     facility: str
     priority: str
 
+    @validator('date', 'final_date', pre=True)
+    def validate_date(cls, value):
+        try:
+            date_list = value.split("-")
+            for date in date_list:
+                date = date.strip(" ")
+                return datetime.strptime(date, "%d/%m/%Y").date()
+        except ValueError:
+            raise ValueError('Date should be the format of: DD/MM/YYYY')
+
 
 class RequestUpdate(BaseModel):
     location: Optional[str] = None
     facility: Optional[str] = None
     date: Optional[date] = None
     priority: Optional[str] = None
+
+    @validator('date', 'final_date', pre=True)
+    def validate_date(cls, value):
+        try:
+            date_list = value.split("-")
+            for date in date_list:
+                date = date.strip(" ")
+                return datetime.strptime(date, "%d/%m/%Y").date()
+        except ValueError:
+            raise ValueError('Date should be the format of: DD/MM/YYYY')
 
 
 class RequestLogic:
