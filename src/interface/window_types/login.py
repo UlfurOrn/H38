@@ -47,7 +47,6 @@ class Login(Window):
         except Exception as e:
             print("User not found")
             ErrorMessage(e).run()
-            
         
         
 
