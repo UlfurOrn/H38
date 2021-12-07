@@ -3,9 +3,12 @@ from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel
+from pydantic.class_validators import validator
 
 from database.models.report_model import Report
 from logic.helpers import InfoModel, ListItem, Paginator
+
+from datetime import datetime
 
 
 class ReportItem(ListItem):
@@ -34,6 +37,16 @@ class ReportCreate(BaseModel):
     status: str
     date: date
     contractor_id: UUID
+
+    @validator('date', pre=True)
+    def validate_date(cls, input):
+        try:
+            date_list = input.split("-")
+            for date in date_list:
+                date = date.strip(" ")
+                return datetime.strptime(date, "%d/%m/%Y").date()
+        except ValueError:
+            raise ValueError('Date should be the format of: DD/MM/YYYY')
 
 
 class ReportUpdate(BaseModel):

@@ -39,7 +39,10 @@ class ContractorCreate(BaseModel):
     @validator('opening_hours')
     def validate_open_hours(cls, input):
         try:
-            datetime.strptime(input, "%H:%M - %H:%M")
+            time_list = input.split("-")
+            for time in time_list:
+                time = time.strip(" ")
+                datetime.strptime(time, "%H:%M")
         except ValueError:
             raise ValueError('Opening hours should be the format of: HH:MM - HH:MM')
         return input
