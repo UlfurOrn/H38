@@ -10,7 +10,7 @@ from interface.window_types.option_window import OptionWindow
 from interface.window_types.update_window import UpdateWindow
 from interface.window_types.view_window import ViewWindow
 from logic.api import api
-from logic.logic.contractor_logic import ContractorInfo
+from logic.logic.contractor_logic import ContractorCreate, ContractorInfo, ContractorItem
 from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeItem, EmployeeUpdate
 from logic.logic.facility_logic import FacilityCreate, FacilityInfo, FacilityItem, FacilityUpdate
 from logic.logic.location_logic import LocationCreate, LocationInfo, LocationItem, LocationUpdate
@@ -116,7 +116,7 @@ class EmployeeCreateWindow(CreateWindow):
         return employee_id
 
     def submenu(self) -> None:
-        value = LocationListWindow().run()
+        value: Union[BACK, LocationInfo] = LocationListWindow().run()
         if value == BACK:
             return
 
@@ -544,20 +544,17 @@ class ContractorListWindow(ListWindow):
     def setup(self) -> None:
         self.paginator = api.contractors.all(self.page)
 
-    def view_item(self, item: FacilityItem) -> None:
-        pass
-        # value = FacilityViewWindow(item.facility_id).run()
-        # if value == BACK:
-        #     return
-        # return value
+    def view_item(self, item: ContractorItem) -> None:
+        value = ContractorViewWindow(item.contractor_id).run()
+        if value == BACK:
+            return
+        return value
 
     def create(self) -> None:
-        pass
-        # value = FacilityCreateWindow(self.property_id).run()
-        # if value == BACK:
-        #     return
-        #
-        # FacilityViewWindow(value).run()
+        value = ContractorCreateWindow().run()
+        if value == BACK:
+            return
+        ContractorViewWindow(value).run()
 
 
 class ContractorViewWindow(ViewWindow):
@@ -565,16 +562,19 @@ class ContractorViewWindow(ViewWindow):
     info: ContractorInfo
     fields = [
         Field(name="Name", field="name"),
-        Field(name="Condition", field="condition"),
-        Field(name="Property", field="property"),
+        Field(name="Phone", field="phone"),
+        Field(name="Email", field="email"),
+        Field(name="Opening Hours", field="opening_hours"),
+        Field(name="Location", field="location"),
     ]
 
     def window_setup(self) -> None:
-        self.info = api.facilities.get(self.model_id)
+        self.info = api.contractors.get(self.model_id)
 
     def update(self) -> None:
-        FacilityUpdateWindow(self.model_id).run()
-        self.window_setup()
+        pass
+        # FacilityUpdateWindow(self.model_id).run()
+        # self.window_setup()
 
     def select(self) -> ContractorInfo:
         return self.info
@@ -585,23 +585,27 @@ class ContractorViewWindow(ViewWindow):
 
 class ContractorCreateWindow(CreateWindow):
     title = "Create Contractor"
-    fields = [Field(name="Name", field="name"), Field(name="Condition", field="condition", submenu=True)]
-
-    def __init__(self, property_id: UUID):
-        self.property_id = property_id
+    fields = [
+        Field(name="Name", field="name"),
+        Field(name="Phone", field="phone"),
+        Field(name="Email", field="email"),
+        Field(name="Opening Hours", field="opening_hours"),
+        Field(name="Location", field="location", submenu=True),
+    ]
 
     def submit(self) -> UUID:
-        data = FacilityCreate(**self.info)
-        facility_id = api.facilities.create(self.property_id, data)
+        data = ContractorCreate(**self.info)
+        contractor_id = api.contractors.create(data)
 
-        return facility_id
+        return contractor_id
 
     def submenu(self) -> None:
-        value: Union[BACK, Condition] = ChooseConditionWindow().run()
+        value: Union[BACK, LocationInfo] = LocationListWindow().run()
         if value == BACK:
             return
 
-        self.info["condition"] = value.value
+        self.info["location"] = value.airport
+        self.info["location_id"] = value.location_id
 
 
 class ContractorUpdateWindow(UpdateWindow):

@@ -29,7 +29,7 @@ class ContractorCreate(BaseModel):
     phone: int
     email: str
     opening_hours: str
-    location: str
+    location_id: UUID
 
 
 class ContractorUpdate(BaseModel):
@@ -77,7 +77,7 @@ class ContractorLogic:
             email=contractor.email,
             opening_hours=contractor.opening_hours,
             location_id=location.id,
-            location=location.countr,
+            location=location.airport,
         )
 
     @staticmethod
