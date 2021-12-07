@@ -3,7 +3,6 @@ from typing import Optional
 from interface.extra import Button
 from interface.window_types.window import Window
 from logic.helpers import InfoModel, ListItem, Paginator
-from utils.verification import Verification
 
 
 class ListWindow(Window):

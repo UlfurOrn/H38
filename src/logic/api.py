@@ -1,3 +1,4 @@
+from logic.logic.authentication_logic import AuthenticationLogic
 from logic.logic.contractor_logic import ContractorLogic
 from logic.logic.employee_logic import EmployeeLogic
 from logic.logic.facility_logic import FacilityLogic
@@ -11,6 +12,7 @@ class LogicAPI:
     properties = PropertyLogic
     facilities = FacilityLogic
     contractors = ContractorLogic
+    authentication = AuthenticationLogic
 
 
 api = LogicAPI

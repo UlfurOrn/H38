@@ -3,7 +3,6 @@ from uuid import UUID
 from interface.extra import Field
 from interface.window_types.window import Button, Window
 from logic.helpers import InfoModel
-from utils.verification import Verification
 
 
 class ViewWindow(Window):

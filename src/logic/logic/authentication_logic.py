@@ -1,5 +1,6 @@
 from src.database.models.employee_model import Employee
 from utils.authentication import AuthManager
+from utils.exceptions import NotFoundException
 
 
 class AuthenticationLogic:
@@ -11,7 +12,7 @@ class AuthenticationLogic:
                 AuthManager.set_user(employee)
                 return
 
-        raise Exception("User not found in database")
+        raise NotFoundException(f'User with SSN "{ssn}" not found')
 
     @staticmethod
     def is_supervisor():
