@@ -1,3 +1,4 @@
+from typing import Optional
 from uuid import UUID
 
 from database.models.employee_model import Employee
@@ -5,11 +6,12 @@ from utils.exceptions import ForbiddenException
 
 
 class AuthManager:
-    __logged_in_user_id: UUID
+    __logged_in_user_id: Optional[UUID] = None
 
     @classmethod
     def get_user(cls):
-        return Employee.get(cls.__logged_in_user_id)
+        if cls.__logged_in_user_id is not None:
+            return Employee.get(cls.__logged_in_user_id)
 
     @classmethod
     def set_user(cls, user: Employee):
