@@ -264,7 +264,7 @@ need to finish the Update superclass and any others needed.
 * Kolbeinn:
     *
 * Ríkharður:
-    *
+    * Search options polished a bit. Implemented a function to display all the buttons in a fixed format so they would look nicer.
 * Smári:
     *
 * Úlfur:

@@ -6,10 +6,12 @@ from logic.helpers import InfoModel
 
 
 class UpdateWindow(Window):
-    model_id: UUID
     info: dict
     fields: list[Field]
     current: int = 0
+
+    def __init__(self, model_id: UUID):
+        self.model_id = model_id
 
     def button_setup(self) -> None:
         self.buttons = [

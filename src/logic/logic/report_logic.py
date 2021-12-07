@@ -5,7 +5,7 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from database.models.report_model import Report
-from logic.helpers import ListItem, Paginator
+from logic.helpers import InfoModel, ListItem, Paginator
 
 
 class ReportItem(ListItem):
@@ -15,7 +15,7 @@ class ReportItem(ListItem):
     date: date
 
 
-class ReportInfo(BaseModel):
+class ReportInfo(InfoModel):
     report_id: UUID
     property_id: UUID
     employee_id: UUID
