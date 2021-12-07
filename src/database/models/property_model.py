@@ -1,25 +1,37 @@
 from __future__ import annotations
 
+from enum import Enum
 from uuid import UUID
 
 from database.models.database_model import DatabaseModel
+from database.models.facility_model import Facility
 from database.models.location_model import Location
 
 
+class Condition(str, Enum):
+    Excellent = "Excellent"
+    Good = "Good"
+    OK = "OK"
+    Bad = "Bad"
+    Terrible = "Terrible"
+
+
 class Property(DatabaseModel):
-    _HEADERS = ["id", "property_number", "condition", "location_id"]
+    _HEADERS = ["id", "property_number", "area", "condition", "location_id"]
     _FILENAME = "properties.csv"
 
     property_number: str
-    condition: str
+    area: int
+    condition: Condition
     location_id: UUID
 
     @property
     def location(self) -> Location:
         return Location.get(model_id=self.location_id)
 
+    @property
     def facilities(self):
-        pass
+        return [facility for facility in Facility.all() if facility.property_id == self.id]
 
     @classmethod
     def serialize(cls, model: Property) -> dict:
@@ -31,9 +43,11 @@ class Property(DatabaseModel):
 
 
 if __name__ == "__main__":
-    DatabaseModel._PATH = "../data/"
+    DatabaseModel._PATH = "./data/"
 
-    property = Property(
-        property_number = "property1234",
-        condition = "good",
-        location_id = "cd314c5c-1cc3-4376-9003-6529b14cda8f")
+    Property(
+        property_number="property1234",
+        area=100,
+        condition=Condition.Good,
+        location_id=UUID("cd314c5c-1cc3-4376-9003-6529b14cda8f"),
+    ).create()

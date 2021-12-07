@@ -1,14 +1,14 @@
 from __future__ import annotations
-from datetime import date
 
+from datetime import date
+from enum import Enum
 from uuid import UUID
 
 from database.models.database_model import DatabaseModel
-from database.models.location_model import Location
 
 
 class Report(DatabaseModel):
-    _HEADERS = ["id", "property_id", "employee_id", "description", "cost", "status", "date"]
+    _HEADERS = ["id", "property_id", "employee_id", "description", "cost", "status", "date", "contractor"]
     _FILENAME = "reports.csv"
 
     property_id: UUID
@@ -17,6 +17,7 @@ class Report(DatabaseModel):
     cost: str
     status: str
     date: date
+    contractor_id: UUID
 
     @classmethod
     def serialize(cls, model: Report) -> dict:
@@ -25,6 +26,12 @@ class Report(DatabaseModel):
     @classmethod
     def deserialize(cls, data: dict) -> Report:
         return Report(**data)
+
+
+class Status(Enum):
+    approve = "approve"
+    unapprove = "unapprove"
+    close = "close"
 
 
 if __name__ == "__main__":

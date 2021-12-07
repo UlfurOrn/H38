@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import Optional
 from uuid import UUID
 
 from database.models.database_model import DatabaseModel
@@ -13,7 +14,7 @@ class Employee(DatabaseModel):
     name: str
     ssn: int
     address: str
-    home_phone: int
+    home_phone: Optional[int]
     work_phone: int
     email: str
     location_id: UUID
@@ -28,6 +29,7 @@ class Employee(DatabaseModel):
 
     @classmethod
     def deserialize(cls, data: dict) -> Employee:
+        cls._deserialize(data, "home_phone")
         return Employee(**data)
 
 
