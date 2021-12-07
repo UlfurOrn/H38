@@ -14,7 +14,7 @@ class ViewWindow(Window):
 
     def button_setup(self) -> None:
         self.buttons = [
-            Button(letter="u", description="update", function=self.update),
+            Button(letter="u", description="update", function=self.update, supervisor=True),
             Button(letter="s", description="select", function=self.select),
             Button(letter="v", description="view", function=self.view),
             Button(letter="b", description="back", function=self.back),

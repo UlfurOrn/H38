@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 from database.models.employee_model import Employee
 from logic.helpers import InfoModel, ListItem, Paginator
+from utils.authentication import requires_supervisor
 
 
 class EmployeeItem(ListItem):
@@ -60,9 +61,7 @@ class EmployeeLogic:
             employees = filter(check_match, employees)
 
         employee_items = [
-            EmployeeItem(
-                employee_id=employee.employee_id, name=employee.name, ssn=employee.ssn, phone=employee.work_phone
-            )
+            EmployeeItem(employee_id=employee.id, name=employee.name, ssn=employee.ssn, phone=employee.work_phone)
             for employee in employees
         ]
 
@@ -73,9 +72,7 @@ class EmployeeLogic:
         employees = Employee.all()
 
         filtered_list = [
-            EmployeeItem(
-                employee_id=employee.employee_id, name=employee.name, ssn=employee.ssn, phone=employee.work_phone
-            )
+            EmployeeItem(employee_id=employee.id, name=employee.name, ssn=employee.ssn, phone=employee.work_phone)
             for employee in employees
             if location_filter is not None and employee.location_id == location_filter
         ]
@@ -83,6 +80,7 @@ class EmployeeLogic:
         return Paginator.paginate(filtered_list, page)
 
     @staticmethod
+    @requires_supervisor
     def create(data: EmployeeCreate) -> UUID:
         employee = Employee(**data.dict())
 

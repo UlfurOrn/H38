@@ -10,6 +10,7 @@ class Button(BaseModel):
     description: str
     function: Optional[Callable]
     hidden: bool = False
+    supervisor: bool = False
 
 
 class Column(BaseModel):

@@ -23,6 +23,14 @@ class Employee(DatabaseModel):
     def location(self) -> Location:
         return Location.get(model_id=self.location_id)
 
+    def is_supervisor(self) -> bool:
+        locations = Location.all()
+        for location in locations:
+            if location.supervisor_id == self.id:
+                return True
+
+        return False
+
     @classmethod
     def serialize(cls, model: Employee) -> dict:
         return model.dict()
