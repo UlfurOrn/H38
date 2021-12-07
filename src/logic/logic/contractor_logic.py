@@ -37,7 +37,7 @@ class ContractorUpdate(BaseModel):
     phone: Optional[int] = None
     email: Optional[str] = None
     opening_hours: Optional[str] = None
-    location_id: Optional[int] = None
+    location_id: Optional[UUID] = None
 
 
 class ContractorLogic:

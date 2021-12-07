@@ -10,7 +10,7 @@ from interface.window_types.option_window import OptionWindow
 from interface.window_types.update_window import UpdateWindow
 from interface.window_types.view_window import ViewWindow
 from logic.api import api
-from logic.logic.contractor_logic import ContractorCreate, ContractorInfo, ContractorItem
+from logic.logic.contractor_logic import ContractorCreate, ContractorInfo, ContractorItem, ContractorUpdate
 from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeItem, EmployeeUpdate
 from logic.logic.facility_logic import FacilityCreate, FacilityInfo, FacilityItem, FacilityUpdate
 from logic.logic.location_logic import LocationCreate, LocationInfo, LocationItem, LocationUpdate
@@ -572,9 +572,8 @@ class ContractorViewWindow(ViewWindow):
         self.info = api.contractors.get(self.model_id)
 
     def update(self) -> None:
-        pass
-        # FacilityUpdateWindow(self.model_id).run()
-        # self.window_setup()
+        ContractorUpdateWindow(self.model_id).run()
+        self.window_setup()
 
     def select(self) -> ContractorInfo:
         return self.info
@@ -610,23 +609,30 @@ class ContractorCreateWindow(CreateWindow):
 
 class ContractorUpdateWindow(UpdateWindow):
     title = "Update Contractor"
-    fields = [Field(name="Name", field="name"), Field(name="Condition", field="condition", submenu=True)]
+    fields = [
+        Field(name="Name", field="name"),
+        Field(name="Phone", field="phone"),
+        Field(name="Email", field="email"),
+        Field(name="Opening Hours", field="opening_hours"),
+        Field(name="Location", field="location", submenu=True),
+    ]
 
     def window_setup(self) -> None:
-        self.info = api.facilities.get(self.model_id).dict()
+        self.info = api.contractors.get(self.model_id).dict()
 
     def submit(self) -> UUID:
-        data = FacilityUpdate(**self.info)
-        property_id = api.facilities.update(self.model_id, data)
+        data = ContractorUpdate(**self.info)
+        contractor_id = api.contractors.update(self.model_id, data)
 
-        return property_id
+        return contractor_id
 
     def submenu(self) -> None:
-        value: Union[BACK, Condition] = ChooseConditionWindow().run()
+        value: Union[BACK, LocationInfo] = LocationListWindow().run()
         if value == BACK:
             return
 
-        self.info["condition"] = value.value
+        self.info["location"] = value.airport
+        self.info["location_id"] = value.location_id
 
 
 ###############################################################################
