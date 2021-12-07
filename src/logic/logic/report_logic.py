@@ -47,8 +47,14 @@ class ReportUpdate(BaseModel):
 
 class ReportLogic:
     @staticmethod
-    def all(page: int) -> Paginator:
+    def all(page: int, search: Optional[str] = None) -> Paginator:
         reports = Report.all()
+
+        def check_match(report):
+            return search in str(report.id)
+
+        if search is not None:
+            reports = filter(check_match, reports)
 
         report_items = [
             ReportItem(report_id=report.id, property_id=report.propert_id, status=report.status, date=report.date)

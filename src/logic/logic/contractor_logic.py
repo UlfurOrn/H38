@@ -42,8 +42,14 @@ class ContractorUpdate(BaseModel):
 
 class ContractorLogic:
     @staticmethod
-    def all(page: int) -> Paginator:
+    def all(page: int, search: Optional[str] = None) -> Paginator:
         contractors = Contractor.all()
+
+        def check_match(contractor: Contractor):
+            return search in str(contractor.name)
+
+        if search:
+            contractors = filter(check_match, contractors)
 
         contractor_items = [
             ContractorItem(

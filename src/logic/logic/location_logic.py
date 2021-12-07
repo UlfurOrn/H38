@@ -41,8 +41,14 @@ class LocationUpdate(BaseModel):
 
 class LocationLogic:
     @staticmethod
-    def all(page: int) -> Paginator:
+    def all(page: int, search=None) -> Paginator:
         locations = Location.all()
+
+        def check_match(location: Location):
+            return search in str(location.country)
+
+        if search:
+            locations = filter(check_match, locations)
 
         location_items = [
             LocationItem(location_id=location.id, country=location.country, airport=location.airport)

@@ -47,11 +47,17 @@ class EmployeeUpdate(BaseModel):
 
 class EmployeeLogic:
     @staticmethod
-    def all(page: int, location_filter: Optional[UUID] = None) -> Paginator:
+    def all(page: int, location_filter: Optional[UUID] = None, search: Optional[str] = None) -> Paginator:
         employees = Employee.all()
 
         if location_filter:
             employees = filter(lambda employee: employee.location_id == location_filter, employees)
+
+        def check_match(employee: Employee):
+            return search in str(employee.ssn)
+
+        if search:
+            employees = filter(check_match, employees)
 
         employee_items = [
             EmployeeItem(
