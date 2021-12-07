@@ -33,7 +33,7 @@ class OptionWindow(Window):
 
 
 class SelectOptionWindow(OptionWindow):
-    def __init__(self, title: str, options: Type[Enum]):
+    def __init__(self, options: Type[Enum], title: str = "Choose Option to View"):
         self.title = title
         self.options = list(options)
 

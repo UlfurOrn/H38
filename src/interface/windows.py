@@ -6,7 +6,7 @@ from database.models.property_model import Condition
 from interface.extra import BACK, Column, Field
 from interface.window_types.create_window import CreateWindow
 from interface.window_types.list_window import ListWindow
-from interface.window_types.option_window import OptionWindow
+from interface.window_types.option_window import OptionWindow, SelectOptionWindow
 from interface.window_types.update_window import UpdateWindow
 from interface.window_types.view_window import ViewWindow
 from logic.api import api
@@ -96,6 +96,14 @@ class EmployeeViewWindow(ViewWindow):
     def select(self) -> EmployeeInfo:
         return self.info
 
+    def view(self) -> None:
+        value: Union[BACK, EmployeeViewOptions] = SelectOptionWindow(EmployeeViewOptions).run()
+        if value == BACK:
+            return
+
+        if value == EmployeeViewOptions.Location:
+            LocationViewWindow(self.info.location_id).run()
+
 
 class EmployeeCreateWindow(CreateWindow):
     title = "Create Employee"
@@ -166,6 +174,10 @@ class EmployeeUpdateWindow(UpdateWindow):
             self.info["location_id"] = None
 
 
+class EmployeeViewOptions(str, Enum):
+    Location = "Location"
+
+
 ###############################################################################
 
 
@@ -218,7 +230,12 @@ class LocationViewWindow(ViewWindow):
         return self.info
 
     def view(self) -> None:
-        print("View")
+        value: Union[BACK, LocationViewOptions] = SelectOptionWindow(LocationViewOptions).run()
+        if value == BACK:
+            return
+
+        if value == LocationViewOptions.Supervisor:
+            EmployeeViewWindow(self.info.supervisor_id).run()
 
 
 class LocationCreateWindow(CreateWindow):
@@ -286,6 +303,10 @@ class LocationUpdateWindow(UpdateWindow):
             self.info["location_id"] = None
 
 
+class LocationViewOptions(str, Enum):
+    Supervisor = "Supervisor"
+
+
 ###############################################################################
 
 
@@ -340,7 +361,7 @@ class PropertyViewWindow(ViewWindow):
         return self.info
 
     def view(self) -> None:
-        value: Union[BACK, PropertyViewOptions] = PropertyViewOptionsWindow().run()
+        value: Union[BACK, PropertyViewOptions] = SelectOptionWindow(PropertyViewOptions).run()
         if value == BACK:
             return
 
@@ -419,14 +440,6 @@ class PropertyUpdateWindow(UpdateWindow):
 class PropertyViewOptions(str, Enum):
     Location = "Location"
     Facilities = "Facilities"
-
-
-class PropertyViewOptionsWindow(OptionWindow):
-    title = "Choose Option to View"
-    options = list(PropertyViewOptions)
-
-    def window_specific(self, data: PropertyViewOptions) -> PropertyViewOptions:
-        return data
 
 
 ###############################################################################
@@ -579,7 +592,7 @@ class ContractorViewWindow(ViewWindow):
         return self.info
 
     def view(self) -> None:
-        value: Union[BACK, ContractorViewOptions] = ContractorViewOptionsWindow().run()
+        value: Union[BACK, ContractorViewOptions] = SelectOptionWindow(ContractorViewOptions).run()
         if value == BACK:
             return
 
@@ -642,14 +655,6 @@ class ContractorUpdateWindow(UpdateWindow):
 
 class ContractorViewOptions(str, Enum):
     Location = "Location"
-
-
-class ContractorViewOptionsWindow(OptionWindow):
-    title = "Choose Option to View"
-    options = list(ContractorViewOptions)
-
-    def window_specific(self, data: ContractorViewOptions) -> ContractorViewOptions:
-        return data
 
 
 ###############################################################################
