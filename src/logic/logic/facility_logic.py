@@ -4,64 +4,76 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from database.models.facility_model import Facility
-from logic.helpers import ListItem, Paginator
+from database.models.property_model import Condition, Property
+from logic.helpers import InfoModel, ListItem, Paginator
 
 
 class FacilityItem(ListItem):
-    facility_name: str
+    facility_id: UUID
+    name: str
     condition: str
 
 
-class FacilityInfo(BaseModel):
+class FacilityInfo(InfoModel):
+    facility_id: UUID
+    name: str
+    condition: str
     property_id: UUID
-    facility_name: str
-    condition: str
+    property: str
 
 
 class FacilityCreate(BaseModel):
-    facility_name: str
-    condition: str
+    name: str
+    condition: Condition
 
 
 class FacilityUpdate(BaseModel):
-    facility_name: Optional[str] = None
-    condition: Optional[str] = None
+    name: Optional[str] = None
+    condition: Optional[Condition] = None
 
 
 class FacilityLogic:
     @staticmethod
     def all(property_id: UUID, page: int) -> Paginator:
-        facilities = Facility.all(property_id)
+        facilities = Facility.all()
+
+        facilities = filter(lambda facility: facility.property_id == property_id, facilities)
 
         facility_items = [
-            FacilityItem(facility_name=facility.facility_name, condition=facility.condition) for facility in facilities
+            FacilityItem(facility_id=facility.id, name=facility.name, condition=facility.condition)
+            for facility in facilities
         ]
 
         return Paginator.paginate(facility_items, page)
 
     @staticmethod
-    def create(data: FacilityCreate) -> UUID:
-        facility = Facility(**data.dict())
+    def create(property_id: UUID, data: FacilityCreate) -> UUID:
+        facility = Facility(property_id=property_id, **data.dict())
 
         facility.create()
 
-        return facility.property_id
+        return facility.id
 
     @staticmethod
-    def get(property_id: UUID) -> FacilityInfo:
-        facility = Facility.get(property_id)
+    def get(facility_id: UUID) -> FacilityInfo:
+        facility = Facility.get(facility_id)
+        property = Property.get(facility.property_id)
 
         return FacilityInfo(
-            property_id=facility.property_id, facility_name=facility.facility_name, condition=facility.condition
+            facility_id=facility.id,
+            name=facility.name,
+            condition=facility.condition,
+            property_id=property.id,
+            property=property.property_number,
         )
 
     @staticmethod
-    def update(property_id: UUID, data: FacilityUpdate) -> UUID:
-        facility = Facility.get(property_id)
+    def update(facility_id: UUID, data: FacilityUpdate) -> UUID:
+        facility = Facility.get(facility_id)
 
-        facility.facility_name = data.facility_name or facility.facility_name
+        facility.name = data.name or facility.name
         facility.condition = data.condition or facility.condition
 
         facility.update()
 
-        return facility.property_id
+        return facility.id

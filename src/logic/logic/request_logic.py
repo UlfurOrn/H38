@@ -5,7 +5,7 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from database.models.request_model import Request
-from logic.helpers import ListItem, Paginator
+from logic.helpers import InfoModel, ListItem, Paginator
 
 
 class RequestItem(ListItem):
@@ -14,7 +14,7 @@ class RequestItem(ListItem):
     priority: str
 
 
-class RequestInfo(BaseModel):
+class RequestInfo(InfoModel):
     property_id: UUID
     location: str
     facility: str

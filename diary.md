@@ -278,3 +278,89 @@ This gives us a solid foundation moving into the next week.
 
 
 ## Week 3:
+
+### Monday, 6 December:
+Today we will continue with working on the windows, implementing windows for properties
+and facilities. We will also be working on the authentication system. If we have extra time
+we will be starting on the contractor logic.
+
+* Guðmundur:
+    *
+* Kristófer:
+    *
+* Kolbeinn:
+    *
+* Ríkharður:
+
+* Smári:
+    *
+* Úlfur:
+    *
+
+
+### Tuesday, 7 December:
+
+
+* Guðmundur:
+    *
+* Kristófer:
+    *
+* Kolbeinn:
+    *
+* Ríkharður:
+
+* Smári:
+    *
+* Úlfur:
+    *
+
+
+### Wednesday, 8 December:
+
+
+* Guðmundur:
+    *
+* Kristófer:
+    *
+* Kolbeinn:
+    *
+* Ríkharður:
+    *
+* Smári:
+    *
+* Úlfur:
+    *
+
+
+### Thursday, 9 December:
+
+
+* Guðmundur:
+    *
+* Kristófer:
+    *
+* Kolbeinn:
+    *
+* Ríkharður:
+    *
+* Smári:
+    *
+* Úlfur:
+    *
+
+
+### Friday, 10 December:
+
+
+* Guðmundur:
+    *
+* Kristófer:
+    *
+* Kolbeinn:
+    *
+* Ríkharður:
+    *
+* Smári:
+    *
+* Úlfur:
+    *
