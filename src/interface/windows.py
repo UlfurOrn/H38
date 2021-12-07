@@ -712,11 +712,10 @@ class RequestViewWindow(ViewWindow):
 class RequestCreateWindow(CreateWindow):
     title = "Create Request"
     fields = [
-        Field(name="Name", field="name"),
-        Field(name="Phone", field="phone"),
-        Field(name="Email", field="email"),
-        Field(name="Opening Hours", field="opening_hours"),
-        Field(name="Location", field="location", submenu=True),
+        Field(name="Property", field="property", submenu=True),
+        Field(name="Date", field="date"),
+        Field(name="Priority", field="priority", submenu=True),
+        Field(name="Status", field="status", submenu=True),
     ]
 
     def submit(self) -> UUID:
