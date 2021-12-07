@@ -176,8 +176,6 @@ class EmployeeUpdateWindow(UpdateWindow):
 
 class EmployeeViewOptions(str, Enum):
     Location = "Location"
-
-
 ###############################################################################
 
 
@@ -305,8 +303,6 @@ class LocationUpdateWindow(UpdateWindow):
 
 class LocationViewOptions(str, Enum):
     Supervisor = "Supervisor"
-
-
 ###############################################################################
 
 
@@ -440,8 +436,6 @@ class PropertyUpdateWindow(UpdateWindow):
 class PropertyViewOptions(str, Enum):
     Location = "Location"
     Facilities = "Facilities"
-
-
 ###############################################################################
 
 
@@ -538,8 +532,6 @@ class FacilityUpdateWindow(UpdateWindow):
             return
 
         self.info["condition"] = value.value
-
-
 ###############################################################################
 
 
@@ -655,8 +647,6 @@ class ContractorUpdateWindow(UpdateWindow):
 
 class ContractorViewOptions(str, Enum):
     Location = "Location"
-
-
 ###############################################################################
 
 
