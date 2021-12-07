@@ -579,7 +579,12 @@ class ContractorViewWindow(ViewWindow):
         return self.info
 
     def view(self) -> None:
-        pass
+        value: Union[BACK, ContractorViewOptions] = ContractorViewOptionsWindow().run()
+        if value == BACK:
+            return
+
+        if value == ContractorViewOptions.Location:
+            LocationViewWindow(self.info.location_id).run()
 
 
 class ContractorCreateWindow(CreateWindow):
@@ -633,6 +638,18 @@ class ContractorUpdateWindow(UpdateWindow):
 
         self.info["location"] = value.airport
         self.info["location_id"] = value.location_id
+
+
+class ContractorViewOptions(str, Enum):
+    Location = "Location"
+
+
+class ContractorViewOptionsWindow(OptionWindow):
+    title = "Choose Option to View"
+    options = list(ContractorViewOptions)
+
+    def window_specific(self, data: ContractorViewOptions) -> ContractorViewOptions:
+        return data
 
 
 ###############################################################################
