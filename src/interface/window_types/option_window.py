@@ -1,4 +1,5 @@
-from typing import Any
+from enum import Enum
+from typing import Any, Type
 
 from interface.window_types.window import Button, Window
 
@@ -29,3 +30,12 @@ class OptionWindow(Window):
 
     def window_specific(self, data: Any) -> Any:
         raise NotImplementedError()
+
+
+class SelectOptionWindow(OptionWindow):
+    def __init__(self, options: Type[Enum], title: str = "Choose Option to View"):
+        self.title = title
+        self.options = list(options)
+
+    def window_specific(self, data: Enum) -> Enum:
+        return data

@@ -1,3 +1,4 @@
+from logic.logic.contractor_logic import ContractorLogic
 from logic.logic.employee_logic import EmployeeLogic
 from logic.logic.facility_logic import FacilityLogic
 from logic.logic.location_logic import LocationLogic
@@ -9,6 +10,7 @@ class LogicAPI:
     locations = LocationLogic
     properties = PropertyLogic
     facilities = FacilityLogic
+    contractors = ContractorLogic
 
 
 api = LogicAPI
