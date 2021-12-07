@@ -6,9 +6,11 @@ from logic.helpers import InfoModel
 
 
 class ViewWindow(Window):
-    model_id: UUID
     info: InfoModel
     fields: list[Field]
+
+    def __init__(self, model_id: UUID):
+        self.model_id = model_id
 
     def button_setup(self) -> None:
         self.buttons = [
@@ -34,7 +36,7 @@ class ViewWindow(Window):
             value = value or ""
             print(f"|{field.name:>16}: {value:<30}|")
 
-    def update(self) -> UUID:
+    def update(self) -> None:
         raise NotImplementedError()
 
     def select(self) -> InfoModel:

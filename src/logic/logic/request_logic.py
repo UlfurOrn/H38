@@ -1,11 +1,11 @@
+from datetime import date
 from typing import Optional
 from uuid import UUID
-from datetime import date
+
 from pydantic import BaseModel
 
 from database.models.request_model import Request
-from database.models.contractor_model import Contractor
-from logic.helpers import ListItem, Paginator
+from logic.helpers import InfoModel, ListItem, Paginator
 
 
 class RequestItem(ListItem):
@@ -14,10 +14,10 @@ class RequestItem(ListItem):
     priority: str
 
 
-class RequestInfo(BaseModel):
+class RequestInfo(InfoModel):
     property_id: UUID
     location: str
-    facility:str
+    facility: str
     date: date
     priority: str
 
@@ -31,6 +31,7 @@ class RequestCreate(BaseModel):
     location: str
     facility: str
     priority: str
+
 
 class RequestUpdate(BaseModel):
     location: Optional[str] = None
@@ -52,6 +53,21 @@ class RequestLogic:
         return Paginator.paginate(request_items, page)
 
     @staticmethod
+    def filter(page: int = 1, property_filter: UUID = None, employee_filter: UUID = None):
+        requests = Request.all()
+
+        filtered_list = [
+            RequestItem(property_id=request.property_id, facility=request.facility, priority=request.priority)
+            for request in requests
+            if property_filter is not None
+            and request.property_id == property_filter
+            or employee_filter is not None
+            and request.employee_id == employee_filter
+        ]
+
+        return Paginator.paginate(filtered_list, page)
+
+    @staticmethod
     def create(data: RequestCreate) -> UUID:
         request = Request(**data.dict())
 
@@ -68,9 +84,8 @@ class RequestLogic:
             location=request.location,
             facility=request.facility,
             date=request.date,
-            priority=request.priority
+            priority=request.priority,
         )
-
 
     @staticmethod
     def update(property_id: UUID, data: RequestUpdate) -> UUID:
@@ -79,7 +94,7 @@ class RequestLogic:
         request.location = data.location or request.location
         request.facility = data.facility or request.facility
         request.date = data.date or request.date
-        
+
         request.update()
 
         return request.property_id
