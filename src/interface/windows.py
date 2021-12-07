@@ -1,14 +1,16 @@
+from datetime import date, datetime
 from enum import Enum
 from typing import Any, Optional, Union
 from uuid import UUID
 
 from database.models.property_model import Condition
-from interface.extra import BACK, Column, Field
+from interface.extra import BACK, Button, Column, Field
 from interface.window_types.create_window import CreateWindow
 from interface.window_types.list_window import ListWindow
 from interface.window_types.option_window import OptionWindow, SelectOptionWindow
 from interface.window_types.update_window import UpdateWindow
 from interface.window_types.view_window import ViewWindow
+from interface.window_types.window import Window
 from logic.api import api
 from logic.logic.contractor_logic import ContractorCreate, ContractorInfo, ContractorItem, ContractorUpdate
 from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeItem, EmployeeUpdate
@@ -16,6 +18,7 @@ from logic.logic.facility_logic import FacilityCreate, FacilityInfo, FacilityIte
 from logic.logic.location_logic import LocationCreate, LocationInfo, LocationItem, LocationUpdate
 from logic.logic.property_logic import PropertyCreate, PropertyInfo, PropertyItem, PropertyUpdate
 from logic.logic.request_logic import RequestInfo, RequestItem
+from utils.exceptions import BadRequest
 
 
 class MainMenuOptions(str, Enum):
@@ -777,3 +780,23 @@ class ChooseConditionWindow(OptionWindow):
 
     def window_specific(self, data: Condition) -> Condition:
         return data
+
+
+class SelectDateWindow(Window):
+    def __init__(self, title: str):
+        self.title = title
+
+    def button_setup(self) -> None:
+        self.buttons = [Button(letter="b", description="back", function=self.back)]
+
+    def display(self) -> None:
+        self.empty()
+        self.centered("Enter a date in the following format:")
+        self.centered("DD/MM/YY")
+        self.empty()
+
+    def parse_input(self, data: str) -> Optional[date]:
+        try:
+            return datetime.strptime("%d/%m/%Y", data).date()
+        except ValueError:
+            raise ValueError("Invalid Date Provided")
