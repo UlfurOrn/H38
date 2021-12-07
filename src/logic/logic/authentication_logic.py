@@ -1,9 +1,9 @@
-from uuid import UUID
-from Verklegt_1.H38.src.database.models.employee_model import Employee
+from database.models.employee_model import Employee
 from utils.authentication import AuthManager
 
 
 class Verification:
+    @staticmethod
     def login(ssn: int) -> None:
         """Check if a user exists with this SSN. If not, raise an error otherwise
         use AuthManger to set logged_in_user to the user found
@@ -15,7 +15,8 @@ class Verification:
                 return
 
         raise Exception("User not found in database")
-        
+
+    @staticmethod
     def check_supervisor():
         """Should fetch user with ID AuthManager.logged_in_user_id and raise exception
         if not a supervisor

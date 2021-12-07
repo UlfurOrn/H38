@@ -7,7 +7,7 @@ from database.models.location_model import Location
 
 
 class Contractor(DatabaseModel):
-    _HEADERS = ["name", "phone", "opening_hours", "email", "location_id"]
+    _HEADERS = ["id", "name", "phone", "opening_hours", "email", "location_id"]
     _FILENAME = "contractors.csv"
 
     name: str
@@ -30,4 +30,12 @@ class Contractor(DatabaseModel):
 
 
 if __name__ == "__main__":
-    DatabaseModel._PATH = "../data/"
+    DatabaseModel._PATH = "./data/"
+
+    Contractor(
+        name="Test Contractor",
+        phone=1234567,
+        opening_hours="08:00-20:00",
+        email="test@test.com",
+        location_id=UUID("cd314c5c-1cc3-4376-9003-6529b14cda8f"),
+    ).create()

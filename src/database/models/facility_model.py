@@ -6,10 +6,11 @@ from database.models.database_model import DatabaseModel
 
 
 class Facility(DatabaseModel):
-    _HEADERS = ["id", "property_id", "condition"]
+    _HEADERS = ["id", "property_id", "name", "condition"]
     _FILENAME = "facilities.csv"
 
     property_id: UUID
+    name: str
     condition: str
 
     @classmethod

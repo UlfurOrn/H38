@@ -6,20 +6,23 @@ from logic.helpers import InfoModel
 
 
 class UpdateWindow(Window):
-    model_id: UUID
     info: dict
     fields: list[Field]
-    current: int
+    current: int = 0
+
+    def __init__(self, model_id: UUID):
+        self.model_id = model_id
 
     def button_setup(self) -> None:
         self.buttons = [
             Button(letter="s", description="submit", function=self.submit, supervisor=True),
             Button(letter="f", description="fill", function=self.submenu),
+            Button(letter="c", description="clear", function=self.clear),
             Button(letter="b", description="back", function=self.back),
         ]
 
     def window_setup(self) -> None:
-        self.current = 0
+        raise NotImplementedError()
 
     def setup(self) -> None:
         for field in self.fields:
@@ -61,3 +64,7 @@ class UpdateWindow(Window):
 
     def submenu(self) -> InfoModel:
         raise NotImplementedError()
+
+    def clear(self) -> None:
+        field = self.fields[self.current]
+        self.info[field.field] = None
