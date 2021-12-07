@@ -4,14 +4,16 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from database.models.request_model import Request
+from database.models.request_model import Priority, Request, Status
 from logic.helpers import InfoModel, ListItem, Paginator
 
 
 class RequestItem(ListItem):
-    property_id: UUID
-    facility: str
-    priority: str
+    request_id: UUID
+    property: str
+    date: date
+    priority: Priority
+    status: Status
 
 
 class RequestInfo(InfoModel):
@@ -46,7 +48,13 @@ class RequestLogic:
         requests = Request.all()
 
         request_items = [
-            RequestItem(property_id=request.property_id, facility=request.facility, priority=request.priority)
+            RequestItem(
+                request_id=request.id,
+                property=request.property.property_number,
+                date=request.date,
+                priority=request.priority,
+                status=request.status,
+            )
             for request in requests
         ]
 

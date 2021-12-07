@@ -37,6 +37,7 @@ class MainMenu(OptionWindow):
             MainMenuOptions.Locations: LocationListWindow(),
             MainMenuOptions.Properties: PropertyListWindow(),
             MainMenuOptions.Contractors: ContractorListWindow(),
+            MainMenuOptions.Requests: RequestListWindow(),
         }
 
         if option not in options:
@@ -179,9 +180,6 @@ class EmployeeViewOptions(str, Enum):
     Location = "Location"
 
 
-###############################################################################
-
-
 # Location Windows:
 ###############################################################################
 class LocationListWindow(ListWindow):
@@ -306,9 +304,6 @@ class LocationUpdateWindow(UpdateWindow):
 
 class LocationViewOptions(str, Enum):
     Supervisor = "Supervisor"
-
-
-###############################################################################
 
 
 # Property Windows:
@@ -443,9 +438,6 @@ class PropertyViewOptions(str, Enum):
     Facilities = "Facilities"
 
 
-###############################################################################
-
-
 # Facility Windows:
 ###############################################################################
 class FacilityListWindow(ListWindow):
@@ -539,9 +531,6 @@ class FacilityUpdateWindow(UpdateWindow):
             return
 
         self.info["condition"] = value.value
-
-
-###############################################################################
 
 
 # Contractor Windows:
@@ -658,20 +647,20 @@ class ContractorViewOptions(str, Enum):
     Location = "Location"
 
 
-###############################################################################
 # Contractor Windows:
 ###############################################################################
 class RequestListWindow(ListWindow):
     title = "Request List"
     columns = [
         Column(name="#", field="", size=3),
-        Column(name="Name", field="name", size=20),
-        Column(name="Location", field="location", size=13),
-        Column(name="Phone", field="phone", size=9),
+        Column(name="Property", field="property", size=12),
+        Column(name="Date", field="date", size=10),
+        Column(name="Priority", field="priority", size=10),
+        Column(name="Status", field="status", size=9),
     ]
 
     def setup(self) -> None:
-        self.paginator = api.contractors.all(self.page)
+        self.paginator = api.requests.all(self.page)
 
     def view_item(self, item: RequestItem) -> None:
         pass
@@ -779,9 +768,6 @@ class RequestUpdateWindow(UpdateWindow):
 
 class RequestViewOptions(str, Enum):
     Employee = "Employee"
-
-
-###############################################################################
 
 
 # Extra Windows:
