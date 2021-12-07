@@ -54,11 +54,27 @@ class EmployeeLogic:
             employees = filter(lambda employee: employee.location_id == location_filter, employees)
 
         employee_items = [
-            EmployeeItem(employee_id=employee.id, name=employee.name, ssn=employee.ssn, phone=employee.work_phone)
+            EmployeeItem(
+                employee_id=employee.employee_id, name=employee.name, ssn=employee.ssn, phone=employee.work_phone
+            )
             for employee in employees
         ]
 
         return Paginator.paginate(employee_items, page)
+
+    @staticmethod
+    def filter(page: int = 1, location_filter: UUID = None) -> Paginator:
+        employees = Employee.all()
+
+        filtered_list = [
+            EmployeeItem(
+                employee_id=employee.employee_id, name=employee.name, ssn=employee.ssn, phone=employee.work_phone
+            )
+            for employee in employees
+            if location_filter is not None and employee.location_id == location_filter
+        ]
+
+        return Paginator.paginate(filtered_list, page)
 
     @staticmethod
     def create(data: EmployeeCreate) -> UUID:

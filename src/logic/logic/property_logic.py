@@ -54,6 +54,18 @@ class PropertyLogic:
         return Paginator.paginate(property_items, page)
 
     @staticmethod
+    def filter(page: int = 1, location_filter: UUID = None) -> Paginator:
+        properties = Property.all()
+
+        filtered_list = [
+            PropertyItem(property_id=property.property_id, location=property.location, condition=property.condition)
+            for property in properties
+            if location_filter is not None and property.location_id == location_filter
+        ]
+
+        return Paginator.paginate(filtered_list, page)
+
+    @staticmethod
     def create(data: PropertyCreate) -> UUID:
         property = Property(**data.dict())
 
