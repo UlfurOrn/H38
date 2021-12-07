@@ -3,6 +3,8 @@ class NotFoundException(Exception):
 
 
 class BadRequest(Exception):
-    """Bad request exeption is called when the user is requesting something that isn't allowed?"""
+    pass
 
+
+class ForbiddenException(Exception):
     pass

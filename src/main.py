@@ -51,4 +51,3 @@ class TestWindow(Window):
 if __name__ == "__main__":
     # MainMenu().run()
     TestWindow().run()
-

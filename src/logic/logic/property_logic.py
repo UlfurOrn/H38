@@ -3,36 +3,37 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from database.models.property_model import Property
-from logic.helpers import ListItem, Paginator
+from database.models.property_model import Condition, Property
+from logic.helpers import InfoModel, ListItem, Paginator
 
 
 class PropertyItem(ListItem):
     property_id: UUID
-    location: str
-    condition: str
-
-
-class PropertyInfo(BaseModel):
-    property_id: UUID
     property_number: str
     location: str
     condition: str
-    facilities: str
+
+
+class PropertyInfo(InfoModel):
+    property_id: UUID
+    property_number: str
+    area: int
+    location_id: UUID
+    location: str
+    condition: str
+    facilities: int
 
 
 class PropertyCreate(BaseModel):
-    property_id: UUID
     property_number: str
+    area: int
     location_id: UUID
     condition: str
-    facilities: str
 
 
 class PropertyUpdate(BaseModel):
-    location_id: Optional[UUID] = None
-    condition: Optional[str] = None
-    facilities: Optional[str] = None
+    area: Optional[int] = None
+    condition: Optional[Condition] = None
 
 
 class PropertyLogic:
@@ -41,11 +42,28 @@ class PropertyLogic:
         properties = Property.all()
 
         property_items = [
-            PropertyItem(property_id=property.property_id, location=property.location, condition=property.condition)
+            PropertyItem(
+                property_id=property.id,
+                property_number=property.property_number,
+                location=property.location.airport,
+                condition=property.condition,
+            )
             for property in properties
         ]
 
         return Paginator.paginate(property_items, page)
+
+    @staticmethod
+    def filter(page: int = 1, location_filter: UUID = None) -> Paginator:
+        properties = Property.all()
+
+        filtered_list = [
+            PropertyItem(property_id=property.property_id, location=property.location, condition=property.condition)
+            for property in properties
+            if location_filter is not None and property.location_id == location_filter
+        ]
+
+        return Paginator.paginate(filtered_list, page)
 
     @staticmethod
     def create(data: PropertyCreate) -> UUID:
@@ -53,28 +71,29 @@ class PropertyLogic:
 
         property.create()
 
-        return property.property_id
+        return property.id
 
     @staticmethod
     def get(property_id: UUID) -> PropertyInfo:
         property = Property.get(property_id)
 
         return PropertyInfo(
-            property_id=property.property_id,
+            property_id=property.id,
             property_number=property.property_number,
-            location=property.location,
+            area=property.area,
+            location_id=property.location.id,
+            location=property.location.airport,
             condition=property.condition,
-            facilities=property.facilities,
+            facilities=len(property.facilities),
         )
 
     @staticmethod
     def update(property_id: UUID, data: PropertyUpdate) -> UUID:
         property = Property.get(property_id)
 
-        property.location_id = data.location_id or property.location_id
+        property.area = data.area or property.area
         property.condition = data.condition or property.condition
-        property.facilities = data.facilities or property.facilities
 
         property.update()
 
-        return property.property_id
+        return property.id

@@ -1,6 +1,7 @@
 from typing import Any
 
 from interface.extra import BACK, Button
+from logic.api import api
 
 
 class Window:
@@ -43,10 +44,27 @@ class Window:
         self.centered(self.title)
 
     def display_buttons(self) -> None:
-        # ToDo: Implement display buttons function
-        for button in self.buttons:
+        user_is_supervisor = api.authentication.is_supervisor()
+
+        buttons = [
+            button
+            for button in self.buttons
+            if not (button.supervisor and not user_is_supervisor) and not button.hidden
+        ]
+
+        length_per_button = (self.WINDOW_SIZE - 2) / len(buttons)
+        string = "|"
+
+        for button in buttons:
+            if button.supervisor and not user_is_supervisor:
+                continue
             if not button.hidden:
-                self.padded(f"{button.letter}: {button.description}", 20)
+                button_string = f"{button.letter}: {button.description}"
+                string += "{:^{}}".format(button_string, round(length_per_button))
+
+        string += "|"
+        print(string)
+
         self.boundary()
 
     def hide_button(self, letter: str) -> None:
@@ -55,7 +73,11 @@ class Window:
                 button.hidden = True
 
     def parse_data(self, data: str) -> Any:
+        user_is_supervisor = api.authentication.is_supervisor()
         for button in self.buttons:
+            if button.supervisor and not user_is_supervisor:
+                continue
+
             if not button.hidden and button.letter == data:
                 return button.function()
 
