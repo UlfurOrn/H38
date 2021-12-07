@@ -1,7 +1,9 @@
 from typing import Optional
-from uuid import UUID
+from uuid import RESERVED_FUTURE, UUID, uuid4
+from click.decorators import command
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
+from pydantic.utils import Representation
 
 from database.models.employee_model import Employee
 from logic.helpers import InfoModel, ListItem, Paginator
@@ -29,13 +31,27 @@ class EmployeeInfo(InfoModel):
 
 class EmployeeCreate(BaseModel):
     name: str
-    ssn: int
+    ssn: str
     address: str
-    home_phone: Optional[int]
-    work_phone: int
+    home_phone: Optional[str]
+    work_phone: str
     email: str
     location_id: UUID
 
+    @validator('home_phone', 'work_phone')
+    def validate_phone(cls, input):
+        if not input:
+            pass
+        else:
+            if not len(input) == 7:
+                raise ValueError('Phone number should be the length of 7!')
+        return input
+    
+    @validator('ssn')
+    def validate_ssn(cls, input):
+        if not len(input) == 10:
+            raise ValueError('SSN should be the length of 10!')
+        return input
 
 class EmployeeUpdate(BaseModel):
     name: Optional[str] = None

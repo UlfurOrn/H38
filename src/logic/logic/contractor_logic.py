@@ -2,9 +2,13 @@ from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel
+from pydantic.class_validators import validator
+from pydantic.errors import DateTimeError
 
 from database.models.contractor_model import Contractor
 from logic.helpers import InfoModel, ListItem, Paginator
+
+from datetime import datetime
 
 
 class ContractorItem(ListItem):
@@ -30,6 +34,15 @@ class ContractorCreate(BaseModel):
     email: str
     opening_hours: str
     location_id: UUID
+
+
+    @validator('opening_hours')
+    def validate_open_hours(cls, input):
+        try:
+            datetime.strptime(input, "%H:%M - %H:%M")
+        except ValueError:
+            raise ValueError('Opening hours should be the format of: HH:MM - HH:MM')
+        return input
 
 
 class ContractorUpdate(BaseModel):

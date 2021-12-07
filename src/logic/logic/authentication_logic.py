@@ -1,4 +1,4 @@
-from src.database.models.employee_model import Employee
+from database.models.employee_model import Employee
 from utils.authentication import AuthManager
 from utils.exceptions import NotFoundException
 
