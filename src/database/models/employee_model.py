@@ -29,9 +29,7 @@ class Employee(DatabaseModel):
 
     @classmethod
     def deserialize(cls, data: dict) -> Employee:
-        home_phone = data["home_phone"]
-        if home_phone == "":
-            data["home_phone"] = None
+        cls._deserialize(data, "home_phone")
         return Employee(**data)
 
 

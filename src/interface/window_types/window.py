@@ -18,15 +18,13 @@ class Window:
             self.display_buttons()
 
             data = self.get_input()
-
-            value = self.check_buttons(data)
-            value = value or self.parse_input(data)
+            value = self.parse_data(data)
 
             if value:
                 return value
 
             self.reset()
-            self.clear()
+            self.clear_screen()
 
     def button_setup(self) -> None:
         raise NotImplementedError()
@@ -56,10 +54,12 @@ class Window:
             if button.letter == letter:
                 button.hidden = True
 
-    def check_buttons(self, data: str) -> Any:
+    def parse_data(self, data: str) -> Any:
         for button in self.buttons:
             if not button.hidden and button.letter == data:
                 return button.function()
+
+        return self.parse_input(data)
 
     def parse_input(self, data: str) -> Any:
         pass
@@ -91,7 +91,7 @@ class Window:
     def empty(self) -> None:
         print("|" + " " * (self.WINDOW_SIZE - 2) + "|")
 
-    def clear(self) -> None:
+    def clear_screen(self) -> None:
         print("\n" * 5)
 
     def get_input(self, text: str = "Enter Command: ") -> str:

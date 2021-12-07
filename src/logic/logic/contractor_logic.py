@@ -4,16 +4,17 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from database.models.contractor_model import Contractor
-from database.models.location_model import Location
-from Verklegt_1.H38.src.logic.helpers import ListItem, Paginator
+from logic.helpers import InfoModel, ListItem, Paginator
+
 
 class ContractorItem(ListItem):
     contractor_id: UUID
     name: str
-    location_id: UUID
+    location: str
     phone: int
 
-class ContractorInfo(BaseModel):
+
+class ContractorInfo(InfoModel):
     contractor_id: UUID
     name: str
     phone: int
@@ -22,36 +23,41 @@ class ContractorInfo(BaseModel):
     location_id: UUID
     location: str
 
+
 class ContractorCreate(BaseModel):
     name: str
     phone: int
     email: str
-    opening_hours: str 
-    location: str
+    opening_hours: str
+    location_id: UUID
+
 
 class ContractorUpdate(BaseModel):
     name: Optional[str] = None
     phone: Optional[int] = None
     email: Optional[str] = None
     opening_hours: Optional[str] = None
-    location_id: Optional[int] = None
+    location_id: Optional[UUID] = None
 
-class ContracatorLogic:
+
+class ContractorLogic:
     @staticmethod
-    def all(page: int, search=None) -> Paginator:
+    def all(page: int, search: Optional[str] = None) -> Paginator:
         contractors = Contractor.all()
 
-        def check_match(search):
-            if contractors.name == search:
-                return True
-            
-            return False
+        def check_match(contractor: Contractor):
+            return search in str(contractor.name)
 
-        if search is not None:
+        if search:
             contractors = filter(check_match, contractors)
 
         contractor_items = [
-            ContractorItem(contractor_id = contractor.id, name = contractor.name, phone = contractor.phone)
+            ContractorItem(
+                contractor_id=contractor.id,
+                name=contractor.name,
+                location=contractor.location.country,
+                phone=contractor.phone,
+            )
             for contractor in contractors
         ]
 
@@ -71,15 +77,15 @@ class ContracatorLogic:
         location = contractor.location
 
         return ContractorInfo(
-            contractor_id = contractor.id,
-            name = contractor.name,
-            phone = contractor.phone,
-            email = contractor.email,
-            opening_hours = contractor.opening_hours,
-            location_id = location.id,
-            location = location.countr
+            contractor_id=contractor.id,
+            name=contractor.name,
+            phone=contractor.phone,
+            email=contractor.email,
+            opening_hours=contractor.opening_hours,
+            location_id=location.id,
+            location=location.airport,
         )
-    
+
     @staticmethod
     def update(contractor_id: UUID, data: ContractorUpdate) -> UUID:
         contractor = Contractor.get(contractor_id)

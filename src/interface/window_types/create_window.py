@@ -14,6 +14,7 @@ class CreateWindow(Window):
         self.buttons = [
             Button(letter="s", description="submit", function=self.submit),
             Button(letter="f", description="fill", function=self.submenu),
+            Button(letter="c", description="clear", function=self.clear),
             Button(letter="b", description="back", function=self.back),
         ]
 
@@ -57,3 +58,7 @@ class CreateWindow(Window):
 
     def submenu(self) -> InfoModel:
         raise NotImplementedError()
+
+    def clear(self) -> None:
+        field = self.fields[self.current]
+        self.info[field.field] = None

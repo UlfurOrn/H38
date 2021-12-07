@@ -98,6 +98,10 @@ class DatabaseModel(BaseModel):
     def deserialize(cls, data: dict) -> Model:
         raise NotImplementedError()
 
+    @classmethod
+    def _deserialize(cls, data: dict, field: str) -> None:
+        data[field] = None if data[field] == "" else data[field]
+
 
 # Type hint for any subclass of DatabaseModel
 Model = TypeVar("Model", bound=DatabaseModel)
