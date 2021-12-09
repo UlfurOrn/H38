@@ -27,7 +27,7 @@ class Welcome(Window):
         ]
     
     def login(self):
-        #Implement movement to login window!!!!
+        Login().run()
         pass
 
     def display(self) -> None:
