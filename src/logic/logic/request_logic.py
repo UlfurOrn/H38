@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime, timedelta
 from typing import Optional
 from uuid import UUID
 
@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 from database.models.request_model import Priority, Request, Status
 from logic.helpers import InfoModel, ListItem, Paginator
+from utils.exceptions import BadRequest
 
 
 class RequestItem(ListItem):
@@ -24,15 +25,18 @@ class RequestInfo(InfoModel):
     priority: str
 
 
-class RequestCreate(BaseModel):
-    recurring: str
-    date: date
-    repetition: str
-    final_date: str
+class SingleRequestCreate(BaseModel):
     property_id: UUID
-    location: str
-    facility: str
-    priority: str
+    date: date
+    priority: Priority
+
+
+class MultipleRequestCreate(BaseModel):
+    property_id: UUID
+    start_date: date
+    end_date: date
+    interval: timedelta
+    priority: Priority
 
 
 class RequestUpdate(BaseModel):
@@ -76,12 +80,34 @@ class RequestLogic:
         return Paginator.paginate(filtered_list, page)
 
     @staticmethod
-    def create(data: RequestCreate) -> UUID:
-        request = Request(**data.dict())
+    def create(data: SingleRequestCreate) -> UUID:
+        request = Request(**data.dict(), status=Status.Todo)
 
         request.create()
 
         return request.property_id
+
+    @staticmethod
+    def recurring(data: MultipleRequestCreate) -> UUID:
+        start_date = data.start_date
+        end_date = data.end_date
+
+        if start_date < datetime.now():
+            raise BadRequest("Start date must be in the future")
+
+        if end_date < start_date:
+            raise BadRequest("Start date must be before end date")
+
+        first_request = None
+        current_date = start_date
+        while current_date <= end_date:
+            request = Request(
+                property_id=data.property_id, date=current_date, priority=data.priority, status=Status.Todo
+            ).create()
+            if first_request is None:
+                first_request = request
+
+        return first_request.id
 
     @staticmethod
     def get(property_id: UUID) -> RequestInfo:

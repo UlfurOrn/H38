@@ -4,6 +4,7 @@ from typing import Any, Optional, Union
 from uuid import UUID
 
 from database.models.property_model import Condition
+from database.models.request_model import Priority, Status
 from interface.extra import BACK, Button, Column, Field
 from interface.window_types.create_window import CreateWindow
 from interface.window_types.list_window import ListWindow
@@ -17,7 +18,7 @@ from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeIte
 from logic.logic.facility_logic import FacilityCreate, FacilityInfo, FacilityItem, FacilityUpdate
 from logic.logic.location_logic import LocationCreate, LocationInfo, LocationItem, LocationUpdate
 from logic.logic.property_logic import PropertyCreate, PropertyInfo, PropertyItem, PropertyUpdate
-from logic.logic.request_logic import RequestInfo, RequestItem
+from logic.logic.request_logic import MultipleRequestCreate, RequestInfo, RequestItem, SingleRequestCreate
 from utils.exceptions import BadRequest
 
 
@@ -508,7 +509,7 @@ class FacilityCreateWindow(CreateWindow):
         return facility_id
 
     def submenu(self) -> None:
-        value: Union[BACK, Condition] = ChooseConditionWindow().run()
+        value: Union[BACK, Condition] = SelectOptionWindow(Condition, "Select Condition").run()
         if value == BACK:
             return
 
@@ -529,7 +530,7 @@ class FacilityUpdateWindow(UpdateWindow):
         return property_id
 
     def submenu(self) -> None:
-        value: Union[BACK, Condition] = ChooseConditionWindow().run()
+        value: Union[BACK, Condition] = SelectOptionWindow(Condition, "Select Condition").run()
         if value == BACK:
             return
 
@@ -673,11 +674,10 @@ class RequestListWindow(ListWindow):
         # return value
 
     def create(self) -> None:
-        pass
-        # value = RequestCreateWindow().run()
-        # if value == BACK:
-        #     return
-        # RequestViewWindow(value).run()
+        value = RecurringRequestWindow().run()
+        if value == BACK:
+            return
+        RequestViewWindow(value).run()
 
 
 class RequestViewWindow(ViewWindow):
@@ -712,30 +712,84 @@ class RequestViewWindow(ViewWindow):
         #     LocationViewWindow(self.info.location_id).run()
 
 
-class RequestCreateWindow(CreateWindow):
+class RecurringRequestWindow(Window):
     title = "Create Request"
+
+    def button_setup(self) -> None:
+        self.buttons = [
+            Button(letter="y", description="yes", function=self.yes),
+            Button(letter="n", description="no", function=self.no),
+            Button(letter="b", description="back", function=self.back),
+        ]
+
+    def display(self) -> None:
+        self.boundary()
+        self.empty()
+        self.centered("Is this a recurring project?")
+        self.empty()
+        self.boundary()
+
+    def yes(self) -> None:
+        return MultipleRequestCreateWindow().run()
+
+    def no(self) -> Union[BACK, UUID]:
+        return SingleRequestCreateWindow().run()
+
+
+class RequestCreateSuperWindow(CreateWindow):
+    title = "Create Request"
+
+    def submenu(self) -> None:
+        field = self.fields[self.current]
+        if field.field == "property":
+            value: Union[BACK, PropertyInfo] = PropertyListWindow().run()
+            if value == BACK:
+                return
+
+            self.info["property"] = value.property_number
+            self.info["property_id"] = value.property_id
+        if field.field == "priority":
+            value: Union[BACK, Priority] = SelectOptionWindow(Priority, "Select Priority").run()
+            if value == BACK:
+                return
+
+            self.info["priority"] = value.value
+
+    def clear(self) -> None:
+        super().clear()
+        field = self.fields[self.current]
+        if field.field == "property":
+            self.info["property_id"] = None
+
+
+class SingleRequestCreateWindow(RequestCreateSuperWindow):
     fields = [
         Field(name="Property", field="property", submenu=True),
         Field(name="Date", field="date"),
         Field(name="Priority", field="priority", submenu=True),
-        Field(name="Status", field="status", submenu=True),
     ]
 
     def submit(self) -> UUID:
-        pass
-        # data = ContractorCreate(**self.info)
-        # contractor_id = api.contractors.create(data)
+        data = SingleRequestCreate(**self.info)
+        request_id = api.requests.create(data)
 
-        # return contractor_id
+        return request_id
 
-    def submenu(self) -> None:
-        pass
-        # value: Union[BACK, LocationInfo] = LocationListWindow().run()
-        # if value == BACK:
-        #     return
 
-        # self.info["location"] = value.airport
-        # self.info["location_id"] = value.location_id
+class MultipleRequestCreateWindow(RequestCreateSuperWindow):
+    fields = [
+        Field(name="Property", field="property", submenu=True),
+        Field(name="Start Date", field="start_date"),
+        Field(name="End Date", field="end_date"),
+        Field(name="Interval", field="interval"),
+        Field(name="Priority", field="priority", submenu=True),
+    ]
+
+    def submit(self) -> UUID:
+        data = MultipleRequestCreate(**self.info)
+        request_id = api.requests.recurring(data)
+
+        return request_id
 
 
 class RequestUpdateWindow(UpdateWindow):
@@ -774,14 +828,6 @@ class RequestViewOptions(str, Enum):
 
 # Extra Windows:
 ###############################################################################
-class ChooseConditionWindow(OptionWindow):
-    title = "Choose Condition"
-    options = list(Condition)
-
-    def window_specific(self, data: Condition) -> Condition:
-        return data
-
-
 class SelectDateWindow(Window):
     def __init__(self, title: str):
         self.title = title
@@ -799,4 +845,4 @@ class SelectDateWindow(Window):
         try:
             return datetime.strptime("%d/%m/%Y", data).date()
         except ValueError:
-            raise ValueError("Invalid Date Provided")
+            raise ValueError("Invalid Date Provided: DD/MM/YY")

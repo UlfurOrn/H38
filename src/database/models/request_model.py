@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import date
 from enum import Enum
+from typing import Optional
 from uuid import UUID
 
 from database.models.database_model import DatabaseModel
@@ -29,7 +30,7 @@ class Request(DatabaseModel):
     date: date
     priority: Priority
     status: Status
-    employee_id: UUID
+    employee_id: Optional[UUID]
 
     @property
     def property(self) -> Property:
@@ -41,6 +42,7 @@ class Request(DatabaseModel):
 
     @classmethod
     def deserialize(cls, data: dict) -> Request:
+        cls._deserialize(data, "employee_id")
         return Request(**data)
 
 
