@@ -5,7 +5,9 @@ from enum import Enum
 from typing import Optional
 from uuid import UUID
 
+from database.models.contractor_model import Contractor
 from database.models.database_model import DatabaseModel
+from database.models.employee_model import Employee
 from database.models.property_model import Property
 
 
@@ -33,6 +35,15 @@ class Request(DatabaseModel):
     employee_id: Optional[UUID]
 
     @property
+    def employee(self) -> Employee:
+        if self.employee_id:
+            return Employee.get(self.employee_id)
+
+    @property
+    def contractors(self) -> list[Contractor]:
+        return Contractor.all()
+
+    @property
     def property(self) -> Property:
         return Property.get(self.property_id)
 
@@ -42,7 +53,7 @@ class Request(DatabaseModel):
 
     @classmethod
     def deserialize(cls, data: dict) -> Request:
-        cls._deserialize(data, "employee_id")
+        cls._optional(data, "employee_id")
         return Request(**data)
 
 

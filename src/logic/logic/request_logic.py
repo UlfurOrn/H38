@@ -19,11 +19,14 @@ class RequestItem(ListItem):
 
 
 class RequestInfo(InfoModel):
+    request_id: UUID
     property_id: UUID
-    location: str
-    facility: str
+    property: str
     date: date
     priority: str
+    status: str
+    employee_id: Optional[UUID]
+    employee: Optional[str]
 
 
 class SingleRequestCreate(BaseModel):
@@ -42,31 +45,46 @@ class MultipleRequestCreate(BaseModel):
     @validator("start_date", "end_date", pre=True)
     def validate_date(cls, date_string: str) -> date:
         try:
-            return datetime.strptime(date_string, "%d/%m/%y").date()
+            date_object = datetime.strptime(date_string, "%d/%m/%y").date()
+            if date_object < datetime.now().date():
+                raise ValueError("Date cannot be in the past")
+            return date_object
         except ValueError:
             raise ValueError("Invalid date provided, use format: DD/MM/YY")
 
     @validator("interval", pre=True)
     def validate_interval(cls, interval: str) -> timedelta:
-        match = re.match(r"^(?P<years>\d)y (?P<months>\d)m (?P<days>\d)d$", interval)
-        assert match is not None, "Interval must have the following format: 0y 2m 1d"
+        match = re.match(r"^(?P<years>\d+)y (?P<months>\d+)m (?P<weeks>\d+)w (?P<days>\d+)d$", interval)
+        assert match is not None, "Interval must have the following format: 0y 2m 0w 1d"
 
         years = int(match.group("years"))
         months = int(match.group("months"))
+        weeks = int(match.group("weeks"))
         days = int(match.group("days"))
 
         assert years >= 0, "You can't have a negative amount of years"
         assert months >= 0, "You can't have a negative amount of months"
+        assert weeks >= 0, "You can't have a negative amount of weeks"
         assert days >= 0, "You can't have a negative amount of days"
 
-        return timedelta(days=years * 365 + months * 30 + days)
+        return timedelta(days=years * 365 + months * 30 + weeks * 7 + days)
 
 
 class RequestUpdate(BaseModel):
-    location: Optional[str] = None
-    facility: Optional[str] = None
     date: Optional[date] = None
-    priority: Optional[str] = None
+    priority: Optional[Priority] = None
+
+    @validator("date", pre=True)
+    def validate_optional_date(cls, date_string: Optional[str] = None):
+        if date_string is None:
+            return
+        try:
+            date_object = datetime.strptime(date_string, "%d/%m/%y").date()
+            if date_object < datetime.now().date():
+                raise ValueError("Date cannot be in the past")
+            return date_object
+        except ValueError:
+            raise ValueError("Invalid date provided, use format: DD/MM/YY")
 
 
 class RequestLogic:
@@ -115,9 +133,6 @@ class RequestLogic:
         start_date = data.start_date
         end_date = data.end_date
 
-        if start_date < datetime.now().date():
-            raise BadRequest("Start date must be in the future")
-
         if end_date < start_date:
             raise BadRequest("Start date must be before end date")
 
@@ -136,24 +151,31 @@ class RequestLogic:
         return first_request.id
 
     @staticmethod
-    def get(property_id: UUID) -> RequestInfo:
-        request = Request.get(property_id)
+    def get(request_id: UUID) -> RequestInfo:
+        request = Request.get(request_id)
+        property = request.property
+
+        employee = request.employee
+        if employee is not None:
+            employee = employee.name
 
         return RequestInfo(
-            property_id=request.property_id,
-            location=request.location,
-            facility=request.facility,
+            request_id=request.id,
+            property_id=property.id,
+            property=property.property_number,
             date=request.date,
             priority=request.priority,
+            status=request.status,
+            employee_id=request.employee_id,
+            employee=employee,
         )
 
     @staticmethod
-    def update(property_id: UUID, data: RequestUpdate) -> UUID:
-        request = Request.get(property_id)
+    def update(request_id: UUID, data: RequestUpdate) -> UUID:
+        request = Request.get(request_id)
 
-        request.location = data.location or request.location
-        request.facility = data.facility or request.facility
         request.date = data.date or request.date
+        request.priority = data.priority or request.priority
 
         request.update()
 

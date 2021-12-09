@@ -37,7 +37,7 @@ class Employee(DatabaseModel):
 
     @classmethod
     def deserialize(cls, data: dict) -> Employee:
-        cls._deserialize(data, "home_phone")
+        cls._optional(data, "home_phone")
         return Employee(**data)
 
 

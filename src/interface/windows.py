@@ -667,11 +667,10 @@ class RequestListWindow(ListWindow):
         self.paginator = api.requests.all(self.page)
 
     def view_item(self, item: RequestItem) -> None:
-        pass
-        # value = RequestViewWindow(item.contractor_id).run()
-        # if value == BACK:
-        #     return
-        # return value
+        value = RequestViewWindow(item.request_id).run()
+        if value == BACK:
+            return
+        return value
 
     def create(self) -> None:
         value = RecurringRequestWindow().run()
@@ -689,27 +688,30 @@ class RequestViewWindow(ViewWindow):
         Field(name="Priority", field="priority", submenu=True),
         Field(name="Status", field="status", submenu=True),
         Field(name="Employee", field="employee", submenu=True),
+        Field(name="Contractors", field="contractors"),
     ]
 
     def window_setup(self) -> None:
         self.info = api.requests.get(self.model_id)
 
     def update(self) -> None:
-        pass
-        # ContractorUpdateWindow(self.model_id).run()
-        # self.window_setup()
+        RequestUpdateWindow(self.model_id).run()
+        self.window_setup()
 
     def select(self) -> RequestInfo:
         return self.info
 
     def view(self) -> None:
-        pass
-        # value: Union[BACK, ContractorViewOptions] = SelectOptionWindow(ContractorViewOptions).run()
-        # if value == BACK:
-        #     return
+        value: Union[BACK, RequestViewOptions] = SelectOptionWindow(RequestViewOptions).run()
+        if value == BACK:
+            return
 
-        # if value == ContractorViewOptions.Location:
-        #     LocationViewWindow(self.info.location_id).run()
+        if value == RequestViewOptions.Property:
+            PropertyViewWindow(self.info.property_id).run()
+        if value == RequestViewOptions.Employee:
+            if self.info.employee_id is None:
+                raise BadRequest("No Employee is registered to this task")
+            EmployeeViewWindow(self.info.employee_id).run()
 
 
 class RecurringRequestWindow(Window):
@@ -762,6 +764,11 @@ class RequestCreateSuperWindow(CreateWindow):
             self.info["property_id"] = None
 
 
+class RequestViewOptions(str, Enum):
+    Property = "Property"
+    Employee = "Employee"
+
+
 class SingleRequestCreateWindow(RequestCreateSuperWindow):
     fields = [
         Field(name="Property", field="property", submenu=True),
@@ -795,15 +802,15 @@ class MultipleRequestCreateWindow(RequestCreateSuperWindow):
 class RequestUpdateWindow(UpdateWindow):
     title = "Update Request"
     fields = [
-        Field(name="Name", field="name"),
-        Field(name="Phone", field="phone"),
-        Field(name="Email", field="email"),
-        Field(name="Opening Hours", field="opening_hours"),
-        Field(name="Location", field="location", submenu=True),
+        Field(name="Property", field="property", submenu=True, mutable=False),
+        Field(name="Date", field="date"),
+        Field(name="Priority", field="priority", submenu=True),
+        Field(name="Status", field="status", mutable=False),
+        Field(name="Employee", field="employee", mutable=False),
     ]
 
     def window_setup(self) -> None:
-        self.info = api.contractors.get(self.model_id).dict()
+        self.info = api.requests.get(self.model_id).dict()
 
     def submit(self) -> UUID:
         pass

@@ -22,7 +22,7 @@ class Location(DatabaseModel):
 
     @classmethod
     def deserialize(cls, data: dict) -> Location:
-        cls._deserialize(data, "supervisor_id")
+        cls._optional(data, "supervisor_id")
         return Location(**data)
 
 
