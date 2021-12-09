@@ -8,7 +8,7 @@ from database.models.database_model import DatabaseModel
 
 class ContractorRequest(DatabaseModel):
     _HEADERS = ["id", "contractor_id", "request_id", "grade", "cost"]
-    _FILENAME = "employees.csv"
+    _FILENAME = "contractor_requests.csv"
 
     contractor_id: UUID
     request_id: UUID

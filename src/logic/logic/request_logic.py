@@ -5,8 +5,11 @@ from uuid import UUID
 
 from pydantic import BaseModel, validator
 
+from database.models.contractor_model import Contractor
+from database.models.contractor_requests_model import ContractorRequest
 from database.models.request_model import Priority, Request, Status
 from logic.helpers import InfoModel, ListItem, Paginator
+from logic.logic.contractor_logic import ContractorItem
 from utils.exceptions import BadRequest
 
 
@@ -27,6 +30,7 @@ class RequestInfo(InfoModel):
     status: str
     employee_id: Optional[UUID]
     employee: Optional[str]
+    contractors: int
 
 
 class SingleRequestCreate(BaseModel):
@@ -168,6 +172,7 @@ class RequestLogic:
             status=request.status,
             employee_id=request.employee_id,
             employee=employee,
+            contractors=len(request.contractor_requests),
         )
 
     @staticmethod
@@ -180,3 +185,34 @@ class RequestLogic:
         request.update()
 
         return request.property_id
+
+    @staticmethod
+    def contractors(request_id: UUID, page: int = 1) -> Paginator:
+        request = Request.get(request_id)
+        contractors = [
+            Contractor.get(contractor_request.contractor_id) for contractor_request in request.contractor_requests
+        ]
+
+        contractor_items = [
+            ContractorItem(
+                contractor_id=contractor.id,
+                name=contractor.name,
+                location=contractor.location.country,
+                phone=contractor.phone,
+            )
+            for contractor in contractors
+        ]
+
+        return Paginator.paginate(contractor_items, page)
+
+    @staticmethod
+    def add_contractor(request_id: UUID, contractor_id: UUID) -> None:
+        request = Request.get(request_id)
+        contractor = Contractor.get(contractor_id)
+
+        contractor_ids = [contractor_request.contractor_id for contractor_request in request.contractor_requests]
+
+        if contractor.id in contractor_ids:
+            raise BadRequest("Contractor is already assigned to this task")
+
+        ContractorRequest(request_id=request.id, contractor_id=contractor.id).create()

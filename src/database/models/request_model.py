@@ -6,6 +6,7 @@ from typing import Optional
 from uuid import UUID
 
 from database.models.contractor_model import Contractor
+from database.models.contractor_requests_model import ContractorRequest
 from database.models.database_model import DatabaseModel
 from database.models.employee_model import Employee
 from database.models.property_model import Property
@@ -40,8 +41,12 @@ class Request(DatabaseModel):
             return Employee.get(self.employee_id)
 
     @property
-    def contractors(self) -> list[Contractor]:
-        return Contractor.all()
+    def contractor_requests(self) -> list[ContractorRequest]:
+        return [
+            contractor_request
+            for contractor_request in ContractorRequest.all()
+            if contractor_request.request_id == self.id
+        ]
 
     @property
     def property(self) -> Property:

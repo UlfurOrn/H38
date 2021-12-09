@@ -679,6 +679,21 @@ class RequestListWindow(ListWindow):
         RequestViewWindow(value).run()
 
 
+class RequestContractorsListWindow(ContractorListWindow):
+    def __init__(self, request_id: UUID):
+        self.request_id = request_id
+
+    def setup(self) -> None:
+        self.paginator = api.requests.contractors(self.request_id, self.page)
+
+    def add(self) -> None:
+        value: Union[BACK, ContractorInfo] = ContractorListWindow().run()
+        if value == BACK:
+            return
+
+        api.requests.add_contractor(self.request_id, value.contractor_id)
+
+
 class RequestViewWindow(ViewWindow):
     title = "View Request"
     info: RequestInfo
@@ -712,6 +727,10 @@ class RequestViewWindow(ViewWindow):
             if self.info.employee_id is None:
                 raise BadRequest("No Employee is registered to this task")
             EmployeeViewWindow(self.info.employee_id).run()
+        if value == RequestViewOptions.Contractors:
+            RequestContractorsListWindow(request_id=self.model_id).run()
+
+        self.window_setup()
 
 
 class RecurringRequestWindow(Window):
@@ -762,11 +781,6 @@ class RequestCreateSuperWindow(CreateWindow):
         field = self.fields[self.current]
         if field.field == "property":
             self.info["property_id"] = None
-
-
-class RequestViewOptions(str, Enum):
-    Property = "Property"
-    Employee = "Employee"
 
 
 class SingleRequestCreateWindow(RequestCreateSuperWindow):
@@ -830,7 +844,9 @@ class RequestUpdateWindow(UpdateWindow):
 
 
 class RequestViewOptions(str, Enum):
+    Property = "Property"
     Employee = "Employee"
+    Contractors = "Contractors"
 
 
 # Extra Windows:
