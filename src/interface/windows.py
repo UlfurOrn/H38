@@ -18,15 +18,14 @@ from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeIte
 from logic.logic.facility_logic import FacilityCreate, FacilityInfo, FacilityItem, FacilityUpdate
 from logic.logic.location_logic import LocationCreate, LocationInfo, LocationItem, LocationUpdate
 from logic.logic.property_logic import PropertyCreate, PropertyInfo, PropertyItem, PropertyUpdate
-from utils.exceptions import BadRequest
-
-from logic.logic.request_logic import (  # isort:skip
+from logic.logic.request_logic import (
     MultipleRequestCreate,
     RequestInfo,
     RequestItem,
     RequestUpdate,
     SingleRequestCreate,
 )
+from utils.exceptions import BadRequest
 
 
 class MainMenuOptions(str, Enum):
