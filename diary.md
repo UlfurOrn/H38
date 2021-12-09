@@ -291,7 +291,7 @@ we will be starting on the contractor logic.
 * Kolbeinn:
     *
 * Ríkharður:
-
+    * Authentication funtionality was worked on.
 * Smári:
     *
 * Úlfur:
@@ -308,7 +308,7 @@ we will be starting on the contractor logic.
 * Kolbeinn:
     *
 * Ríkharður:
-
+    * Verification in logic where it applies was implemented. Made to verify inputs when creating or editing things to the database.
 * Smári:
     *
 * Úlfur:
