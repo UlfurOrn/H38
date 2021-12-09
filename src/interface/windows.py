@@ -25,7 +25,7 @@ from logic.logic.request_logic import (
     RequestUpdate,
     SingleRequestCreate,
 )
-from utils.exceptions import BadRequest
+from utils.exceptions import BadRequestException
 
 
 class MainMenuOptions(str, Enum):
@@ -759,7 +759,7 @@ class RequestViewWindow(ViewWindow):
             PropertyViewWindow(self.info.property_id).run()
         if value == RequestViewOptions.Employee:
             if self.info.employee_id is None:
-                raise BadRequest("No Employee is registered to this task")
+                raise BadRequestException("No Employee is registered to this task")
             EmployeeViewWindow(self.info.employee_id).run()
         if value == RequestViewOptions.Contractors:
             RequestContractorsListWindow(request_id=self.model_id).run()
