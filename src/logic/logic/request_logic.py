@@ -1,8 +1,9 @@
+import re
 from datetime import date, datetime, timedelta
 from typing import Optional
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 from database.models.request_model import Priority, Request, Status
 from logic.helpers import InfoModel, ListItem, Paginator
@@ -12,9 +13,9 @@ from utils.exceptions import BadRequest
 class RequestItem(ListItem):
     request_id: UUID
     property: str
-    date: date
-    priority: Priority
-    status: Status
+    date: str
+    priority: str
+    status: str
 
 
 class RequestInfo(InfoModel):
@@ -38,6 +39,28 @@ class MultipleRequestCreate(BaseModel):
     interval: timedelta
     priority: Priority
 
+    @validator("start_date", "end_date", pre=True)
+    def validate_date(cls, date_string: str) -> date:
+        try:
+            return datetime.strptime(date_string, "%d/%m/%y").date()
+        except ValueError:
+            raise ValueError("Invalid date provided, use format: DD/MM/YY")
+
+    @validator("interval", pre=True)
+    def validate_interval(cls, interval: str) -> timedelta:
+        match = re.match(r"^(?P<years>\d)y (?P<months>\d)m (?P<days>\d)d$", interval)
+        assert match is not None, "Interval must have the following format: 0y 2m 1d"
+
+        years = int(match.group("years"))
+        months = int(match.group("months"))
+        days = int(match.group("days"))
+
+        assert years >= 0, "You can't have a negative amount of years"
+        assert months >= 0, "You can't have a negative amount of months"
+        assert days >= 0, "You can't have a negative amount of days"
+
+        return timedelta(days=years * 365 + months * 30 + days)
+
 
 class RequestUpdate(BaseModel):
     location: Optional[str] = None
@@ -55,7 +78,7 @@ class RequestLogic:
             RequestItem(
                 request_id=request.id,
                 property=request.property.property_number,
-                date=request.date,
+                date=datetime.strftime(request.date, "%d/%m/%y"),
                 priority=request.priority,
                 status=request.status,
             )
@@ -92,7 +115,7 @@ class RequestLogic:
         start_date = data.start_date
         end_date = data.end_date
 
-        if start_date < datetime.now():
+        if start_date < datetime.now().date():
             raise BadRequest("Start date must be in the future")
 
         if end_date < start_date:
@@ -104,6 +127,9 @@ class RequestLogic:
             request = Request(
                 property_id=data.property_id, date=current_date, priority=data.priority, status=Status.Todo
             ).create()
+
+            current_date += data.interval
+
             if first_request is None:
                 first_request = request
 
