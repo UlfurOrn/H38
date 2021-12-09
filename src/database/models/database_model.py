@@ -99,7 +99,7 @@ class DatabaseModel(BaseModel):
         raise NotImplementedError()
 
     @classmethod
-    def _deserialize(cls, data: dict, field: str) -> None:
+    def _optional(cls, data: dict, field: str) -> None:
         data[field] = None if data[field] == "" else data[field]
 
 

@@ -56,11 +56,8 @@ class Window:
         string = "|"
 
         for button in buttons:
-            if button.supervisor and not user_is_supervisor:
-                continue
-            if not button.hidden:
-                button_string = f"{button.letter}: {button.description}"
-                string += "{:^{}}".format(button_string, round(length_per_button))
+            button_string = f"{button.letter}: {button.description}"
+            string += "{:^{}}".format(button_string, round(length_per_button))
 
         string += "|"
         print(string)

@@ -1,4 +1,4 @@
-from typing import Callable, Optional
+from typing import Callable
 
 from pydantic import BaseModel
 
@@ -8,7 +8,7 @@ BACK = "back"
 class Button(BaseModel):
     letter: str
     description: str
-    function: Optional[Callable]
+    function: Callable
     hidden: bool = False
     supervisor: bool = False
 
