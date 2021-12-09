@@ -1,4 +1,5 @@
 from typing import Optional
+from interface.extra import WindowState
 
 from interface.extra import Button
 from interface.window_types.window import Window
@@ -10,6 +11,10 @@ class ListWindow(Window):
     paginator: Paginator
     page: int = 1
 
+    def __init__(self, window_state: WindowState) -> None:
+        super().__init__()
+        self.window_state = window_state
+
     def button_setup(self) -> None:
         self.buttons = [
             Button(letter="c", description="create", function=self.create, supervisor=True),
@@ -20,6 +25,20 @@ class ListWindow(Window):
 
     def window_setup(self) -> None:
         assert sum(column.size for column in self.columns) + len(self.columns) + 1 == self.WINDOW_SIZE
+    
+    def hide_buttons(self) -> None:
+        if self.window_state == WindowState.Normal:
+            self.hide_button("a")
+            self.hide_button("s")
+        elif self.window_state == WindowState.Add:
+            self.hide_button("c")
+        elif self.window_state == WindowState.Select:
+            self.hide_button("c")
+            self.hide_button("a")
+        elif self.window_state == WindowState.View:
+            self.hide_button("a")
+            self.hide_button("s")
+            self.hide_button("c")
 
     def setup(self) -> None:
         raise NotImplementedError()

@@ -1,4 +1,5 @@
 from uuid import UUID
+from interface.extra import WindowState
 
 from interface.extra import Field
 from interface.window_types.window import Button, Window
@@ -9,8 +10,9 @@ class ViewWindow(Window):
     info: InfoModel
     fields: list[Field]
 
-    def __init__(self, model_id: UUID):
+    def __init__(self, model_id: UUID, window_state: WindowState):
         self.model_id = model_id
+        self.window_state = window_state
 
     def button_setup(self) -> None:
         self.buttons = [
@@ -22,6 +24,20 @@ class ViewWindow(Window):
 
     def window_setup(self) -> None:
         raise NotImplementedError()
+
+    def hide_buttons(self) -> None:
+        if self.window_state == WindowState.Normal:
+            self.hide_button("a")
+            self.hide_button("s")
+        elif self.window_state == WindowState.Add:
+            self.hide_button("c")
+        elif self.window_state == WindowState.Select:
+            self.hide_button("c")
+            self.hide_button("a")
+        elif self.window_state == WindowState.View:
+            self.hide_button("u")
+            self.hide_button("s")
+            self.hide_button("c")
 
     def display(self) -> None:
         self.boundary()

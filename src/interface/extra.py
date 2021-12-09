@@ -1,3 +1,4 @@
+from enum import Enum, auto
 from typing import Callable, Optional
 
 from pydantic import BaseModel
@@ -25,3 +26,10 @@ class Field(BaseModel):
     required: bool = True
     mutable: bool = True
     submenu: bool = False
+
+
+class WindowState(Enum):
+    Normal: auto
+    Select: auto
+    Add: auto
+    View: auto

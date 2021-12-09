@@ -1,8 +1,9 @@
 from enum import Enum
 from typing import Any, Optional, Union
 from uuid import UUID
-from Verklegt_1.H38.src.interface.extra import Button
-from Verklegt_1.H38.src.interface.window_types.window import Window
+from Verklegt_1.H38.src.interface.extra import WindowState
+from interface.extra import Button
+from interface.window_types.window import Window
 
 from database.models.property_model import Condition
 from interface.extra import BACK, Column, Field
@@ -18,8 +19,9 @@ from logic.logic.facility_logic import FacilityCreate, FacilityInfo, FacilityIte
 from logic.logic.location_logic import LocationCreate, LocationInfo, LocationItem, LocationUpdate
 from logic.logic.property_logic import PropertyCreate, PropertyInfo, PropertyItem, PropertyUpdate
 
+    
 class Welcome(Window):
-    title = "Welcome to NaN Air."
+    title = "-- Welcome to NaN Air --"
 
     def button_setup(self) -> None:
         self.buttons = [
@@ -36,23 +38,6 @@ class Welcome(Window):
         self.display_title()
         self.empty()
         self.boundary()
-    
-    def run(self) -> Any:
-        self.button_setup()
-        self.window_setup()
-        while True:
-            self.setup()
-            self.display()
-            self.display_buttons()
-
-            data = self.get_input()
-            value = self.parse_data(data)
-
-            if value:
-                return value
-
-            self.reset()
-            self.clear_screen()
 
 
 class MainMenuOptions(str, Enum):
@@ -70,10 +55,10 @@ class MainMenu(OptionWindow):
 
     def window_specific(self, option: MainMenuOptions) -> Any:
         options = {
-            MainMenuOptions.Employees: EmployeeListWindow(),
-            MainMenuOptions.Locations: LocationListWindow(),
-            MainMenuOptions.Properties: PropertyListWindow(),
-            MainMenuOptions.Contractors: ContractorListWindow(),
+            MainMenuOptions.Employees: EmployeeListWindow(WindowState.Normal),
+            MainMenuOptions.Locations: LocationListWindow(WindowState.Normal),
+            MainMenuOptions.Properties: PropertyListWindow(WindowState.Normal),
+            MainMenuOptions.Contractors: ContractorListWindow(WindowState.Normal),
         }
 
         if option not in options:
@@ -85,7 +70,7 @@ class MainMenu(OptionWindow):
 
 # Employee Windows:
 ###############################################################################
-class EmployeeListWindow(ListWindow):
+class EmployeeListWindow(ListWindow, WindowState):
     title = "Employee List"
     columns = [
         Column(name="#", field="", size=3),
@@ -98,7 +83,7 @@ class EmployeeListWindow(ListWindow):
         self.paginator = api.employees.all(self.page)
 
     def view_item(self, item: EmployeeItem) -> None:
-        value = EmployeeViewWindow(item.employee_id).run()
+        value = EmployeeViewWindow(item.employee_id, WindowState).run()
         if value == BACK:
             return
         return value
@@ -111,7 +96,7 @@ class EmployeeListWindow(ListWindow):
         EmployeeViewWindow(value).run()
 
 
-class EmployeeViewWindow(ViewWindow):
+class EmployeeViewWindow(ViewWindow, WindowState):
     title = "View Employee"
     info: EmployeeInfo
     fields = [
@@ -162,7 +147,7 @@ class EmployeeCreateWindow(CreateWindow):
         return employee_id
 
     def submenu(self) -> None:
-        value: Union[BACK, LocationInfo] = LocationListWindow().run()
+        value: Union[BACK, LocationInfo] = LocationListWindow(WindowState.Select).run()
         if value == BACK:
             return
 
@@ -198,7 +183,7 @@ class EmployeeUpdateWindow(UpdateWindow):
         return employee_id
 
     def submenu(self) -> None:
-        value = LocationListWindow().run()
+        value = LocationListWindow(WindowState.Select).run()
         if value == BACK:
             return
 
@@ -221,7 +206,7 @@ class EmployeeViewOptions(str, Enum):
 
 # Location Windows:
 ###############################################################################
-class LocationListWindow(ListWindow):
+class LocationListWindow(ListWindow, WindowState):
     title = "Location List"
     columns = [
         Column(name="#", field="", size=3),
@@ -233,7 +218,7 @@ class LocationListWindow(ListWindow):
         self.paginator = api.locations.all(self.page)
 
     def view_item(self, item: LocationItem) -> Optional[LocationInfo]:
-        value = LocationViewWindow(item.location_id).run()
+        value = LocationViewWindow(item.location_id, WindowState).run()
         if value == BACK:
             return
         return value
@@ -273,7 +258,7 @@ class LocationViewWindow(ViewWindow):
             return
 
         if value == LocationViewOptions.Supervisor:
-            EmployeeViewWindow(self.info.supervisor_id).run()
+            EmployeeViewWindow(self.info.supervisor_id, WindowState.View).run()
 
 
 class LocationCreateWindow(CreateWindow):
@@ -293,7 +278,7 @@ class LocationCreateWindow(CreateWindow):
         return location_id
 
     def submenu(self) -> None:
-        value: Union[BACK, EmployeeInfo] = EmployeeListWindow().run()
+        value: Union[BACK, EmployeeInfo] = EmployeeListWindow(WindowState.Select).run()
         if value == BACK:
             return
 
@@ -327,7 +312,7 @@ class LocationUpdateWindow(UpdateWindow):
         return location_id
 
     def submenu(self) -> None:
-        value: Union[BACK, EmployeeInfo] = EmployeeListWindow().run()
+        value: Union[BACK, EmployeeInfo] = EmployeeListWindow(WindowState.Select).run()
         if value == BACK:
             return
 
@@ -350,7 +335,7 @@ class LocationViewOptions(str, Enum):
 
 # Property Windows:
 ###############################################################################
-class PropertyListWindow(ListWindow):
+class PropertyListWindow(ListWindow, WindowState):
     title = "Property List"
     columns = [
         Column(name="#", field="", size=3),
@@ -363,7 +348,7 @@ class PropertyListWindow(ListWindow):
         self.paginator = api.properties.all(self.page)
 
     def view_item(self, item: PropertyItem) -> None:
-        value = PropertyViewWindow(item.property_id).run()
+        value = PropertyViewWindow(item.property_id, WindowState).run()
         if value == BACK:
             return
 
@@ -377,7 +362,7 @@ class PropertyListWindow(ListWindow):
         PropertyViewWindow(value).run()
 
 
-class PropertyViewWindow(ViewWindow):
+class PropertyViewWindow(ViewWindow, WindowState):
     title = "View Property"
     info: PropertyInfo
     fields = [
@@ -429,7 +414,7 @@ class PropertyCreateWindow(CreateWindow):
     def submenu(self) -> None:
         field = self.fields[self.current]
         if field.field == "location":
-            value: Union[BACK, LocationInfo] = LocationListWindow().run()
+            value: Union[BACK, LocationInfo] = LocationListWindow(WindowState.Select).run()
             if value == BACK:
                 return
 
@@ -468,7 +453,7 @@ class PropertyUpdateWindow(UpdateWindow):
         return property_id
 
     def submenu(self) -> None:
-        value: Union[BACK, Condition] = ChooseConditionWindow().run()
+        value: Union[BACK, Condition] = ChooseConditionWindow(WindowState.Select).run()
         if value == BACK:
             return
 
@@ -485,7 +470,7 @@ class PropertyViewOptions(str, Enum):
 
 # Facility Windows:
 ###############################################################################
-class FacilityListWindow(ListWindow):
+class FacilityListWindow(ListWindow, WindowState):
     title = "Facility List"
     columns = [
         Column(name="#", field="", size=3),
@@ -500,7 +485,7 @@ class FacilityListWindow(ListWindow):
         self.paginator = api.facilities.all(self.property_id, self.page)
 
     def view_item(self, item: FacilityItem) -> None:
-        value = FacilityViewWindow(item.facility_id).run()
+        value = FacilityViewWindow(item.facility_id, WindowState).run()
         if value == BACK:
             return
         return value
@@ -571,7 +556,7 @@ class FacilityUpdateWindow(UpdateWindow):
         return property_id
 
     def submenu(self) -> None:
-        value: Union[BACK, Condition] = ChooseConditionWindow().run()
+        value: Union[BACK, Condition] = ChooseConditionWindow(WindowState.Select).run()
         if value == BACK:
             return
 
@@ -583,7 +568,7 @@ class FacilityUpdateWindow(UpdateWindow):
 
 # Contractor Windows:
 ###############################################################################
-class ContractorListWindow(ListWindow):
+class ContractorListWindow(ListWindow, WindowState):
     title = "Contractor List"
     columns = [
         Column(name="#", field="", size=3),
@@ -596,7 +581,7 @@ class ContractorListWindow(ListWindow):
         self.paginator = api.contractors.all(self.page)
 
     def view_item(self, item: ContractorItem) -> None:
-        value = ContractorViewWindow(item.contractor_id).run()
+        value = ContractorViewWindow(item.contractor_id, WindowState).run()
         if value == BACK:
             return
         return value
@@ -655,7 +640,7 @@ class ContractorCreateWindow(CreateWindow):
         return contractor_id
 
     def submenu(self) -> None:
-        value: Union[BACK, LocationInfo] = LocationListWindow().run()
+        value: Union[BACK, LocationInfo] = LocationListWindow(WindowState.Select).run()
         if value == BACK:
             return
 
@@ -683,7 +668,7 @@ class ContractorUpdateWindow(UpdateWindow):
         return contractor_id
 
     def submenu(self) -> None:
-        value: Union[BACK, LocationInfo] = LocationListWindow().run()
+        value: Union[BACK, LocationInfo] = LocationListWindow(WindowState.Select).run()
         if value == BACK:
             return
 
