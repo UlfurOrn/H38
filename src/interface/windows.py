@@ -18,8 +18,15 @@ from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeIte
 from logic.logic.facility_logic import FacilityCreate, FacilityInfo, FacilityItem, FacilityUpdate
 from logic.logic.location_logic import LocationCreate, LocationInfo, LocationItem, LocationUpdate
 from logic.logic.property_logic import PropertyCreate, PropertyInfo, PropertyItem, PropertyUpdate
-from logic.logic.request_logic import MultipleRequestCreate, RequestInfo, RequestItem, SingleRequestCreate
 from utils.exceptions import BadRequest
+
+from logic.logic.request_logic import (  # isort:skip
+    MultipleRequestCreate,
+    RequestInfo,
+    RequestItem,
+    RequestUpdate,
+    SingleRequestCreate,
+)
 
 
 class MainMenuOptions(str, Enum):
@@ -398,7 +405,7 @@ class PropertyCreateWindow(CreateWindow):
             self.info["location"] = value.airport
             self.info["location_id"] = value.location_id
         else:
-            value: Union[BACK, Condition] = ChooseConditionWindow().run()
+            value: Union[BACK, Condition] = SelectOptionWindow(Condition).run()
             if value == BACK:
                 return
 
@@ -430,7 +437,7 @@ class PropertyUpdateWindow(UpdateWindow):
         return property_id
 
     def submenu(self) -> None:
-        value: Union[BACK, Condition] = ChooseConditionWindow().run()
+        value: Union[BACK, Condition] = SelectOptionWindow(Condition).run()
         if value == BACK:
             return
 
@@ -706,12 +713,40 @@ class RequestViewWindow(ViewWindow):
         Field(name="Contractors", field="contractors"),
     ]
 
+    def button_setup(self) -> None:
+        self.buttons = [
+            Button(letter="u", description="update", function=self.update, supervisor=True),
+            Button(letter="a", description="assign", function=self.assign),
+            Button(letter="d", description="done", function=self.done),
+            Button(letter="c", description="create", function=self.create),
+            Button(letter="s", description="select", function=self.select),
+            Button(letter="v", description="view", function=self.view),
+            Button(letter="b", description="back", function=self.back),
+        ]
+
     def window_setup(self) -> None:
         self.info = api.requests.get(self.model_id)
+
+    def setup(self) -> None:
+        if self.info.status != Status.Todo:
+            self.hide_button("a")
+        if self.info.status != Status.Ongoing:
+            self.hide_button("d")
+        if self.info.status != Status.Done:
+            self.hide_button("c")
 
     def update(self) -> None:
         RequestUpdateWindow(self.model_id).run()
         self.window_setup()
+
+    def assign(self) -> None:
+        api.requests.assign(request_id=self.model_id)
+
+    def done(self) -> None:
+        api.requests.done(request_id=self.model_id)
+
+    def create(self) -> None:
+        raise NotImplementedError()
 
     def select(self) -> RequestInfo:
         return self.info
@@ -750,10 +785,12 @@ class RecurringRequestWindow(Window):
         self.empty()
         self.boundary()
 
-    def yes(self) -> None:
+    @staticmethod
+    def yes() -> None:
         return MultipleRequestCreateWindow().run()
 
-    def no(self) -> Union[BACK, UUID]:
+    @staticmethod
+    def no() -> Union[BACK, UUID]:
         return SingleRequestCreateWindow().run()
 
 
@@ -827,26 +864,29 @@ class RequestUpdateWindow(UpdateWindow):
         self.info = api.requests.get(self.model_id).dict()
 
     def submit(self) -> UUID:
-        pass
-        # data = ContractorUpdate(**self.info)
-        # contractor_id = api.contractors.update(self.model_id, data)
+        data = RequestUpdate(**self.info)
+        request_id = api.requests.update(self.model_id, data)
 
-        # return contractor_id
+        return request_id
 
     def submenu(self) -> None:
-        pass
-        # value: Union[BACK, LocationInfo] = LocationListWindow().run()
-        # if value == BACK:
-        #     return
+        value: Union[BACK, Priority] = SelectOptionWindow(Priority).run()
+        if value == BACK:
+            return
 
-        # self.info["location"] = value.airport
-        # self.info["location_id"] = value.location_id
+        self.info["priority"] = value
 
 
 class RequestViewOptions(str, Enum):
     Property = "Property"
     Employee = "Employee"
     Contractors = "Contractors"
+
+
+# Report Windows:
+###############################################################################
+class Temp:
+    pass
 
 
 # Extra Windows:

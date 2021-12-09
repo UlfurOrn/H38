@@ -10,6 +10,7 @@ from database.models.contractor_requests_model import ContractorRequest
 from database.models.request_model import Priority, Request, Status
 from logic.helpers import InfoModel, ListItem, Paginator
 from logic.logic.contractor_logic import ContractorItem
+from utils.authentication import AuthManager
 from utils.exceptions import BadRequest
 
 
@@ -216,3 +217,26 @@ class RequestLogic:
             raise BadRequest("Contractor is already assigned to this task")
 
         ContractorRequest(request_id=request.id, contractor_id=contractor.id).create()
+
+    @staticmethod
+    def assign(request_id: UUID) -> None:
+        request = Request.get(request_id)
+
+        if request.status != Status.Todo:
+            raise BadRequest("Task has already been assigned")
+
+        request.status = Status.Ongoing
+        request.employee_id = AuthManager.get_user().id
+
+        request.update()
+
+    @staticmethod
+    def done(request_id: UUID) -> None:
+        request = Request.get(request_id)
+
+        if request.status != Status.Ongoing:
+            raise BadRequest("Task must have status ongoing")
+
+        request.status = Status.Done
+
+        request.update()
