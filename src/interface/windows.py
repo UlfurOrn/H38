@@ -1,6 +1,8 @@
 from enum import Enum
 from typing import Any, Optional, Union
 from uuid import UUID
+from Verklegt_1.H38.src.interface.extra import Button
+from Verklegt_1.H38.src.interface.window_types.window import Window
 
 from database.models.property_model import Condition
 from interface.extra import BACK, Column, Field
@@ -15,6 +17,42 @@ from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeIte
 from logic.logic.facility_logic import FacilityCreate, FacilityInfo, FacilityItem, FacilityUpdate
 from logic.logic.location_logic import LocationCreate, LocationInfo, LocationItem, LocationUpdate
 from logic.logic.property_logic import PropertyCreate, PropertyInfo, PropertyItem, PropertyUpdate
+
+class Welcome(Window):
+    title = "Welcome to NaN Air."
+
+    def button_setup(self) -> None:
+        self.buttons = [
+            Button(letter="l", description="login", function=self.login)
+        ]
+    
+    def login(self):
+        #Implement movement to login window!!!!
+        pass
+
+    def display(self) -> None:
+        self.boundary()
+        self.empty()
+        self.display_title()
+        self.empty()
+        self.boundary()
+    
+    def run(self) -> Any:
+        self.button_setup()
+        self.window_setup()
+        while True:
+            self.setup()
+            self.display()
+            self.display_buttons()
+
+            data = self.get_input()
+            value = self.parse_data(data)
+
+            if value:
+                return value
+
+            self.reset()
+            self.clear_screen()
 
 
 class MainMenuOptions(str, Enum):
