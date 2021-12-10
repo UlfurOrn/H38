@@ -4,7 +4,7 @@ from typing import Any, Optional, Union
 from uuid import UUID
 
 from database.models.property_model import Condition
-from database.models.request_model import Priority, Status
+from database.models.request_model import Priority, RequestStatus
 from interface.extra import BACK, Button, Column, Field
 from interface.window_types.create_window import CreateWindow
 from interface.window_types.list_window import ListWindow
@@ -18,6 +18,7 @@ from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeIte
 from logic.logic.facility_logic import FacilityCreate, FacilityInfo, FacilityItem, FacilityUpdate
 from logic.logic.location_logic import LocationCreate, LocationInfo, LocationItem, LocationUpdate
 from logic.logic.property_logic import PropertyCreate, PropertyInfo, PropertyItem, PropertyUpdate
+from logic.logic.report_logic import ReportCreate, ReportInfo, ReportItem
 from logic.logic.request_logic import (
     MultipleRequestCreate,
     RequestInfo,
@@ -48,6 +49,7 @@ class MainMenu(OptionWindow):
             MainMenuOptions.Properties: PropertyListWindow(),
             MainMenuOptions.Contractors: ContractorListWindow(),
             MainMenuOptions.Requests: RequestListWindow(),
+            MainMenuOptions.Reports: ReportListWindow(),
         }
 
         if option not in options:
@@ -657,7 +659,7 @@ class ContractorViewOptions(str, Enum):
     Location = "Location"
 
 
-# Contractor Windows:
+# Request Windows:
 ###############################################################################
 class RequestListWindow(ListWindow):
     title = "Request List"
@@ -727,11 +729,11 @@ class RequestViewWindow(ViewWindow):
         self.info = api.requests.get(self.model_id)
 
     def setup(self) -> None:
-        if self.info.status != Status.Todo:
+        if self.info.status != RequestStatus.Todo:
             self.hide_button("a")
-        if self.info.status != Status.Ongoing:
+        if self.info.status != RequestStatus.Ongoing:
             self.hide_button("d")
-        if self.info.status != Status.Done:
+        if self.info.status != RequestStatus.Done:
             self.hide_button("c")
 
     def update(self) -> None:
@@ -884,8 +886,129 @@ class RequestViewOptions(str, Enum):
 
 # Report Windows:
 ###############################################################################
-class Temp:
-    pass
+class ReportListWindow(ListWindow):
+    title = "Report List"
+    columns = [
+        Column(name="#", field="", size=3),
+        Column(name="Property", field="property", size=12),
+        Column(name="Employee", field="employee", size=18),
+        Column(name="Status", field="status", size=12),
+    ]
+
+    def setup(self) -> None:
+        self.paginator = api.reports.all(self.page)
+        self.hide_button("c")  # Create is never used for this window
+
+    def view_item(self, item: ReportItem) -> None:
+        value = ReportViewWindow(item.report_id).run()
+        if value == BACK:
+            return
+        return value
+
+    def create(self) -> None:
+        pass
+
+
+class ReportViewWindow(ViewWindow):
+    title = "View Report"
+    info: ReportInfo
+    fields = [
+        Field(name="Property", field="property"),
+        Field(name="Employee", field="employee"),
+        Field(name="Description", field="description"),
+        Field(name="Cost", field="cost"),
+        Field(name="Contractors", field="contractors"),
+        Field(name="Status", field="status"),
+    ]
+
+    def window_setup(self) -> None:
+        self.info = api.reports.get(self.model_id)
+
+    def setup(self) -> None:
+        self.hide_button("u")  # Update is never used for this window
+        self.hide_button("s")  # Select is never used for this window
+
+    def update(self) -> None:
+        pass
+
+    def select(self) -> None:
+        pass
+
+    def view(self) -> None:
+        value: Union[BACK, ReportViewOptions] = SelectOptionWindow(ReportViewOptions).run()
+        if value == BACK:
+            return
+
+        if value == ReportViewOptions.Request:
+            RequestViewWindow(self.info.request_id).run()
+        if value == ReportViewOptions.Property:
+            PropertyViewWindow(self.info.property_id).run()
+        if value == ReportViewOptions.Employee:
+            EmployeeViewWindow(self.info.employee_id).run()
+        if value == ReportViewOptions.Contractors:
+            raise NotImplementedError()
+            # RequestViewWindow(self.info.request_id).run()
+
+
+class ReportCreateWindow(CreateWindow):
+    title = "Create Report"
+    fields = [
+        Field(name="Name", field="name"),
+        Field(name="Phone", field="phone"),
+        Field(name="Email", field="email"),
+        Field(name="Opening Hours", field="opening_hours"),
+        Field(name="Location", field="location", submenu=True),
+    ]
+
+    def submit(self) -> UUID:
+        data = ReportCreate(**self.info)
+        contractor_id = api.contractors.create(data)
+
+        return contractor_id
+
+    def submenu(self) -> None:
+        value: Union[BACK, LocationInfo] = LocationListWindow().run()
+        if value == BACK:
+            return
+
+        self.info["location"] = value.airport
+        self.info["location_id"] = value.location_id
+
+
+class ReportUpdateWindow(UpdateWindow):
+    title = "Update Report"
+    fields = [
+        Field(name="Name", field="name"),
+        Field(name="Phone", field="phone"),
+        Field(name="Email", field="email"),
+        Field(name="Opening Hours", field="opening_hours"),
+        Field(name="Location", field="location", submenu=True),
+    ]
+
+    def window_setup(self) -> None:
+        self.info = api.contractors.get(self.model_id).dict()
+
+    def submit(self) -> UUID:
+        pass
+        # data = ReportUpdate(**self.info)
+        # contractor_id = api.contractors.update(self.model_id, data)
+
+        # return contractor_id
+
+    def submenu(self) -> None:
+        value: Union[BACK, LocationInfo] = LocationListWindow().run()
+        if value == BACK:
+            return
+
+        self.info["location"] = value.airport
+        self.info["location_id"] = value.location_id
+
+
+class ReportViewOptions(str, Enum):
+    Request = "Request"
+    Property = "Property"
+    Employee = "Employee"
+    Contractors = "Contractors"
 
 
 # Extra Windows:

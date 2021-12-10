@@ -18,7 +18,7 @@ class Priority(str, Enum):
     Soon = "Soon"
 
 
-class Status(str, Enum):
+class RequestStatus(str, Enum):
     Todo = "To Do"
     Ongoing = "Ongoing"
     Done = "Done"
@@ -32,7 +32,7 @@ class Request(DatabaseModel):
     property_id: UUID
     date: date
     priority: Priority
-    status: Status
+    status: RequestStatus
     employee_id: Optional[UUID]
 
     @property
