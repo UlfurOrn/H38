@@ -2,8 +2,8 @@ from uuid import UUID
 
 from interface.extra import Button, Field
 from interface.window_types.window import Window
-from logic.helpers import InfoModel
 from logic.api import api
+from logic.helpers import InfoModel
 from logic.logic.employee_logic import EmployeeInfo, EmployeeItem
 
 
@@ -57,35 +57,12 @@ class SearchWindow(Window):
         self.info[self.field.field] = None
 
 
-
 class EmployeeSearchWindow(SearchWindow):
-    
     title = "Search Employee"
     search_type = "ssn"
     item = "employee"
 
-    field = Field(name="SSN", field="ssn", requied = True)
+    field = Field(name="SSN", field="ssn", required=True)
 
     def submit(self) -> UUID:
-        employee = api.employees.all(search = self.value)   # -> Paginator
-        
-        #employee_id = api.employees.get(employee.ssn) 
-
-
-
-
-# +-----------------------------------------------+
-# |                Search Employee                |
-# +-----------------------------------------------+
-# |                                               |
-# |      # Please enter SSN for employee          |
-# |                                               |
-# |               ssn:  1909992979                |
-# |                                               |
-# |                                               |
-# |                                               |
-# |                                               |
-# |                                               |
-# +-----------------------------------------------+
-# | s: submit         c: clear            b: back |
-# +-----------------------------------------------+
+        employee = api.employees.all(search=self.value)
