@@ -4,7 +4,7 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from database.models.property_model import Condition, Property
-from logic.helpers import InfoModel, ListItem, Paginator
+from logic.helpers import FilterOptions, InfoModel, ListItem, Paginator, filter_by_field
 
 
 class PropertyItem(ListItem):
@@ -36,10 +36,24 @@ class PropertyUpdate(BaseModel):
     condition: Optional[Condition] = None
 
 
+class PropertyFilterOptions(FilterOptions):
+    location_id: Optional[UUID]
+    location: Optional[str]
+    condition: Optional[Condition]
+    property_number: Optional[str]
+
+
 class PropertyLogic:
     @staticmethod
-    def all(page: int) -> Paginator:
+    def all(page: int, filters: PropertyFilterOptions) -> Paginator:
         properties = Property.all()
+
+        if filters.location_id:
+            properties = filter(lambda property: property.location_id == filters.location_id, properties)
+        if filters.condition:
+            properties = filter(lambda property: property.condition == filters.condition, properties)
+
+        properties = filter_by_field(properties, "property_number", filters.property_number)
 
         property_items = [
             PropertyItem(

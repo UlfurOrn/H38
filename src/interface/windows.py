@@ -19,7 +19,7 @@ from logic.logic.contractor_logic import ContractorCreate, ContractorInfo, Contr
 from logic.logic.employee_logic import EmployeeCreate, EmployeeFilterOptions, EmployeeInfo, EmployeeItem, EmployeeUpdate
 from logic.logic.facility_logic import FacilityCreate, FacilityInfo, FacilityItem, FacilityUpdate
 from logic.logic.location_logic import LocationCreate, LocationFilterOptions, LocationInfo, LocationItem, LocationUpdate
-from logic.logic.property_logic import PropertyCreate, PropertyInfo, PropertyItem, PropertyUpdate
+from logic.logic.property_logic import PropertyCreate, PropertyFilterOptions, PropertyInfo, PropertyItem, PropertyUpdate
 from logic.logic.report_logic import ReportCreate, ReportInfo, ReportItem
 from logic.logic.request_logic import (
     MultipleRequestCreate,
@@ -224,7 +224,9 @@ class EmployeeFilterWindow(FilterWindow):
 
     def clear(self) -> None:
         super().clear()
-        self.info["location_id"] = None
+        field = self.fields[self.current]
+        if field.field == "location":
+            self.info["location_id"] = None
 
 
 # Location Windows:
@@ -386,9 +388,10 @@ class PropertyListWindow(ListWindow):
         Column(name="Location", field="location", size=14),
         Column(name="Condition", field="condition", size=11),
     ]
+    filters = PropertyFilterOptions()
 
     def setup(self) -> None:
-        self.paginator = api.properties.all(self.page)
+        self.paginator = api.properties.all(self.page, self.filters)
 
     def view_item(self, item: PropertyItem) -> None:
         value = PropertyViewWindow(item.property_id).run()
@@ -403,6 +406,13 @@ class PropertyListWindow(ListWindow):
             return
 
         PropertyViewWindow(value).run()
+
+    def filter(self) -> None:
+        value = PropertyFilterWindow(self.filters).run()
+        if value == BACK:
+            return
+        self.filters = value
+        self.page = 1
 
 
 class PropertyViewWindow(ViewWindow):
@@ -506,6 +516,40 @@ class PropertyUpdateWindow(UpdateWindow):
 class PropertyViewOptions(str, Enum):
     Location = "Location"
     Facilities = "Facilities"
+
+
+class PropertyFilterWindow(FilterWindow):
+    title = "Property Filters"
+    fields = [
+        Field(name="Location", field="location", submenu=True),
+        Field(name="Condition", field="condition", submenu=True),
+        Field(name="Property Number", field="property_number"),
+    ]
+
+    def save(self) -> PropertyFilterOptions:
+        return PropertyFilterOptions(**self.info)
+
+    def submenu(self) -> None:
+        field = self.fields[self.current]
+        if field.field == "location":
+            value: Union[BACK, LocationInfo] = LocationListWindow().run()
+            if value == BACK:
+                return
+
+            self.info["location"] = value.airport
+            self.info["location_id"] = value.location_id
+        else:
+            value: Union[BACK, Condition] = SelectOptionWindow(Condition).run()
+            if value == BACK:
+                return
+
+            self.info["condition"] = value.value
+
+    def clear(self) -> None:
+        super().clear()
+        field = self.fields[self.current]
+        if field.field == "location":
+            self.info["location_id"] = None
 
 
 # Facility Windows:
