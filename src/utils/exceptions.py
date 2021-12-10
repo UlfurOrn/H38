@@ -8,7 +8,3 @@ class BadRequestException(Exception):
 
 class ForbiddenException(Exception):
     pass
-
-
-class InternalServiceError(Exception):
-    pass

@@ -5,9 +5,18 @@ from pydantic import ValidationError
 
 from interface.extra import BACK, Button
 from logic.api import api
-from utils.exceptions import BadRequestException, ForbiddenException, InternalServiceError, NotFoundException
+from utils.exceptions import BadRequestException, ForbiddenException, NotFoundException
 
-logging.basicConfig(filename="logfile.log", level=logging.WARNING)
+logger = logging.getLogger(__name__)
+logging.basicConfig()
+logger.setLevel(logging.WARNING)
+
+log_formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s\n")
+
+file_handler = logging.FileHandler("logfile.log")
+file_handler.setFormatter(log_formatter)
+
+logger.addHandler(file_handler)
 
 
 class Window:
@@ -139,10 +148,6 @@ class ExceptionHandler:
         if exception_type is None:
             return True
 
-        # We do not want to catch all exceptions (KeyboardInterrupt for example) only subclasses of Exception
-        elif not (exception_type == Exception or exception_type in Exception.__subclasses__()):
-            return False
-
         elif exception_type == ValidationError:
             errors = exception_value.errors()
             error_string = ""
@@ -153,15 +158,19 @@ class ExceptionHandler:
                 error_string += "\n\n"
 
             window = ErrorWindow("Validation Error", error_string.strip())
-            logging.exception(window.error_message, (exception_type, exception_value, traceback))
+            logger.exception(exception_value)
+
+        # We do not want to catch all exceptions (KeyboardInterrupt for example) only subclasses of Exception
+        elif not (exception_type == Exception or exception_type in Exception.__subclasses__()):
+            return False
 
         elif exception_type in (BadRequestException, NotFoundException, ForbiddenException):
             window = ErrorWindow(exception_type.__name__, str(exception_value))
-            logging.exception(window.error_message, (exception_type, exception_value, traceback))
+            logger.exception(exception_value)
 
         else:
             window = ErrorWindow("Internal Server Error", "Contact a System Admin for Support")
-            logging.critical(window.error_message, (exception_type, exception_value, traceback))
+            logger.critical(exception_value)
 
         window.run()
 
