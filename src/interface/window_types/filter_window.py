@@ -1,3 +1,5 @@
+from enum import Enum
+
 from interface.extra import Button, Field
 from interface.window_types.window import Window
 from logic.helpers import FilterOptions, InfoModel
@@ -35,6 +37,8 @@ class FilterWindow(Window):
             prefix = "+ " if field.submenu else ""
             value = self.info.get(field.field)
             value = value or ""
+            if isinstance(value, Enum):
+                value = value.value
             value = str(value)
             if field == self.fields[self.current]:
                 value = value[:7] + " <---"

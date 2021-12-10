@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 from database.models.facility_model import Facility
 from database.models.property_model import Condition, Property
-from logic.helpers import InfoModel, ListItem, Paginator
+from logic.helpers import FilterOptions, InfoModel, ListItem, Paginator, filter_by_field
 
 
 class FacilityItem(ListItem):
@@ -32,12 +32,22 @@ class FacilityUpdate(BaseModel):
     condition: Optional[Condition] = None
 
 
+class FacilityFilterOptions(FilterOptions):
+    condition: Optional[Condition]
+    name: Optional[str]
+
+
 class FacilityLogic:
     @staticmethod
-    def all(property_id: UUID, page: int) -> Paginator:
+    def all(property_id: UUID, page: int, filters: FacilityFilterOptions) -> Paginator:
         facilities = Facility.all()
 
         facilities = filter(lambda facility: facility.property_id == property_id, facilities)
+
+        if filters.condition:
+            facilities = filter(lambda facility: facility.condition == filters.condition, facilities)
+
+        facilities = filter_by_field(facilities, "name", filters.name)
 
         facility_items = [
             FacilityItem(facility_id=facility.id, name=facility.name, condition=facility.condition)

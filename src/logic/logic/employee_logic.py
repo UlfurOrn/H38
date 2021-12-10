@@ -59,8 +59,8 @@ class EmployeeCreate(BaseModel):
 class EmployeeUpdate(BaseModel):
     name: Optional[str] = None
     address: Optional[str] = None
-    home_phone: Optional[int] = None
-    work_phone: Optional[int] = None
+    home_phone: Optional[str] = None
+    work_phone: Optional[str] = None
     email: Optional[str] = None
     location_id: Optional[UUID] = None
 
@@ -83,7 +83,7 @@ class EmployeeFilterOptions(FilterOptions):
 
 class EmployeeLogic:
     @staticmethod
-    def all(page: int, filters: EmployeeFilterOptions, search: Optional[str] = None) -> Paginator:
+    def all(page: int, filters: EmployeeFilterOptions) -> Paginator:
         employees = Employee.all()
 
         if filters.location_id:

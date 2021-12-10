@@ -4,10 +4,9 @@ from uuid import UUID
 
 from pydantic import BaseModel
 from pydantic.class_validators import validator
-from pydantic.errors import DateTimeError
 
 from database.models.contractor_model import Contractor
-from logic.helpers import InfoModel, ListItem, Paginator
+from logic.helpers import FilterOptions, InfoModel, ListItem, Paginator, filter_by_field
 
 
 class ContractorItem(ListItem):
@@ -29,10 +28,39 @@ class ContractorInfo(InfoModel):
 
 class ContractorCreate(BaseModel):
     name: str
-    phone: int
+    phone: str
     email: str
     opening_hours: str
     location_id: UUID
+
+    @validator("phone")
+    def validate_phone(cls, value):
+        if value is not None:
+            assert value.isdigit(), "Phone number should only include numbers"
+            assert len(value) == 7, "Phone number should be exactly 7 digits"
+
+        return value
+
+    @validator("opening_hours")
+    def validate_open_hours(cls, value):
+        message = "Opening Hours should have the following format:\nHH:MM - HH:MM"
+        try:
+            time_list = value.split("-")
+            assert len(time_list) == 2, message
+            for time in time_list:
+                time = time.strip()
+                datetime.strptime(time, "%H:%M")
+        except ValueError:
+            raise ValueError(message)
+        return value
+
+
+class ContractorUpdate(BaseModel):
+    name: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    opening_hours: Optional[str] = None
+    location_id: Optional[UUID] = None
 
     @validator("phone")
     def validate_phone(cls, value):
@@ -54,44 +82,23 @@ class ContractorCreate(BaseModel):
         return value
 
 
-class ContractorUpdate(BaseModel):
-    name: Optional[str] = None
-    phone: Optional[int] = None
-    email: Optional[str] = None
-    opening_hours: Optional[str] = None
-    location_id: Optional[UUID] = None
-
-    @validator("phone")
-    def validate_phone(cls, value):
-        if not value:
-            pass
-        else:
-            if not len(value) == 7 or not value.isdigit():
-                raise ValueError("Phone number is incvalid! It should be the length of 7 numbers!")
-        return value
-
-    @validator("opening_hours")
-    def validate_open_hours(cls, value):
-        try:
-            time_list = value.split("-")
-            for time in time_list:
-                time = time.strip(" ")
-                datetime.strptime(time, "%H:%M")
-        except ValueError:
-            raise ValueError("Opening hours should be the format of: HH:MM - HH:MM")
-        return value
+class ContractorFilterOptions(FilterOptions):
+    location_id: Optional[UUID]
+    location: Optional[str]
+    name: Optional[str]
+    phone: Optional[str]
 
 
 class ContractorLogic:
     @staticmethod
-    def all(page: int, search: Optional[str] = None) -> Paginator:
+    def all(page: int, filters: ContractorFilterOptions) -> Paginator:
         contractors = Contractor.all()
 
-        def check_match(contractor: Contractor):
-            return search in str(contractor.name)
+        if filters.location_id:
+            contractors = filter(lambda contractor: filters.location_id == contractor.location_id, contractors)
 
-        if search:
-            contractors = filter(check_match, contractors)
+        contractors = filter_by_field(contractors, "name", filters.name)
+        contractors = filter_by_field(contractors, "phone", filters.phone)
 
         contractor_items = [
             ContractorItem(
