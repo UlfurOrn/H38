@@ -17,7 +17,7 @@ from interface.window_types.window import Window
 from logic.api import api
 from logic.logic.contractor_logic import ContractorCreate, ContractorInfo, ContractorItem, ContractorUpdate
 from logic.logic.employee_logic import EmployeeCreate, EmployeeFilterOptions, EmployeeInfo, EmployeeItem, EmployeeUpdate
-from logic.logic.facility_logic import FacilityCreate, FacilityInfo, FacilityItem, FacilityUpdate
+from logic.logic.facility_logic import FacilityCreate, FacilityFilterOptions, FacilityInfo, FacilityItem, FacilityUpdate
 from logic.logic.location_logic import LocationCreate, LocationFilterOptions, LocationInfo, LocationItem, LocationUpdate
 from logic.logic.property_logic import PropertyCreate, PropertyFilterOptions, PropertyInfo, PropertyItem, PropertyUpdate
 from logic.logic.report_logic import ReportCreate, ReportInfo, ReportItem
@@ -561,12 +561,13 @@ class FacilityListWindow(ListWindow):
         Column(name="Name", field="name", size=32),
         Column(name="Condition", field="condition", size=11),
     ]
+    filters = FacilityFilterOptions()
 
     def __init__(self, property_id: UUID):
         self.property_id = property_id
 
     def setup(self) -> None:
-        self.paginator = api.facilities.all(self.property_id, self.page)
+        self.paginator = api.facilities.all(self.property_id, self.page, self.filters)
 
     def view_item(self, item: FacilityItem) -> None:
         value = FacilityViewWindow(item.facility_id).run()
@@ -580,6 +581,13 @@ class FacilityListWindow(ListWindow):
             return
 
         FacilityViewWindow(value).run()
+
+    def filter(self) -> None:
+        value = FacilityFilterWindow(self.filters).run()
+        if value == BACK:
+            return
+        self.filters = value
+        self.page = 1
 
 
 class FacilityViewWindow(ViewWindow):
@@ -641,6 +649,21 @@ class FacilityUpdateWindow(UpdateWindow):
 
     def submenu(self) -> None:
         value: Union[BACK, Condition] = SelectOptionWindow(Condition, "Select Condition").run()
+        if value == BACK:
+            return
+
+        self.info["condition"] = value.value
+
+
+class FacilityFilterWindow(FilterWindow):
+    title = "Property Filters"
+    fields = [Field(name="Condition", field="condition", submenu=True), Field(name="Name", field="name")]
+
+    def save(self) -> FacilityFilterOptions:
+        return FacilityFilterOptions(**self.info)
+
+    def submenu(self) -> None:
+        value: Union[BACK, Condition] = SelectOptionWindow(Condition).run()
         if value == BACK:
             return
 

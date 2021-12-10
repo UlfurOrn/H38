@@ -4,7 +4,6 @@ from uuid import UUID
 
 from pydantic import BaseModel
 from pydantic.class_validators import validator
-from pydantic.errors import DateTimeError
 
 from database.models.contractor_model import Contractor
 from logic.helpers import InfoModel, ListItem, Paginator
@@ -29,7 +28,7 @@ class ContractorInfo(InfoModel):
 
 class ContractorCreate(BaseModel):
     name: str
-    phone: int
+    phone: str
     email: str
     opening_hours: str
     location_id: UUID
@@ -58,7 +57,7 @@ class ContractorCreate(BaseModel):
 
 class ContractorUpdate(BaseModel):
     name: Optional[str] = None
-    phone: Optional[int] = None
+    phone: Optional[str] = None
     email: Optional[str] = None
     opening_hours: Optional[str] = None
     location_id: Optional[UUID] = None
