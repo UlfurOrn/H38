@@ -481,7 +481,7 @@ class PropertyCreateWindow(CreateWindow):
             self.info["location"] = value.airport
             self.info["location_id"] = value.location_id
         else:
-            value: Union[BACK, Condition] = SelectOptionWindow(Condition).run()
+            value: Union[BACK, Condition] = SelectOptionWindow(Condition, "Select Condition").run()
             if value == BACK:
                 return
 
@@ -513,7 +513,7 @@ class PropertyUpdateWindow(UpdateWindow):
         return property_id
 
     def submenu(self) -> None:
-        value: Union[BACK, Condition] = SelectOptionWindow(Condition).run()
+        value: Union[BACK, Condition] = SelectOptionWindow(Condition, "Select Condition").run()
         if value == BACK:
             return
 
@@ -546,7 +546,7 @@ class PropertyFilterWindow(FilterWindow):
             self.info["location"] = value.airport
             self.info["location_id"] = value.location_id
         else:
-            value: Union[BACK, Condition] = SelectOptionWindow(Condition).run()
+            value: Union[BACK, Condition] = SelectOptionWindow(Condition, "Select Condition").run()
             if value == BACK:
                 return
 
@@ -671,7 +671,7 @@ class FacilityFilterWindow(FilterWindow):
         return FacilityFilterOptions(**self.info)
 
     def submenu(self) -> None:
-        value: Union[BACK, Condition] = SelectOptionWindow(Condition).run()
+        value: Union[BACK, Condition] = SelectOptionWindow(Condition, "Select Condition").run()
         if value == BACK:
             return
 
@@ -812,7 +812,7 @@ class ContractorFilterWindow(FilterWindow):
         return ContractorFilterOptions(**self.info)
 
     def submenu(self) -> None:
-        value: Union[BACK, LocationInfo] = LocationListWindow().run()
+        value: Union[BACK, LocationInfo] = LocationListWindow(WindowState.Select).run()
         if value == BACK:
             return
 
@@ -843,7 +843,7 @@ class RequestListWindow(ListWindow):
         self.paginator = api.requests.all(self.page, self.filters)
 
     def view_item(self, item: RequestItem) -> None:
-        value = RequestViewWindow(item.request_id).run()
+        value = RequestViewWindow(item.request_id, self.window_state).run()
         if value == BACK:
             return
         return value
@@ -863,14 +863,15 @@ class RequestListWindow(ListWindow):
 
 
 class RequestContractorsListWindow(ContractorListWindow):
-    def __init__(self, request_id: UUID):
+    def __init__(self, request_id: UUID, window_state: WindowState = WindowState.Normal):
+        super().__init__(window_state)
         self.request_id = request_id
 
     def setup(self) -> None:
         self.paginator = api.requests.contractors(self.request_id, self.page, self.filters)
 
     def add(self) -> None:
-        value: Union[BACK, ContractorInfo] = ContractorListWindow().run()
+        value: Union[BACK, ContractorInfo] = ContractorListWindow(WindowState.Add).run()
         if value == BACK:
             return
 
@@ -953,13 +954,14 @@ class RequestViewWindow(ViewWindow):
             return
 
         if value == RequestViewOptions.Property:
-            PropertyViewWindow(self.info.property_id).run()
+            PropertyViewWindow(self.info.property_id, WindowState.View).run()
         if value == RequestViewOptions.Employee:
             if self.info.employee_id is None:
                 raise BadRequestException("No Employee is registered to this task")
-            EmployeeViewWindow(self.info.employee_id).run()
+            EmployeeViewWindow(self.info.employee_id, WindowState.View).run()
         if value == RequestViewOptions.Contractors:
-            RequestContractorsListWindow(request_id=self.model_id).run()
+            window_state = WindowState.Add if self.window_state == WindowState.Normal else WindowState.View
+            RequestContractorsListWindow(request_id=self.model_id, window_state=window_state).run()
 
         self.window_setup()
 
@@ -996,7 +998,7 @@ class RequestCreateSuperWindow(CreateWindow):
     def submenu(self) -> None:
         field = self.fields[self.current]
         if field.field == "property":
-            value: Union[BACK, PropertyInfo] = PropertyListWindow().run()
+            value: Union[BACK, PropertyInfo] = PropertyListWindow(WindowState.Select).run()
             if value == BACK:
                 return
 
@@ -1066,7 +1068,7 @@ class RequestUpdateWindow(UpdateWindow):
         return request_id
 
     def submenu(self) -> None:
-        value: Union[BACK, Priority] = SelectOptionWindow(Priority).run()
+        value: Union[BACK, Priority] = SelectOptionWindow(Priority, "Select Priority").run()
         if value == BACK:
             return
 
@@ -1096,21 +1098,21 @@ class RequestFilterWindow(FilterWindow):
     def submenu(self) -> None:
         field = self.fields[self.current]
         if field.field == "location":
-            value: Union[BACK, LocationInfo] = LocationListWindow().run()
+            value: Union[BACK, LocationInfo] = LocationListWindow(WindowState.Select).run()
             if value == BACK:
                 return
 
             self.info["location"] = value.airport
             self.info["location_id"] = value.location_id
         if field.field == "property":
-            value: Union[BACK, PropertyInfo] = PropertyListWindow().run()
+            value: Union[BACK, PropertyInfo] = PropertyListWindow(WindowState.Select).run()
             if value == BACK:
                 return
 
             self.info["property"] = value.property_number
             self.info["property_id"] = value.property_id
         if field.field == "employee":
-            value: Union[BACK, EmployeeInfo] = EmployeeListWindow().run()
+            value: Union[BACK, EmployeeInfo] = EmployeeListWindow(WindowState.Select).run()
             if value == BACK:
                 return
 
@@ -1145,7 +1147,7 @@ class ReportListWindow(ListWindow):
         self.hide_button("c")  # Create is never used for this window
 
     def view_item(self, item: ReportItem) -> None:
-        value = ReportViewWindow(item.report_id).run()
+        value = ReportViewWindow(item.report_id, self.window_state).run()
         if value == BACK:
             return
         return value
@@ -1216,13 +1218,13 @@ class ReportViewWindow(ViewWindow):
             return
 
         if value == ReportViewOptions.Request:
-            RequestViewWindow(self.info.request_id).run()
+            RequestViewWindow(self.info.request_id, WindowState.View).run()
         if value == ReportViewOptions.Property:
-            PropertyViewWindow(self.info.property_id).run()
+            PropertyViewWindow(self.info.property_id, WindowState.View).run()
         if value == ReportViewOptions.Employee:
-            EmployeeViewWindow(self.info.employee_id).run()
+            EmployeeViewWindow(self.info.employee_id, WindowState.View).run()
         if value == ReportViewOptions.Contractors:
-            RequestContractorsListWindow(self.info.request_id).run()
+            RequestContractorsListWindow(self.info.request_id, WindowState.View).run()
 
 
 class ReportCreateWindow(CreateWindow):
@@ -1258,21 +1260,21 @@ class ReportFilterWindow(FilterWindow):
     def submenu(self) -> None:
         field = self.fields[self.current]
         if field.field == "location":
-            value: Union[BACK, LocationInfo] = LocationListWindow().run()
+            value: Union[BACK, LocationInfo] = LocationListWindow(WindowState.Select).run()
             if value == BACK:
                 return
 
             self.info["location"] = value.airport
             self.info["location_id"] = value.location_id
         if field.field == "property":
-            value: Union[BACK, PropertyInfo] = PropertyListWindow().run()
+            value: Union[BACK, PropertyInfo] = PropertyListWindow(WindowState.Select).run()
             if value == BACK:
                 return
 
             self.info["property"] = value.property_number
             self.info["property_id"] = value.property_id
         if field.field == "employee":
-            value: Union[BACK, EmployeeInfo] = EmployeeListWindow().run()
+            value: Union[BACK, EmployeeInfo] = EmployeeListWindow(WindowState.Select).run()
             if value == BACK:
                 return
 
