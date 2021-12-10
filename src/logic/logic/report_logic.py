@@ -8,8 +8,6 @@ from database.models.request_model import RequestStatus
 from logic.helpers import InfoModel, ListItem, Paginator
 from utils.exceptions import BadRequestException
 
-from datetime import datetime
-
 
 class ReportItem(ListItem):
     report_id: UUID

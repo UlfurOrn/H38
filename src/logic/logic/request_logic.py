@@ -122,21 +122,6 @@ class RequestLogic:
         return Paginator.paginate(request_items, page)
 
     @staticmethod
-    def filter(page: int = 1, property_filter: UUID = None, employee_filter: UUID = None):
-        requests = Request.all()
-
-        filtered_list = [
-            RequestItem(property_id=request.property_id, facility=request.facility, priority=request.priority)
-            for request in requests
-            if property_filter is not None
-            and request.property_id == property_filter
-            or employee_filter is not None
-            and request.employee_id == employee_filter
-        ]
-
-        return Paginator.paginate(filtered_list, page)
-
-    @staticmethod
     def create(data: SingleRequestCreate) -> UUID:
         request = Request(**data.dict(), status=RequestStatus.Todo)
 

@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 from database.models.employee_model import Employee
 from database.models.location_model import Location
-from logic.helpers import InfoModel, ListItem, Paginator
+from logic.helpers import FilterOptions, InfoModel, ListItem, Paginator
 
 
 class LocationItem(ListItem):
@@ -39,16 +39,23 @@ class LocationUpdate(BaseModel):
     supervisor_id: Optional[UUID] = None
 
 
+class LocationFilterOptions(FilterOptions):
+    country: Optional[str]
+    airport: Optional[str]
+    phone: Optional[str]
+
+
 class LocationLogic:
     @staticmethod
-    def all(page: int, search=None) -> Paginator:
+    def all(page: int, filters: LocationFilterOptions) -> Paginator:
         locations = Location.all()
 
-        def check_match(location: Location):
-            return search in str(location.country)
-
-        if search:
-            locations = filter(check_match, locations)
+        if filters.country:
+            locations = filter(lambda location: filters.country in str(location.country), locations)
+        if filters.airport:
+            locations = filter(lambda location: filters.airport in str(location.airport), locations)
+        if filters.phone:
+            locations = filter(lambda location: filters.phone in str(location.phone), locations)
 
         location_items = [
             LocationItem(location_id=location.id, country=location.country, airport=location.airport)

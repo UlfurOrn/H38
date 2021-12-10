@@ -2,20 +2,20 @@ from typing import Optional
 
 from interface.extra import Button
 from interface.window_types.window import Window
-from logic.helpers import InfoModel, ListItem, Paginator
+from logic.helpers import FilterOptions, InfoModel, ListItem, Paginator
 
 
 class ListWindow(Window):
     columns: list
     paginator: Paginator
+    filters: FilterOptions
     page: int = 1
 
     def button_setup(self) -> None:
         self.buttons = [
             Button(letter="c", description="create", function=self.create, supervisor=True),
-            Button(letter="a", description="add", function=self.add),
+            Button(letter="+", description="add", function=self.add),
             Button(letter="f", description="filter", function=self.filter),
-            Button(letter="s", description="search", function=self.search),
             Button(letter="b", description="back", function=self.back),
         ]
 
@@ -96,7 +96,4 @@ class ListWindow(Window):
         pass
 
     def filter(self) -> None:
-        raise NotImplementedError()
-
-    def search(self) -> None:
         raise NotImplementedError()
