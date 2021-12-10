@@ -36,6 +36,29 @@ class ViewWindow(Window):
             value = value or ""
             print(f"|{field.name:>16}: {value:<30}|")
 
+        for field in self.fields:
+            value = self.info.get(field.field)
+            value = value or ""
+            string = f"|{field.name:>16}: "
+            if value and len(value) > 28:
+                txt_lst = value.split(" ")
+                for i in txt_lst:
+                    if len(string) < 48:
+                        string += i + " "
+                    else:
+                        new_string = string[:-1]
+                        new_string += "|"
+                        print(new_string)
+                        string = f"|{i:>16}"
+                fin_string_len = len(string)
+                string +=  " "*(49 - int(fin_string_len))
+                string += "|"
+                print(string)
+            else:
+                print(f"|{field.name:>16}: {value:<30}|")
+
+
+
     def update(self) -> None:
         raise NotImplementedError()
 

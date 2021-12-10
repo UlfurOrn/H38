@@ -49,7 +49,24 @@ class UpdateWindow(Window):
             value = str(value)
             if field == self.fields[self.current]:
                 value = value[:7] + " <---"
-            print(f"|{field.name:>16}: {value:<30}|")
+
+            string = f"|{field.name:>16}: "
+            if value and len(value) > 28:
+                txt_lst = value.split(" ")
+                for i in txt_lst:
+                    if len(string) < 48:
+                        string += i + " "
+                    else:
+                        new_string = string[:-1]
+                        new_string += "|"
+                        print(new_string)
+                        string = f"|{i:>16}"
+                fin_string_len = len(string)
+                string +=  " "*(49 - int(fin_string_len))
+                string += "|"
+                print(string)
+            else:
+                print(f"|{field.name:>16}: {value:<30}|")
 
     def parse_input(self, data: str) -> None:
         if data:
