@@ -8,10 +8,10 @@ from logic.api import api
 from utils.exceptions import BadRequestException, ForbiddenException, NotFoundException
 
 logger = logging.getLogger(__name__)
-logging.basicConfig()
+logger.propagate = False  # This is done to prevent outputting to stdout
 logger.setLevel(logging.WARNING)
 
-log_formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s\n")
+log_formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 
 file_handler = logging.FileHandler("logfile.log")
 file_handler.setFormatter(log_formatter)
