@@ -2,11 +2,16 @@ from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel
+from pydantic.class_validators import validator
+from utils.exceptions import BadRequest
+from database.models.report_model import Status
 
 from database.models.report_model import Report, ReportStatus
 from database.models.request_model import RequestStatus
 from logic.helpers import InfoModel, ListItem, Paginator
 from utils.exceptions import BadRequestException
+
+from datetime import datetime
 
 
 class ReportItem(ListItem):
@@ -31,7 +36,7 @@ class ReportInfo(InfoModel):
 
 class ReportCreate(BaseModel):
     description: str
-    cost: str
+    cost: int
 
 
 class ReportLogic:
