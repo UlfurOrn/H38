@@ -49,6 +49,10 @@ class EmployeeCreate(BaseModel):
         assert value.isdigit(), "SSN should only include numbers"
         assert len(value) == 10, "SSN should be exactly 10 digits"
 
+        employees = Employee.all()
+        for employee in employees:
+            assert employee.ssn != value, "User with this SSN already exists"
+
         return value
 
 
