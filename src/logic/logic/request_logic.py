@@ -11,7 +11,7 @@ from database.models.request_model import Priority, Request, Status
 from logic.helpers import InfoModel, ListItem, Paginator
 from logic.logic.contractor_logic import ContractorItem
 from utils.authentication import AuthManager
-from utils.exceptions import BadRequest
+from utils.exceptions import BadRequestException
 
 
 class RequestItem(ListItem):
@@ -39,6 +39,16 @@ class SingleRequestCreate(BaseModel):
     date: date
     priority: Priority
 
+    @validator("date", pre=True)
+    def validate_date(cls, date_string: str) -> date:
+        try:
+            date_object = datetime.strptime(date_string, "%d/%m/%y").date()
+            if date_object < datetime.now().date():
+                raise ValueError("Date cannot be in the past")
+            return date_object
+        except ValueError:
+            raise ValueError("Invalid date provided, use format:\nDD/MM/YY")
+
 
 class MultipleRequestCreate(BaseModel):
     property_id: UUID
@@ -51,16 +61,17 @@ class MultipleRequestCreate(BaseModel):
     def validate_date(cls, date_string: str) -> date:
         try:
             date_object = datetime.strptime(date_string, "%d/%m/%y").date()
-            if date_object < datetime.now().date():
-                raise ValueError("Date cannot be in the past")
-            return date_object
         except ValueError:
-            raise ValueError("Invalid date provided, use format: DD/MM/YY")
+            raise ValueError("Invalid date provided, use format:\nDD/MM/YY")
+
+        if date_object < datetime.now().date():
+            raise ValueError("Date cannot be in the past")
+        return date_object
 
     @validator("interval", pre=True)
     def validate_interval(cls, interval: str) -> timedelta:
         match = re.match(r"^(?P<years>\d+)y (?P<months>\d+)m (?P<weeks>\d+)w (?P<days>\d+)d$", interval)
-        assert match is not None, "Interval must have the following format: 0y 2m 0w 1d"
+        assert match is not None, "Interval must have the following format:\n0y 2m 0w 1d"
 
         years = int(match.group("years"))
         months = int(match.group("months"))
@@ -139,7 +150,7 @@ class RequestLogic:
         end_date = data.end_date
 
         if end_date < start_date:
-            raise BadRequest("Start date must be before end date")
+            raise BadRequestException("Start date must be before end date")
 
         first_request = None
         current_date = start_date
@@ -214,7 +225,7 @@ class RequestLogic:
         contractor_ids = [contractor_request.contractor_id for contractor_request in request.contractor_requests]
 
         if contractor.id in contractor_ids:
-            raise BadRequest("Contractor is already assigned to this task")
+            raise BadRequestException("Contractor is already assigned to this task")
 
         ContractorRequest(request_id=request.id, contractor_id=contractor.id).create()
 
@@ -223,7 +234,7 @@ class RequestLogic:
         request = Request.get(request_id)
 
         if request.status != Status.Todo:
-            raise BadRequest("Task has already been assigned")
+            raise BadRequestException("Task has already been assigned")
 
         request.status = Status.Ongoing
         request.employee_id = AuthManager.get_user().id
@@ -235,7 +246,7 @@ class RequestLogic:
         request = Request.get(request_id)
 
         if request.status != Status.Ongoing:
-            raise BadRequest("Task must have status ongoing")
+            raise BadRequestException("Task must have status ongoing")
 
         request.status = Status.Done
 
