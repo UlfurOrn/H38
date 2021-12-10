@@ -362,7 +362,7 @@ we will be starting on the contractor logic.
 * Kolbeinn:
     *
 * Ríkharður:
-    *
+    * Implemented text wrapping for long descriptions or names. Fixed class diagram and UI flow diagram. Worked on the final report.
 * Smári:
     * Worked on testing the program. Created a check list in discord for use cases that the system needed to have and checked each one of the uses cases to see if they worked correctly and if there were any error, aswell as creating a list for error that i experienced. I worked on the final report.
 * Úlfur:
