@@ -326,7 +326,7 @@ we will be starting on the contractor logic.
 * Kolbeinn:
     *
 * Ríkharður:
-    *
+    * Working on trying to combine all validators into one file/location. Polished up some other functions
 * Smári:
     *
 * Úlfur:
@@ -343,7 +343,8 @@ we will be starting on the contractor logic.
 * Kolbeinn:
     *
 * Ríkharður:
-    *
+    * Made a welcome window for the beginning of the program. Added window state into the program 
+      so that in some scenarios some buttons are removed where not needed. Started working on the final report.
 * Smári:
     *
 * Úlfur:
