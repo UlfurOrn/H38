@@ -27,7 +27,7 @@ class DatabaseModel(BaseModel):
     @classmethod
     def read(cls) -> list[Model]:
         filepath = cls.__get_filepath()
-        with open(filepath, "r") as file_object:
+        with open(filepath, "r", encoding="utf-8") as file_object:
             reader = DictReader(file_object)
             data = [cls.deserialize(model) for model in reader]
 
@@ -36,7 +36,7 @@ class DatabaseModel(BaseModel):
     @classmethod
     def save(cls, data: list[Model]) -> None:
         filepath = cls.__get_filepath()
-        with open(filepath, "w") as file_object:
+        with open(filepath, "w", encoding="utf-8") as file_object:
             writer = DictWriter(file_object, cls._HEADERS)
             writer.writeheader()
             for model in data:
