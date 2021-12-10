@@ -117,7 +117,7 @@ decisions we mentioned above. Put the puzzle pieces together into a
 complete report.
 
 * Guðmundur:
-    * Continued working on wireframes and UI flow. Also participated in writing 
+    * Continued working on wireframes and UI flow. Also participated in writing
     the design report.
 * Kristófer:
     *
@@ -185,7 +185,7 @@ on the logic for contractors, reports, etc...
 * Ríkharður:
     * Continued work on report logic. Finished by the end of the day.
 * Smári:
-    * 
+    *
 * Úlfur:
     * Today I used the prototyping from the others to start work on creating a
     skeleton of the logic layer. I created a Paginator helper class that will be
@@ -286,7 +286,7 @@ and facilities. We will also be working on the authentication system. If we have
 we will be starting on the contractor logic.
 
 * Guðmundur:
-    * 
+    *
 * Kristófer:
     *
 * Kolbeinn:
@@ -296,11 +296,17 @@ we will be starting on the contractor logic.
 * Smári:
     * Worked on and finished creating a class for the login window
 * Úlfur:
-    *
+    * Started and finished the property and facility windows. Also assisted the others
+    with their work.
+
+Today we were able to finish the property and facility windows along with all the parts
+of the authentication system. Now we only need to piece them together.
 
 
 ### Tuesday, 7 December:
-
+Today we will be working on the contractor windows, as well as finishing the implementation of
+the authentication system. We will also start work on implementing filtering and searching as
+well as input validation.
 
 * Guðmundur:
     * Began working on a SearchWindow Superclass.
@@ -311,13 +317,15 @@ we will be starting on the contractor logic.
 * Ríkharður:
     * Verification in logic where it applies was implemented. Made to verify inputs when creating or editing things to the database.
 * Smári:
-    * 
-* Úlfur:
     *
+* Úlfur:
+    * Today I created the contractor windows, along with putting together the pieces of the
+    authentication system.
 
 
 ### Wednesday, 8 December:
-
+Today we will be working on the request and report windows. Getting them working along with
+continuing with the filtering logic and validation.
 
 * Guðmundur:
     * Continued working on the SearchWindow class, then made subclasses.
@@ -330,33 +338,46 @@ we will be starting on the contractor logic.
 * Smári:
     * Worked on creating the report overview window
 * Úlfur:
-    *
+    * Today I had to go to work again. I worked overtime yesterday and after work today to
+    make up for it. I was able to continue with requests and fix some issues with previous
+    windows.
+
+Today we were able to mostly finish the validation and have a solid prototype for filtering
+and searching. The request windows have been started on but not finished.
 
 
 ### Thursday, 9 December:
-
+Today we will hopefully finish the request and report windows. We will also look into
+if we are able to implement more B requirements. More of us will also start working
+on the report as of now.
 
 * Guðmundur:
-    * Worked on the final report 
+    * Worked on the final report
 * Kristófer:
     *
 * Kolbeinn:
     *
 * Ríkharður:
-    * Made a welcome window for the beginning of the program. Added window state into the program 
+    * Made a welcome window for the beginning of the program. Added window state into the program
       so that in some scenarios some buttons are removed where not needed. Started working on the final report.
 * Smári:
-    * Finished working on the report window, aswell as working on the final report.
+    * Finished working on the report window, as well as working on the final report.
 * Úlfur:
-    *
+    * Today I was able to finish all the request windows and some extra windows needed. I
+    started to implement all the methods needed in the logic layer for the reports and
+    also did some work on the actual UI for the reports.
+
+Requests were finished and the project is close to completion. The report has gotten some
+headway and we implemented some extra requirements like a Welcome Window.
 
 
 ### Friday, 10 December:
+Today we will be finishing all that is left. This includes the report windows, filtering options
+and the report itself.
 
-
-* Guðmundur: 
+* Guðmundur:
     * Continued working on the final report, made changes to the class diagrams and requirement list.
-      Then tested the software, to make sure it matches the ui flow and didn't return errors, and made some fine changes. 
+      Then tested the software, to make sure it matches the ui flow and didn't return errors, and made some fine changes.
 * Kristófer:
     *
 * Kolbeinn:
@@ -366,4 +387,5 @@ we will be starting on the contractor logic.
 * Smári:
     * Worked on testing the program. Created a check list in discord for use cases that the system needed to have and checked each one of the uses cases to see if they worked correctly and if there were any error, aswell as creating a list for error that i experienced. I worked on the final report.
 * Úlfur:
-    *
+    * Today I finished the report windows, added filtering to all list windows, added window
+    states for better flow and more. Finished the day off with beer and the report.
