@@ -64,7 +64,7 @@ system.
 * Kristófer:
     *
 * Kolbeinn:
-    *
+    * Use cases
 * Ríkharður:
     * Finished UI Flow and worked on Use Cases
 * Smári:
@@ -122,7 +122,7 @@ complete report.
 * Kristófer:
     *
 * Kolbeinn:
-    *
+    * Use case - Checked if use cases and requirements were good.
 * Ríkharður:
     * Class diagram finished and worked on the design report.
 * Smári:
@@ -181,7 +181,7 @@ on the logic for contractors, reports, etc...
 * Kristófer:
     *
 * Kolbeinn:
-    *
+    * Attempted to do employee filter
 * Ríkharður:
     * Continued work on report logic. Finished by the end of the day.
 * Smári:
@@ -208,7 +208,7 @@ pop up.
 * Kristófer:
     *
 * Kolbeinn:
-    *
+    * Conitnued to try to do employee filter
 * Ríkharður:
     * Refined report logic. Added in contractors.
 * Smári:
@@ -263,7 +263,7 @@ need to finish the Update superclass and any others needed.
 * Kristófer:
     *
 * Kolbeinn:
-    *
+    * Gave up on employee filter and started working on an decorator to catch errors.
 * Ríkharður:
     * Search options polished a bit. Implemented a function to display all the buttons in a fixed format so they would look nicer.
 * Smári:
@@ -313,7 +313,7 @@ well as input validation.
 * Kristófer:
     *
 * Kolbeinn:
-    *
+    * Continued working on the error logger
 * Ríkharður:
     * Verification in logic where it applies was implemented. Made to verify inputs when creating or editing things to the database.
 * Smári:
@@ -332,7 +332,7 @@ continuing with the filtering logic and validation.
 * Kristófer:
     *
 * Kolbeinn:
-    *
+    * Error logger setup, just needs to be reviewed.
 * Ríkharður:
     * Working on trying to combine all validators into one file/location. Polished up some other functions
 * Smári:
@@ -356,7 +356,7 @@ on the report as of now.
 * Kristófer:
     *
 * Kolbeinn:
-    *
+    * Finished the error logger and added a employee detail function to go with the code.
 * Ríkharður:
     * Made a welcome window for the beginning of the program. Added window state into the program
       so that in some scenarios some buttons are removed where not needed. Started working on the final report.
@@ -381,7 +381,7 @@ and the report itself.
 * Kristófer:
     *
 * Kolbeinn:
-    *
+    * Took a look at my error logger code. Opened a beer ;)
 * Ríkharður:
     * Implemented text wrapping for long descriptions or names. Fixed class diagram and UI flow diagram. Worked on the final report.
 * Smári:
