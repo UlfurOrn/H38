@@ -286,7 +286,7 @@ and facilities. We will also be working on the authentication system. If we have
 we will be starting on the contractor logic.
 
 * Guðmundur:
-    *
+    * 
 * Kristófer:
     *
 * Kolbeinn:
@@ -303,7 +303,7 @@ we will be starting on the contractor logic.
 
 
 * Guðmundur:
-    * worked on SearchWindow Superclass
+    * Began working on a SearchWindow Superclass.
 * Kristófer:
     *
 * Kolbeinn:
@@ -320,7 +320,7 @@ we will be starting on the contractor logic.
 
 
 * Guðmundur:
-    *
+    * Continued working on the SearchWindow class, then made subclasses.
 * Kristófer:
     *
 * Kolbeinn:
@@ -337,7 +337,7 @@ we will be starting on the contractor logic.
 
 
 * Guðmundur:
-    *
+    * Worked on the final report 
 * Kristófer:
     *
 * Kolbeinn:
@@ -354,8 +354,9 @@ we will be starting on the contractor logic.
 ### Friday, 10 December:
 
 
-* Guðmundur:
-    *
+* Guðmundur: 
+    * Continued working on the final report, made changes to the class diagrams and requirement list.
+      Then tested the software, to make sure it matches the ui flow and didn't return errors, and made some fine changes. 
 * Kristófer:
     *
 * Kolbeinn:
