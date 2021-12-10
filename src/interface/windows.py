@@ -18,7 +18,7 @@ from logic.api import api
 from logic.logic.contractor_logic import ContractorCreate, ContractorInfo, ContractorItem, ContractorUpdate
 from logic.logic.employee_logic import EmployeeCreate, EmployeeFilterOptions, EmployeeInfo, EmployeeItem, EmployeeUpdate
 from logic.logic.facility_logic import FacilityCreate, FacilityInfo, FacilityItem, FacilityUpdate
-from logic.logic.location_logic import LocationCreate, LocationInfo, LocationItem, LocationUpdate
+from logic.logic.location_logic import LocationCreate, LocationFilterOptions, LocationInfo, LocationItem, LocationUpdate
 from logic.logic.property_logic import PropertyCreate, PropertyInfo, PropertyItem, PropertyUpdate
 from logic.logic.report_logic import ReportCreate, ReportInfo, ReportItem
 from logic.logic.request_logic import (
@@ -236,9 +236,10 @@ class LocationListWindow(ListWindow):
         Column(name="Country", field="country", size=15),
         Column(name="Airport", field="airport", size=28),
     ]
+    filters = LocationFilterOptions()
 
     def setup(self) -> None:
-        self.paginator = api.locations.all(self.page)
+        self.paginator = api.locations.all(self.page, self.filters)
 
     def view_item(self, item: LocationItem) -> Optional[LocationInfo]:
         value = LocationViewWindow(item.location_id).run()
@@ -252,6 +253,13 @@ class LocationListWindow(ListWindow):
             return
 
         LocationViewWindow(value).run()
+
+    def filter(self) -> None:
+        value = LocationFilterWindow(self.filters).run()
+        if value == BACK:
+            return
+        self.filters = value
+        self.page = 1
 
 
 class LocationViewWindow(ViewWindow):
@@ -351,6 +359,21 @@ class LocationUpdateWindow(UpdateWindow):
 
 class LocationViewOptions(str, Enum):
     Supervisor = "Supervisor"
+
+
+class LocationFilterWindow(FilterWindow):
+    title = "Location Filters"
+    fields = [
+        Field(name="Country", field="country"),
+        Field(name="Airport", field="airport"),
+        Field(name="Phone", field="phone"),
+    ]
+
+    def save(self) -> LocationFilterOptions:
+        return LocationFilterOptions(**self.info)
+
+    def submenu(self) -> None:
+        pass
 
 
 # Property Windows:
