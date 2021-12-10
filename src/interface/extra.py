@@ -1,8 +1,16 @@
+from enum import Enum, auto
 from typing import Callable
 
 from pydantic import BaseModel
 
 BACK = "back"
+
+
+class WindowState(Enum):
+    Normal = auto()
+    Select = auto()
+    View = auto()
+    Add = auto()
 
 
 class Button(BaseModel):

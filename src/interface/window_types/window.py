@@ -29,6 +29,7 @@ class Window:
         self.window_setup()
         while True:
             with ExceptionHandler():
+                self.window_state_setup()
                 self.setup()
                 self.display_title()
                 self.display()
@@ -47,6 +48,9 @@ class Window:
         raise NotImplementedError()
 
     def window_setup(self) -> None:
+        pass
+
+    def window_state_setup(self) -> None:
         pass
 
     def setup(self) -> None:
@@ -127,7 +131,7 @@ class Window:
         print("|" + " " * (self.WINDOW_SIZE - 2) + "|")
 
     def clear_screen(self) -> None:
-        print("\n" * 5)
+        print("\n" * 50)
 
     def get_input(self, text: str = "Enter Command: ") -> str:
         print()

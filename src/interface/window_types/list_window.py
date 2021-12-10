@@ -1,6 +1,6 @@
 from typing import Optional
 
-from interface.extra import Button
+from interface.extra import Button, WindowState
 from interface.window_types.window import Window
 from logic.helpers import FilterOptions, InfoModel, ListItem, Paginator
 
@@ -10,6 +10,9 @@ class ListWindow(Window):
     paginator: Paginator
     filters: FilterOptions
     page: int = 1
+
+    def __init__(self, window_state: WindowState = WindowState.Normal):
+        self.window_state = window_state
 
     def button_setup(self) -> None:
         self.buttons = [
@@ -21,6 +24,12 @@ class ListWindow(Window):
 
     def window_setup(self) -> None:
         assert sum(column.size for column in self.columns) + len(self.columns) + 1 == self.WINDOW_SIZE
+
+    def window_state_setup(self) -> None:
+        if self.window_state != WindowState.Normal:
+            self.hide_button("c")
+        if self.window_state != WindowState.Add:
+            self.hide_button("+")
 
     def setup(self) -> None:
         raise NotImplementedError()
