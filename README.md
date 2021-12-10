@@ -20,6 +20,13 @@ Now you can run the project by running the following commands:
 * `cd src`
 * `python main.py`
 
+There is a user, with administrator access, in the system with the SSN of "0"
+make use of the system easier. If you are wondering which human is allowed such
+a SSN... it is Chuck Norris.
+
+Here is also a link to a video which explains how to use the program in detail:
+[teaching-video](https://youtu.be/s-bQAkfxKSA)
+
 
 ## Git
 Working with git can be hard at the start. So here is a brief rundown
