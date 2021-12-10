@@ -15,7 +15,13 @@ from interface.window_types.update_window import UpdateWindow
 from interface.window_types.view_window import ViewWindow
 from interface.window_types.window import Window
 from logic.api import api
-from logic.logic.contractor_logic import ContractorCreate, ContractorInfo, ContractorItem, ContractorUpdate
+from logic.logic.contractor_logic import (
+    ContractorCreate,
+    ContractorFilterOptions,
+    ContractorInfo,
+    ContractorItem,
+    ContractorUpdate,
+)
 from logic.logic.employee_logic import EmployeeCreate, EmployeeFilterOptions, EmployeeInfo, EmployeeItem, EmployeeUpdate
 from logic.logic.facility_logic import FacilityCreate, FacilityFilterOptions, FacilityInfo, FacilityItem, FacilityUpdate
 from logic.logic.location_logic import LocationCreate, LocationFilterOptions, LocationInfo, LocationItem, LocationUpdate
@@ -680,9 +686,10 @@ class ContractorListWindow(ListWindow):
         Column(name="Location", field="location", size=13),
         Column(name="Phone", field="phone", size=9),
     ]
+    filters = ContractorFilterOptions()
 
     def setup(self) -> None:
-        self.paginator = api.contractors.all(self.page)
+        self.paginator = api.contractors.all(self.page, self.filters)
 
     def view_item(self, item: ContractorItem) -> None:
         value = ContractorViewWindow(item.contractor_id).run()
@@ -695,6 +702,13 @@ class ContractorListWindow(ListWindow):
         if value == BACK:
             return
         ContractorViewWindow(value).run()
+
+    def filter(self) -> None:
+        value = ContractorFilterWindow(self.filters).run()
+        if value == BACK:
+            return
+        self.filters = value
+        self.page = 1
 
 
 class ContractorViewWindow(ViewWindow):
@@ -784,6 +798,32 @@ class ContractorViewOptions(str, Enum):
     Location = "Location"
 
 
+class ContractorFilterWindow(FilterWindow):
+    title = "Contractor Filters"
+    fields = [
+        Field(name="Location", field="location", submenu=True),
+        Field(name="Name", field="name"),
+        Field(name="Phone", field="phone"),
+    ]
+
+    def save(self) -> ContractorFilterOptions:
+        return ContractorFilterOptions(**self.info)
+
+    def submenu(self) -> None:
+        value: Union[BACK, LocationInfo] = LocationListWindow().run()
+        if value == BACK:
+            return
+
+        self.info["location"] = value.airport
+        self.info["location_id"] = value.location_id
+
+    def clear(self) -> None:
+        super().clear()
+        field = self.fields[self.current]
+        if field.field == "location":
+            self.info["location_id"] = None
+
+
 # Request Windows:
 ###############################################################################
 class RequestListWindow(ListWindow):
@@ -817,7 +857,7 @@ class RequestContractorsListWindow(ContractorListWindow):
         self.request_id = request_id
 
     def setup(self) -> None:
-        self.paginator = api.requests.contractors(self.request_id, self.page)
+        self.paginator = api.requests.contractors(self.request_id, self.page, self.filters)
 
     def add(self) -> None:
         value: Union[BACK, ContractorInfo] = ContractorListWindow().run()
@@ -825,6 +865,13 @@ class RequestContractorsListWindow(ContractorListWindow):
             return
 
         api.requests.add_contractor(self.request_id, value.contractor_id)
+
+    def filter(self) -> None:
+        value = ContractorFilterWindow(self.filters).run()
+        if value == BACK:
+            return
+        self.filters = value
+        self.page = 1
 
 
 class RequestViewWindow(ViewWindow):

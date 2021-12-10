@@ -8,8 +8,8 @@ from pydantic import BaseModel, validator
 from database.models.contractor_model import Contractor
 from database.models.contractor_requests_model import ContractorRequest
 from database.models.request_model import Priority, Request, RequestStatus
-from logic.helpers import InfoModel, ListItem, Paginator
-from logic.logic.contractor_logic import ContractorItem
+from logic.helpers import InfoModel, ListItem, Paginator, filter_by_field
+from logic.logic.contractor_logic import ContractorFilterOptions, ContractorItem
 from utils.authentication import AuthManager
 from utils.exceptions import BadRequestException
 
@@ -184,11 +184,17 @@ class RequestLogic:
         return request.property_id
 
     @staticmethod
-    def contractors(request_id: UUID, page: int = 1) -> Paginator:
+    def contractors(request_id: UUID, page: int, filters: ContractorFilterOptions) -> Paginator:
         request = Request.get(request_id)
         contractors = [
             Contractor.get(contractor_request.contractor_id) for contractor_request in request.contractor_requests
         ]
+
+        if filters.location_id:
+            contractors = filter(lambda contractor: filters.location_id == contractor.location_id, contractors)
+
+        contractors = filter_by_field(contractors, "name", filters.name)
+        contractors = filter_by_field(contractors, "phone", filters.phone)
 
         contractor_items = [
             ContractorItem(
