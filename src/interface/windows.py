@@ -1072,7 +1072,7 @@ class RequestUpdateWindow(UpdateWindow):
         if value == BACK:
             return
 
-        self.info["priority"] = value
+        self.info["priority"] = value.value
 
 
 class RequestViewOptions(str, Enum):
