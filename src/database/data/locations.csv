@@ -1,4 +1,5 @@
 id,country,airport,phone,opening_hours,supervisor_id
 cd314c5c-1cc3-4376-9003-6529b14cda8f,Iceland,"Keflavík, Airport",1234567,08:00-20:00,e42cee48-1424-45a3-95a6-3d6037a57d5f
 06bc0353-8763-481e-b2a3-03c7d8e2ed47,Iceland,"Reykjavík, Airport",1234567,08:00-20:00,c54d4f21-5c58-4882-ae7e-6b957ea8b607
-0a2572d5-531d-455a-9f15-e5cd1365cbb3,Greenland,Nuuk Airport,1234567,10:00-18:00,
+0a2572d5-531d-455a-9f15-e5cd1365cbb3,Greenland,Nuuk Airport,1234567,10:00-18:00,ec4e6525-651f-4e1e-807f-b3f6241e3e3c
+

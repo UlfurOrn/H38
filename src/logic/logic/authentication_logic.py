@@ -8,7 +8,7 @@ class AuthenticationLogic:
     def login(ssn: int) -> None:
         employees = Employee.all()
         for employee in employees:
-            if employee.ssn == ssn:
+            if str(employee.ssn) == ssn:
                 AuthManager.set_user(employee)
                 return
 
@@ -17,4 +17,6 @@ class AuthenticationLogic:
     @staticmethod
     def is_supervisor():
         user = AuthManager.get_user()
+        if user is None:
+            return False
         return user.is_supervisor()

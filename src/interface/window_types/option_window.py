@@ -20,11 +20,11 @@ class OptionWindow(Window):
 
     def parse_input(self, data: str) -> None:
         if not data.isdigit():
-            raise Exception("Invalid Input: Input must be a valid integer")
+            return
 
         index = int(data) - 1
         if index not in range(len(self.options)):
-            raise Exception("Invalid Input: Input must be a valid option")
+            return
 
         return self.window_specific(self.options[index])
 

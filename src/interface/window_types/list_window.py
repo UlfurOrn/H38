@@ -13,6 +13,7 @@ class ListWindow(Window):
     def button_setup(self) -> None:
         self.buttons = [
             Button(letter="c", description="create", function=self.create, supervisor=True),
+            Button(letter="a", description="add", function=self.add),
             Button(letter="f", description="filter", function=self.filter),
             Button(letter="s", description="search", function=self.search),
             Button(letter="b", description="back", function=self.back),
@@ -90,6 +91,9 @@ class ListWindow(Window):
 
     def create(self) -> None:
         raise NotImplementedError()
+
+    def add(self) -> None:
+        pass
 
     def filter(self) -> None:
         raise NotImplementedError()
