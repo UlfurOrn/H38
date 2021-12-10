@@ -26,7 +26,7 @@ class RequestInfo(InfoModel):
     request_id: UUID
     property_id: UUID
     property: str
-    date: date
+    date: str
     priority: str
     status: str
     employee_id: Optional[UUID]
@@ -87,8 +87,8 @@ class MultipleRequestCreate(BaseModel):
 
 
 class RequestUpdate(BaseModel):
-    date: Optional[date] = None
-    priority: Optional[Priority] = None
+    date: Optional[date]
+    priority: Optional[Priority]
 
     @validator("date", pre=True)
     def validate_optional_date(cls, date_string: Optional[str] = None):
@@ -200,7 +200,7 @@ class RequestLogic:
             request_id=request.id,
             property_id=property.id,
             property=property.property_number,
-            date=request.date,
+            date=datetime.strftime(request.date, "%d/%m/%y"),
             priority=request.priority,
             status=request.status,
             employee_id=request.employee_id,
