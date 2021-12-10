@@ -1041,7 +1041,7 @@ class ReportViewWindow(ViewWindow):
         if value == ReportViewOptions.Employee:
             EmployeeViewWindow(self.info.employee_id).run()
         if value == ReportViewOptions.Contractors:
-            raise NotImplementedError()
+            RequestContractorsListWindow(self.info.request_id).run()
 
 
 class ReportCreateWindow(CreateWindow):

@@ -36,11 +36,10 @@ class ContractorCreate(BaseModel):
 
     @validator("phone")
     def validate_phone(cls, value):
-        if not value:
-            pass
-        else:
-            if not len(value) == 7 or not value.isadigit():
-                raise ValueError("Phone number is incvalid! It should be the length of 7 numbers!")
+        if value is not None:
+            assert value.isdigit(), "Phone number should only include numbers"
+            assert len(value) == 7, "Phone number should be exactly 7 digits"
+
         return value
 
     @validator("opening_hours")
@@ -67,7 +66,7 @@ class ContractorUpdate(BaseModel):
         if not value:
             pass
         else:
-            if not len(value) == 7 or not value.isadigit():
+            if not len(value) == 7 or not value.isdigit():
                 raise ValueError("Phone number is incvalid! It should be the length of 7 numbers!")
         return value
 

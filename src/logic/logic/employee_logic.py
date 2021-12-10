@@ -1,12 +1,10 @@
 from typing import Optional
 from uuid import UUID
 
-from click.decorators import command
 from pydantic import BaseModel, validator
-from pydantic.utils import Representation
 
 from database.models.employee_model import Employee
-from logic.helpers import FilterOptions, InfoModel, ListItem, Paginator
+from logic.helpers import FilterOptions, InfoModel, ListItem, Paginator, filter_by_field
 from utils.authentication import requires_supervisor
 
 
@@ -40,17 +38,17 @@ class EmployeeCreate(BaseModel):
 
     @validator("home_phone", "work_phone")
     def validate_phone(cls, value):
-        if not value:
-            pass
-        else:
-            if not len(value) == 7 or not value.isadigit():
-                raise ValueError("Phone number is incvalid! It should be the length of 7 numbers!")
+        if value is not None:
+            assert value.isdigit(), "Phone number should only include numbers"
+            assert len(value) == 7, "Phone number should be exactly 7 digits"
+
         return value
 
     @validator("ssn")
     def validate_ssn(cls, value):
-        if not len(value) == 10 or not value.isadigit():
-            raise ValueError("SSN is invalid! It should be the length of 10 numbers!")
+        assert value.isdigit(), "SSN should only include numbers"
+        assert len(value) == 10, "SSN should be exactly 10 digits"
+
         return value
 
 
@@ -64,11 +62,10 @@ class EmployeeUpdate(BaseModel):
 
     @validator("home_phone", "work_phone")
     def validate_phone(cls, value):
-        if not value:
-            pass
-        else:
-            if not len(value) == 7 or not value.isadigit():
-                raise ValueError("Phone number is incvalid! It should be the length of 7 numbers!")
+        if value is not None:
+            assert value.isdigit(), "Phone number should only include numbers"
+            assert len(value) == 7, "Phone number should be exactly 7 digits"
+
         return value
 
 
@@ -88,12 +85,9 @@ class EmployeeLogic:
         if filters.location_id:
             employees = filter(lambda employee: filters.location_id == employee.location_id, employees)
 
-        if filters.ssn:
-            employees = filter(lambda employee: filters.ssn in str(employee.ssn), employees)
-        if filters.name:
-            employees = filter(lambda employee: filters.name in str(employee.name), employees)
-        if filters.phone:
-            employees = filter(lambda employee: filters.phone in str(employee.phone), employees)
+        employees = filter_by_field(employees, "ssn", filters.ssn)
+        employees = filter_by_field(employees, "name", filters.name)
+        employees = filter_by_field(employees, "phone", filters.phone)
 
         employee_items = [
             EmployeeItem(employee_id=employee.id, name=employee.name, ssn=employee.ssn, phone=employee.work_phone)

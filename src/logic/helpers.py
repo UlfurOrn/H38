@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+from typing import Iterator, Optional
+
 from pydantic import BaseModel
 
+from database.models.database_model import DatabaseModel
 from utils.exceptions import BadRequestException
 
 
@@ -42,3 +45,10 @@ class Paginator(BaseModel):
             max_page=max_page,
             items=items[(page - 1) * cls._PAGE_SIZE : page * cls._PAGE_SIZE],  # noqa
         )
+
+
+def filter_by_field(models: Iterator, field: str, value: Optional[str] = None) -> Iterator:
+    if value is None:
+        return models
+    value = value.lower()
+    return filter(lambda model: value in str(model.__getattribute__(field)).lower(), models)
