@@ -1,4 +1,0 @@
-id,request_id,description,cost,status
-8e8b1c13-660e-43bc-92db-2ba950324a67,8e8b1c13-660e-43bc-92db-2ba950324b57,Testing,1000,Closed
-9ef65f02-3570-459b-9d56-b5d9a73d1281,c2d47c93-3b68-4065-8268-2fdcda60d49e,Fixing Shower,5000,Unapproved
-f50a90d6-19bc-467b-9d28-8e116bbdcbb2,c2d47c93-3b68-4065-8268-2fdcda60d49e,Fix Stuff,5000,Unapproved

@@ -27,10 +27,8 @@ class ViewWindow(Window):
     def window_state_setup(self) -> None:
         if self.window_state != WindowState.Normal:
             self.hide_button("u")
-        if self.window_state != WindowState.Select:
+        if self.window_state not in (WindowState.Select, WindowState.Add):
             self.hide_button("s")
-        if self.window_state != WindowState.Add:
-            self.hide_button("+")
 
     def display(self) -> None:
         self.boundary()
