@@ -27,6 +27,7 @@ from logic.logic.request_logic import (
     RequestUpdate,
     SingleRequestCreate,
 )
+from utils.authentication import AuthManager
 from utils.exceptions import BadRequestException
 
 
@@ -717,10 +718,10 @@ class RequestViewWindow(ViewWindow):
 
     def button_setup(self) -> None:
         self.buttons = [
-            Button(letter="u", description="update", function=self.update, supervisor=True),
+            Button(letter="u", description="update", function=self.update),
             Button(letter="a", description="assign", function=self.assign),
             Button(letter="d", description="done", function=self.done),
-            Button(letter="c", description="create", function=self.create),
+            Button(letter="r", description="report", function=self.report),
             Button(letter="s", description="select", function=self.select),
             Button(letter="v", description="view", function=self.view),
             Button(letter="b", description="back", function=self.back),
@@ -734,21 +735,34 @@ class RequestViewWindow(ViewWindow):
             self.hide_button("a")
         if self.info.status != RequestStatus.Ongoing:
             self.hide_button("d")
+            self.hide_button("u")
         if self.info.status != RequestStatus.Done:
             self.hide_button("c")
+            self.hide_button("r")
 
     def update(self) -> None:
+        user = AuthManager.get_user()
+        if not (user.is_supervisor() or user.id == self.info.employee_id):
+            raise BadRequestException("User is not a supervisor or the assignee")
+
         RequestUpdateWindow(self.model_id).run()
         self.window_setup()
 
     def assign(self) -> None:
         api.requests.assign(request_id=self.model_id)
+        self.window_setup()
 
     def done(self) -> None:
         api.requests.done(request_id=self.model_id)
+        self.window_setup()
 
-    def create(self) -> None:
-        raise NotImplementedError()
+    def report(self) -> None:
+        value: Union[BACK, UUID] = ReportCreateWindow(self.info.request_id).run()
+        if value == BACK:
+            return
+
+        ReportViewWindow(value).run()
+        self.window_setup()
 
     def select(self) -> RequestInfo:
         return self.info
@@ -924,10 +938,10 @@ class ReportViewWindow(ViewWindow):
 
     def button_setup(self) -> None:
         self.buttons = [
-            Button(letter="a", description="approve", function=self.approve),
-            Button(letter="u", description="unapprove", function=self.unapprove),
-            Button(letter="c", description="close", function=self.close),
-            Button(letter="c", description="cancel", function=self.cancel),
+            Button(letter="a", description="approve", function=self.approve, supervisor=True),
+            Button(letter="u", description="unapprove", function=self.unapprove, supervisor=True),
+            Button(letter="c", description="close", function=self.close, supervisor=True),
+            Button(letter="c", description="cancel", function=self.cancel, supervisor=True),
             Button(letter="v", description="view", function=self.view),
             Button(letter="b", description="back", function=self.back),
         ]
@@ -988,41 +1002,7 @@ class ReportCreateWindow(CreateWindow):
         return report_id
 
     def submenu(self) -> None:
-        value: Union[BACK, LocationInfo] = LocationListWindow().run()
-        if value == BACK:
-            return
-
-        self.info["location"] = value.airport
-        self.info["location_id"] = value.location_id
-
-
-class ReportUpdateWindow(UpdateWindow):
-    title = "Update Report"
-    fields = [
-        Field(name="Name", field="name"),
-        Field(name="Phone", field="phone"),
-        Field(name="Email", field="email"),
-        Field(name="Opening Hours", field="opening_hours"),
-        Field(name="Location", field="location", submenu=True),
-    ]
-
-    def window_setup(self) -> None:
-        self.info = api.contractors.get(self.model_id).dict()
-
-    def submit(self) -> UUID:
         pass
-        # data = ReportUpdate(**self.info)
-        # contractor_id = api.contractors.update(self.model_id, data)
-
-        # return contractor_id
-
-    def submenu(self) -> None:
-        value: Union[BACK, LocationInfo] = LocationListWindow().run()
-        if value == BACK:
-            return
-
-        self.info["location"] = value.airport
-        self.info["location_id"] = value.location_id
 
 
 class ReportViewOptions(str, Enum):

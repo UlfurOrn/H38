@@ -59,7 +59,7 @@ class ReportLogic:
 
     @staticmethod
     def create(request_id: UUID, data: ReportCreate) -> UUID:
-        report = Report(request_id=request_id, **data.dict())
+        report = Report(request_id=request_id, status=ReportStatus.Unapproved, **data.dict())
 
         report.create()
 
