@@ -156,7 +156,7 @@ the other two layers.
 * Ríkharður:
     * Created and finished employee and contractor logic. Started on report logic.
 * Smári:
-    *
+    * Got familiar with git
 * Úlfur:
     * Today I came in a bit early to setup the git repository. Added linting, pre
     commit hooks and some more stuff to have the best code quality we can. Then I
@@ -185,7 +185,7 @@ on the logic for contractors, reports, etc...
 * Ríkharður:
     * Continued work on report logic. Finished by the end of the day.
 * Smári:
-    *
+    * 
 * Úlfur:
     * Today I used the prototyping from the others to start work on creating a
     skeleton of the logic layer. I created a Paginator helper class that will be
@@ -267,7 +267,7 @@ need to finish the Update superclass and any others needed.
 * Ríkharður:
     * Search options polished a bit. Implemented a function to display all the buttons in a fixed format so they would look nicer.
 * Smári:
-    *
+    * Worked on creating windows for filter and login
 * Úlfur:
     * Today I implemented the Update superclass as well as refactored a big chunk of the
     window logic. This allows us to reuse even more code and there is still some more that
@@ -294,7 +294,7 @@ we will be starting on the contractor logic.
 * Ríkharður:
     * Authentication funtionality was worked on.
 * Smári:
-    *
+    * Worked on and finished creating a class for the login window
 * Úlfur:
     *
 
@@ -311,7 +311,7 @@ we will be starting on the contractor logic.
 * Ríkharður:
     * Verification in logic where it applies was implemented. Made to verify inputs when creating or editing things to the database.
 * Smári:
-    *
+    * 
 * Úlfur:
     *
 
@@ -328,7 +328,7 @@ we will be starting on the contractor logic.
 * Ríkharður:
     * Working on trying to combine all validators into one file/location. Polished up some other functions
 * Smári:
-    *
+    * Worked on creating the report overview window
 * Úlfur:
     *
 
@@ -346,7 +346,7 @@ we will be starting on the contractor logic.
     * Made a welcome window for the beginning of the program. Added window state into the program 
       so that in some scenarios some buttons are removed where not needed. Started working on the final report.
 * Smári:
-    *
+    * Finished working on the report window, aswell as working on the final report.
 * Úlfur:
     *
 
@@ -363,6 +363,6 @@ we will be starting on the contractor logic.
 * Ríkharður:
     *
 * Smári:
-    *
+    * Worked on testing the program. Created a check list in discord for use cases that the system needed to have and checked each one of the uses cases to see if they worked correctly and if there were any error, aswell as creating a list for error that i experienced. I worked on the final report.
 * Úlfur:
     *
