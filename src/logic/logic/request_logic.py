@@ -8,8 +8,8 @@ from pydantic import BaseModel, validator
 from database.models.contractor_model import Contractor
 from database.models.contractor_requests_model import ContractorRequest
 from database.models.request_model import Priority, Request, RequestStatus
-from logic.helpers import InfoModel, ListItem, Paginator
-from logic.logic.contractor_logic import ContractorItem
+from logic.helpers import FilterOptions, InfoModel, ListItem, Paginator, filter_by_field
+from logic.logic.contractor_logic import ContractorFilterOptions, ContractorItem
 from utils.authentication import AuthManager
 from utils.exceptions import BadRequestException
 
@@ -103,10 +103,46 @@ class RequestUpdate(BaseModel):
             raise ValueError("Invalid date provided, use format: DD/MM/YY")
 
 
+class RequestFilterOptions(FilterOptions):
+    location_id: Optional[UUID]
+    location: Optional[str]
+    property_id: Optional[UUID]
+    property: Optional[str]
+    employee_id: Optional[UUID]
+    employee: Optional[str]
+    request_id: Optional[str]
+    from_date: Optional[date]
+    to_date: Optional[date]
+
+    @validator("from_date", "to_date", pre=True)
+    def validate_date(cls, date_string: Optional[str]) -> Optional[date]:
+        if date_string is None:
+            return
+        try:
+            date_object = datetime.strptime(date_string, "%d/%m/%y").date()
+        except ValueError:
+            raise ValueError("Invalid date provided, use format:\nDD/MM/YY")
+
+        return date_object
+
+
 class RequestLogic:
     @staticmethod
-    def all(page: int) -> Paginator:
+    def all(page: int, filters: RequestFilterOptions) -> Paginator:
         requests = Request.all()
+
+        if filters.location_id:
+            requests = filter(lambda request: filters.location_id == request.property.location_id, requests)
+        if filters.property_id:
+            requests = filter(lambda request: filters.property_id == request.property_id, requests)
+        if filters.employee_id:
+            requests = filter(lambda request: filters.employee_id == request.employee_id, requests)
+        if filters.request_id:
+            requests = filter(lambda request: filters.request_id.lower() in str(request.id).lower(), requests)
+        if filters.from_date:
+            requests = filter(lambda request: filters.from_date <= request.date, requests)
+        if filters.to_date:
+            requests = filter(lambda request: filters.to_date >= request.date, requests)
 
         request_items = [
             RequestItem(
@@ -184,11 +220,17 @@ class RequestLogic:
         return request.property_id
 
     @staticmethod
-    def contractors(request_id: UUID, page: int = 1) -> Paginator:
+    def contractors(request_id: UUID, page: int, filters: ContractorFilterOptions) -> Paginator:
         request = Request.get(request_id)
         contractors = [
             Contractor.get(contractor_request.contractor_id) for contractor_request in request.contractor_requests
         ]
+
+        if filters.location_id:
+            contractors = filter(lambda contractor: filters.location_id == contractor.location_id, contractors)
+
+        contractors = filter_by_field(contractors, "name", filters.name)
+        contractors = filter_by_field(contractors, "phone", filters.phone)
 
         contractor_items = [
             ContractorItem(

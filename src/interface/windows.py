@@ -23,12 +23,13 @@ from logic.logic.contractor_logic import (
     ContractorUpdate,
 )
 from logic.logic.employee_logic import EmployeeCreate, EmployeeFilterOptions, EmployeeInfo, EmployeeItem, EmployeeUpdate
-from logic.logic.facility_logic import FacilityCreate, FacilityInfo, FacilityItem, FacilityUpdate
+from logic.logic.facility_logic import FacilityCreate, FacilityFilterOptions, FacilityInfo, FacilityItem, FacilityUpdate
 from logic.logic.location_logic import LocationCreate, LocationFilterOptions, LocationInfo, LocationItem, LocationUpdate
-from logic.logic.property_logic import PropertyCreate, PropertyInfo, PropertyItem, PropertyUpdate
-from logic.logic.report_logic import ReportCreate, ReportInfo, ReportItem
+from logic.logic.property_logic import PropertyCreate, PropertyFilterOptions, PropertyInfo, PropertyItem, PropertyUpdate
+from logic.logic.report_logic import ReportCreate, ReportFilterOptions, ReportInfo, ReportItem
 from logic.logic.request_logic import (
     MultipleRequestCreate,
+    RequestFilterOptions,
     RequestInfo,
     RequestItem,
     RequestUpdate,
@@ -230,7 +231,9 @@ class EmployeeFilterWindow(FilterWindow):
 
     def clear(self) -> None:
         super().clear()
-        self.info["location_id"] = None
+        field = self.fields[self.current]
+        if field.field == "location":
+            self.info["location_id"] = None
 
 
 # Location Windows:
@@ -392,9 +395,10 @@ class PropertyListWindow(ListWindow):
         Column(name="Location", field="location", size=14),
         Column(name="Condition", field="condition", size=11),
     ]
+    filters = PropertyFilterOptions()
 
     def setup(self) -> None:
-        self.paginator = api.properties.all(self.page)
+        self.paginator = api.properties.all(self.page, self.filters)
 
     def view_item(self, item: PropertyItem) -> None:
         value = PropertyViewWindow(item.property_id, self.window_state).run()
@@ -408,6 +412,13 @@ class PropertyListWindow(ListWindow):
             return
 
         PropertyViewWindow(value).run()
+
+    def filter(self) -> None:
+        value = PropertyFilterWindow(self.filters).run()
+        if value == BACK:
+            return
+        self.filters = value
+        self.page = 1
 
 
 class PropertyViewWindow(ViewWindow):
@@ -514,6 +525,40 @@ class PropertyViewOptions(str, Enum):
     Facilities = "Facilities"
 
 
+class PropertyFilterWindow(FilterWindow):
+    title = "Property Filters"
+    fields = [
+        Field(name="Location", field="location", submenu=True),
+        Field(name="Condition", field="condition", submenu=True),
+        Field(name="Property Number", field="property_number"),
+    ]
+
+    def save(self) -> PropertyFilterOptions:
+        return PropertyFilterOptions(**self.info)
+
+    def submenu(self) -> None:
+        field = self.fields[self.current]
+        if field.field == "location":
+            value: Union[BACK, LocationInfo] = LocationListWindow().run()
+            if value == BACK:
+                return
+
+            self.info["location"] = value.airport
+            self.info["location_id"] = value.location_id
+        else:
+            value: Union[BACK, Condition] = SelectOptionWindow(Condition).run()
+            if value == BACK:
+                return
+
+            self.info["condition"] = value.value
+
+    def clear(self) -> None:
+        super().clear()
+        field = self.fields[self.current]
+        if field.field == "location":
+            self.info["location_id"] = None
+
+
 # Facility Windows:
 ###############################################################################
 class FacilityListWindow(ListWindow):
@@ -523,13 +568,14 @@ class FacilityListWindow(ListWindow):
         Column(name="Name", field="name", size=32),
         Column(name="Condition", field="condition", size=11),
     ]
+    filters = FacilityFilterOptions()
 
     def __init__(self, property_id: UUID, window_state: WindowState = WindowState.Normal):
         super().__init__(window_state)
         self.property_id = property_id
 
     def setup(self) -> None:
-        self.paginator = api.facilities.all(self.property_id, self.page)
+        self.paginator = api.facilities.all(self.property_id, self.page, self.filters)
 
     def view_item(self, item: FacilityItem) -> None:
         value = FacilityViewWindow(item.facility_id, self.window_state).run()
@@ -543,6 +589,13 @@ class FacilityListWindow(ListWindow):
             return
 
         FacilityViewWindow(value).run()
+
+    def filter(self) -> None:
+        value = FacilityFilterWindow(self.filters).run()
+        if value == BACK:
+            return
+        self.filters = value
+        self.page = 1
 
 
 class FacilityViewWindow(ViewWindow):
@@ -610,6 +663,21 @@ class FacilityUpdateWindow(UpdateWindow):
         self.info["condition"] = value.value
 
 
+class FacilityFilterWindow(FilterWindow):
+    title = "Property Filters"
+    fields = [Field(name="Condition", field="condition", submenu=True), Field(name="Name", field="name")]
+
+    def save(self) -> FacilityFilterOptions:
+        return FacilityFilterOptions(**self.info)
+
+    def submenu(self) -> None:
+        value: Union[BACK, Condition] = SelectOptionWindow(Condition).run()
+        if value == BACK:
+            return
+
+        self.info["condition"] = value.value
+
+
 # Contractor Windows:
 ###############################################################################
 class ContractorListWindow(ListWindow):
@@ -623,7 +691,7 @@ class ContractorListWindow(ListWindow):
     filters = ContractorFilterOptions()
 
     def setup(self) -> None:
-        self.paginator = api.contractors.all(self.page)
+        self.paginator = api.contractors.all(self.page, self.filters)
 
     def view_item(self, item: ContractorItem) -> None:
         value = ContractorViewWindow(item.contractor_id, self.window_state).run()
@@ -636,6 +704,13 @@ class ContractorListWindow(ListWindow):
         if value == BACK:
             return
         ContractorViewWindow(value).run()
+
+    def filter(self) -> None:
+        value = ContractorFilterWindow(self.filters).run()
+        if value == BACK:
+            return
+        self.filters = value
+        self.page = 1
 
 
 class ContractorViewWindow(ViewWindow):
@@ -737,15 +812,18 @@ class ContractorFilterWindow(FilterWindow):
         return ContractorFilterOptions(**self.info)
 
     def submenu(self) -> None:
-        value: Union[BACK, LocationInfo] = LocationListWindow(WindowState.Select).run()
+        value: Union[BACK, LocationInfo] = LocationListWindow().run()
         if value == BACK:
             return
+
         self.info["location"] = value.airport
         self.info["location_id"] = value.location_id
 
     def clear(self) -> None:
         super().clear()
-        self.info["location_id"] = None
+        field = self.fields[self.current]
+        if field.field == "location":
+            self.info["location_id"] = None
 
 
 # Request Windows:
@@ -759,9 +837,10 @@ class RequestListWindow(ListWindow):
         Column(name="Priority", field="priority", size=10),
         Column(name="Status", field="status", size=9),
     ]
+    filters = RequestFilterOptions()
 
     def setup(self) -> None:
-        self.paginator = api.requests.all(self.page)
+        self.paginator = api.requests.all(self.page, self.filters)
 
     def view_item(self, item: RequestItem) -> None:
         value = RequestViewWindow(item.request_id).run()
@@ -775,13 +854,20 @@ class RequestListWindow(ListWindow):
             return
         RequestViewWindow(value).run()
 
+    def filter(self) -> None:
+        value = RequestFilterWindow(self.filters).run()
+        if value == BACK:
+            return
+        self.filters = value
+        self.page = 1
+
 
 class RequestContractorsListWindow(ContractorListWindow):
     def __init__(self, request_id: UUID):
         self.request_id = request_id
 
     def setup(self) -> None:
-        self.paginator = api.requests.contractors(self.request_id, self.page)
+        self.paginator = api.requests.contractors(self.request_id, self.page, self.filters)
 
     def add(self) -> None:
         value: Union[BACK, ContractorInfo] = ContractorListWindow().run()
@@ -789,6 +875,13 @@ class RequestContractorsListWindow(ContractorListWindow):
             return
 
         api.requests.add_contractor(self.request_id, value.contractor_id)
+
+    def filter(self) -> None:
+        value = ContractorFilterWindow(self.filters).run()
+        if value == BACK:
+            return
+        self.filters = value
+        self.page = 1
 
 
 class RequestViewWindow(ViewWindow):
@@ -986,6 +1079,55 @@ class RequestViewOptions(str, Enum):
     Contractors = "Contractors"
 
 
+class RequestFilterWindow(FilterWindow):
+    title = "Request Filters"
+    fields = [
+        Field(name="Location", field="location", submenu=True),
+        Field(name="Property", field="property", submenu=True),
+        Field(name="Employee", field="employee", submenu=True),
+        Field(name="Request ID", field="request_id"),
+        Field(name="From Date", field="from_date"),
+        Field(name="To Date", field="to_date"),
+    ]
+
+    def save(self) -> RequestFilterOptions:
+        return RequestFilterOptions(**self.info)
+
+    def submenu(self) -> None:
+        field = self.fields[self.current]
+        if field.field == "location":
+            value: Union[BACK, LocationInfo] = LocationListWindow().run()
+            if value == BACK:
+                return
+
+            self.info["location"] = value.airport
+            self.info["location_id"] = value.location_id
+        if field.field == "property":
+            value: Union[BACK, PropertyInfo] = PropertyListWindow().run()
+            if value == BACK:
+                return
+
+            self.info["property"] = value.property_number
+            self.info["property_id"] = value.property_id
+        if field.field == "employee":
+            value: Union[BACK, EmployeeInfo] = EmployeeListWindow().run()
+            if value == BACK:
+                return
+
+            self.info["employee"] = value.name
+            self.info["employee_id"] = value.employee_id
+
+    def clear(self) -> None:
+        super().clear()
+        field = self.fields[self.current]
+        if field.field == "location":
+            self.info["location_id"] = None
+        if field.field == "property":
+            self.info["property_id"] = None
+        if field.field == "employee":
+            self.info["employee_id"] = None
+
+
 # Report Windows:
 ###############################################################################
 class ReportListWindow(ListWindow):
@@ -996,9 +1138,10 @@ class ReportListWindow(ListWindow):
         Column(name="Employee", field="employee", size=18),
         Column(name="Status", field="status", size=12),
     ]
+    filters = ReportFilterOptions()
 
     def setup(self) -> None:
-        self.paginator = api.reports.all(self.page)
+        self.paginator = api.reports.all(self.page, self.filters)
         self.hide_button("c")  # Create is never used for this window
 
     def view_item(self, item: ReportItem) -> None:
@@ -1009,6 +1152,13 @@ class ReportListWindow(ListWindow):
 
     def create(self) -> None:
         pass
+
+    def filter(self) -> None:
+        value = ReportFilterWindow(self.filters).run()
+        if value == BACK:
+            return
+        self.filters = value
+        self.page = 1
 
 
 class ReportViewWindow(ViewWindow):
@@ -1090,6 +1240,54 @@ class ReportCreateWindow(CreateWindow):
 
     def submenu(self) -> None:
         pass
+
+
+class ReportFilterWindow(FilterWindow):
+    title = "Report Filters"
+    fields = [
+        Field(name="Location", field="location", submenu=True),
+        Field(name="Property", field="property", submenu=True),
+        Field(name="Employee", field="employee", submenu=True),
+        Field(name="From Date", field="from_date"),
+        Field(name="To Date", field="to_date"),
+    ]
+
+    def save(self) -> ReportFilterOptions:
+        return ReportFilterOptions(**self.info)
+
+    def submenu(self) -> None:
+        field = self.fields[self.current]
+        if field.field == "location":
+            value: Union[BACK, LocationInfo] = LocationListWindow().run()
+            if value == BACK:
+                return
+
+            self.info["location"] = value.airport
+            self.info["location_id"] = value.location_id
+        if field.field == "property":
+            value: Union[BACK, PropertyInfo] = PropertyListWindow().run()
+            if value == BACK:
+                return
+
+            self.info["property"] = value.property_number
+            self.info["property_id"] = value.property_id
+        if field.field == "employee":
+            value: Union[BACK, EmployeeInfo] = EmployeeListWindow().run()
+            if value == BACK:
+                return
+
+            self.info["employee"] = value.name
+            self.info["employee_id"] = value.employee_id
+
+    def clear(self) -> None:
+        super().clear()
+        field = self.fields[self.current]
+        if field.field == "location":
+            self.info["location_id"] = None
+        if field.field == "property":
+            self.info["property_id"] = None
+        if field.field == "employee":
+            self.info["employee_id"] = None
 
 
 class ReportViewOptions(str, Enum):

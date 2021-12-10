@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 from database.models.employee_model import Employee
 from database.models.location_model import Location
-from logic.helpers import FilterOptions, InfoModel, ListItem, Paginator
+from logic.helpers import FilterOptions, InfoModel, ListItem, Paginator, filter_by_field
 
 
 class LocationItem(ListItem):
@@ -50,12 +50,9 @@ class LocationLogic:
     def all(page: int, filters: LocationFilterOptions) -> Paginator:
         locations = Location.all()
 
-        if filters.country:
-            locations = filter(lambda location: filters.country in str(location.country), locations)
-        if filters.airport:
-            locations = filter(lambda location: filters.airport in str(location.airport), locations)
-        if filters.phone:
-            locations = filter(lambda location: filters.phone in str(location.phone), locations)
+        locations = filter_by_field(locations, "country", filters.country)
+        locations = filter_by_field(locations, "airport", filters.airport)
+        locations = filter_by_field(locations, "phone", filters.phone)
 
         location_items = [
             LocationItem(location_id=location.id, country=location.country, airport=location.airport)
