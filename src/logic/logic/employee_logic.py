@@ -83,7 +83,7 @@ class EmployeeFilterOptions(FilterOptions):
 
 class EmployeeLogic:
     @staticmethod
-    def all(page: int, filters: EmployeeFilterOptions, search: Optional[str] = None) -> Paginator:
+    def all(page: int, filters: EmployeeFilterOptions) -> Paginator:
         employees = Employee.all()
 
         if filters.location_id:

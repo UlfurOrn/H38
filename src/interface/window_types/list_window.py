@@ -11,7 +11,7 @@ class ListWindow(Window):
     filters: FilterOptions
     page: int = 1
 
-    def __init__(self, window_state: WindowState):
+    def __init__(self, window_state: WindowState = WindowState.Normal):
         self.window_state = window_state
 
     def button_setup(self) -> None:

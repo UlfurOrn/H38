@@ -7,7 +7,7 @@ from pydantic.class_validators import validator
 from pydantic.errors import DateTimeError
 
 from database.models.contractor_model import Contractor
-from logic.helpers import InfoModel, ListItem, Paginator
+from logic.helpers import FilterOptions, InfoModel, ListItem, Paginator, filter_by_field
 
 
 class ContractorItem(ListItem):
@@ -82,16 +82,23 @@ class ContractorUpdate(BaseModel):
         return value
 
 
+class ContractorFilterOptions(FilterOptions):
+    location_id: Optional[UUID]
+    location: Optional[str]
+    name: Optional[str]
+    phone: Optional[str]
+
+
 class ContractorLogic:
     @staticmethod
-    def all(page: int, search: Optional[str] = None) -> Paginator:
+    def all(page: int, filters: ContractorFilterOptions) -> Paginator:
         contractors = Contractor.all()
 
-        def check_match(contractor: Contractor):
-            return search in str(contractor.name)
+        if filters.location_id:
+            contractors = filter(lambda contractor: filters.location_id == contractor.location_id, contractors)
 
-        if search:
-            contractors = filter(check_match, contractors)
+        contractors = filter_by_field(contractors, "name", filters.name)
+        contractors = filter_by_field(contractors, "phone", filters.phone)
 
         contractor_items = [
             ContractorItem(

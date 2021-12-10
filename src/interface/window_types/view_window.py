@@ -9,7 +9,7 @@ class ViewWindow(Window):
     info: InfoModel
     fields: list[Field]
 
-    def __init__(self, model_id: UUID, window_state: WindowState):
+    def __init__(self, model_id: UUID, window_state: WindowState = WindowState.Normal):
         self.model_id = model_id
         self.window_state = window_state
 
