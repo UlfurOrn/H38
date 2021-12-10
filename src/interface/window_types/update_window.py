@@ -44,12 +44,13 @@ class UpdateWindow(Window):
 
     def display_info(self) -> None:
         for field in self.fields:
+            prefix = "+ " if field.submenu and field.mutable else ""
             value = self.info.get(field.field)
             value = value or ""
             value = str(value)
             if field == self.fields[self.current]:
                 value = value[:7] + " <---"
-            print(f"|{field.name:>16}: {value:<30}|")
+            print(f"|{prefix + field.name:>16}: {value:<30}|")
 
     def parse_input(self, data: str) -> None:
         if data:

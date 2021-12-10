@@ -4,7 +4,8 @@ from typing import Any, Optional, Union
 from uuid import UUID
 
 from database.models.property_model import Condition
-from database.models.request_model import Priority, Status
+from database.models.report_model import ReportStatus
+from database.models.request_model import Priority, RequestStatus
 from interface.extra import BACK, Button, Column, Field
 from interface.window_types.create_window import CreateWindow
 from interface.window_types.list_window import ListWindow
@@ -18,6 +19,7 @@ from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeIte
 from logic.logic.facility_logic import FacilityCreate, FacilityInfo, FacilityItem, FacilityUpdate
 from logic.logic.location_logic import LocationCreate, LocationInfo, LocationItem, LocationUpdate
 from logic.logic.property_logic import PropertyCreate, PropertyInfo, PropertyItem, PropertyUpdate
+from logic.logic.report_logic import ReportCreate, ReportInfo, ReportItem
 from logic.logic.request_logic import (
     MultipleRequestCreate,
     RequestInfo,
@@ -25,6 +27,7 @@ from logic.logic.request_logic import (
     RequestUpdate,
     SingleRequestCreate,
 )
+from utils.authentication import AuthManager
 from utils.exceptions import BadRequestException
 
 
@@ -48,6 +51,7 @@ class MainMenu(OptionWindow):
             MainMenuOptions.Properties: PropertyListWindow(),
             MainMenuOptions.Contractors: ContractorListWindow(),
             MainMenuOptions.Requests: RequestListWindow(),
+            MainMenuOptions.Reports: ReportListWindow(),
         }
 
         if option not in options:
@@ -657,7 +661,7 @@ class ContractorViewOptions(str, Enum):
     Location = "Location"
 
 
-# Contractor Windows:
+# Request Windows:
 ###############################################################################
 class RequestListWindow(ListWindow):
     title = "Request List"
@@ -714,10 +718,10 @@ class RequestViewWindow(ViewWindow):
 
     def button_setup(self) -> None:
         self.buttons = [
-            Button(letter="u", description="update", function=self.update, supervisor=True),
+            Button(letter="u", description="update", function=self.update),
             Button(letter="a", description="assign", function=self.assign),
             Button(letter="d", description="done", function=self.done),
-            Button(letter="c", description="create", function=self.create),
+            Button(letter="r", description="report", function=self.report),
             Button(letter="s", description="select", function=self.select),
             Button(letter="v", description="view", function=self.view),
             Button(letter="b", description="back", function=self.back),
@@ -727,25 +731,38 @@ class RequestViewWindow(ViewWindow):
         self.info = api.requests.get(self.model_id)
 
     def setup(self) -> None:
-        if self.info.status != Status.Todo:
+        if self.info.status != RequestStatus.Todo:
             self.hide_button("a")
-        if self.info.status != Status.Ongoing:
+        if self.info.status != RequestStatus.Ongoing:
             self.hide_button("d")
-        if self.info.status != Status.Done:
+            self.hide_button("u")
+        if self.info.status != RequestStatus.Done:
             self.hide_button("c")
+            self.hide_button("r")
 
     def update(self) -> None:
+        user = AuthManager.get_user()
+        if not (user.is_supervisor() or user.id == self.info.employee_id):
+            raise BadRequestException("User is not a supervisor or the assignee")
+
         RequestUpdateWindow(self.model_id).run()
         self.window_setup()
 
     def assign(self) -> None:
         api.requests.assign(request_id=self.model_id)
+        self.window_setup()
 
     def done(self) -> None:
         api.requests.done(request_id=self.model_id)
+        self.window_setup()
 
-    def create(self) -> None:
-        raise NotImplementedError()
+    def report(self) -> None:
+        value: Union[BACK, UUID] = ReportCreateWindow(self.info.request_id).run()
+        if value == BACK:
+            return
+
+        ReportViewWindow(value).run()
+        self.window_setup()
 
     def select(self) -> RequestInfo:
         return self.info
@@ -884,8 +901,115 @@ class RequestViewOptions(str, Enum):
 
 # Report Windows:
 ###############################################################################
-class Temp:
-    pass
+class ReportListWindow(ListWindow):
+    title = "Report List"
+    columns = [
+        Column(name="#", field="", size=3),
+        Column(name="Property", field="property", size=12),
+        Column(name="Employee", field="employee", size=18),
+        Column(name="Status", field="status", size=12),
+    ]
+
+    def setup(self) -> None:
+        self.paginator = api.reports.all(self.page)
+        self.hide_button("c")  # Create is never used for this window
+
+    def view_item(self, item: ReportItem) -> None:
+        value = ReportViewWindow(item.report_id).run()
+        if value == BACK:
+            return
+        return value
+
+    def create(self) -> None:
+        pass
+
+
+class ReportViewWindow(ViewWindow):
+    title = "View Report"
+    info: ReportInfo
+    fields = [
+        Field(name="Property", field="property"),
+        Field(name="Employee", field="employee"),
+        Field(name="Description", field="description"),
+        Field(name="Cost", field="cost"),
+        Field(name="Contractors", field="contractors"),
+        Field(name="Status", field="status"),
+    ]
+
+    def button_setup(self) -> None:
+        self.buttons = [
+            Button(letter="a", description="approve", function=self.approve, supervisor=True),
+            Button(letter="u", description="unapprove", function=self.unapprove, supervisor=True),
+            Button(letter="c", description="close", function=self.close, supervisor=True),
+            Button(letter="c", description="cancel", function=self.cancel, supervisor=True),
+            Button(letter="v", description="view", function=self.view),
+            Button(letter="b", description="back", function=self.back),
+        ]
+
+    def window_setup(self) -> None:
+        self.info = api.reports.get(self.model_id)
+
+    def setup(self) -> None:
+        if self.info.status != ReportStatus.Unapproved:
+            self.hide_button("a")
+            self.hide_button("cancel")
+        if self.info.status != ReportStatus.Approved:
+            self.hide_button("u")
+            self.hide_button("close")
+
+    def approve(self) -> None:
+        api.reports.approve(self.model_id)
+        self.window_setup()
+
+    def unapprove(self) -> None:
+        api.reports.unapprove(self.model_id)
+        self.window_setup()
+
+    def close(self) -> None:
+        api.reports.close(self.model_id)
+        self.window_setup()
+
+    def cancel(self) -> None:
+        api.reports.cancel(self.model_id)
+        self.window_setup()
+
+    def view(self) -> None:
+        value: Union[BACK, ReportViewOptions] = SelectOptionWindow(ReportViewOptions).run()
+        if value == BACK:
+            return
+
+        if value == ReportViewOptions.Request:
+            RequestViewWindow(self.info.request_id).run()
+        if value == ReportViewOptions.Property:
+            PropertyViewWindow(self.info.property_id).run()
+        if value == ReportViewOptions.Employee:
+            EmployeeViewWindow(self.info.employee_id).run()
+        if value == ReportViewOptions.Contractors:
+            raise NotImplementedError()
+
+
+class ReportCreateWindow(CreateWindow):
+    title = "Create Report"
+    fields = [Field(name="Description", field="description"), Field(name="Cost", field="cost")]
+
+    def __init__(self, request_id: UUID):
+        self.request_id = request_id
+
+    def submit(self) -> UUID:
+        data = ReportCreate(**self.info)
+        report_id = api.reports.create(request_id=self.request_id, data=data)
+
+        return report_id
+
+    def submenu(self) -> None:
+        pass
+
+
+class ReportViewOptions(str, Enum):
+    Request = "Request"
+    Property = "Property"
+    Employee = "Employee"
+    Contractors = "Contractors"
 
 
 # Extra Windows:

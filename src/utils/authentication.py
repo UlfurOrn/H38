@@ -9,12 +9,12 @@ class AuthManager:
     __logged_in_user_id: Optional[UUID] = None
 
     @classmethod
-    def get_user(cls):
+    def get_user(cls) -> Employee:
         if cls.__logged_in_user_id is not None:
             return Employee.get(cls.__logged_in_user_id)
 
     @classmethod
-    def set_user(cls, user: Employee):
+    def set_user(cls, user: Employee) -> None:
         cls.__logged_in_user_id = user.id
 
 

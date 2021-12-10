@@ -80,9 +80,9 @@ class Window:
 
         self.boundary()
 
-    def hide_button(self, letter: str) -> None:
+    def hide_button(self, string: str) -> None:
         for button in self.buttons:
-            if button.letter == letter:
+            if button.letter == string or button.description == string:
                 button.hidden = True
 
     def parse_data(self, data: str) -> Any:

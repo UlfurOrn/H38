@@ -7,7 +7,7 @@ from pydantic import BaseModel, validator
 
 from database.models.contractor_model import Contractor
 from database.models.contractor_requests_model import ContractorRequest
-from database.models.request_model import Priority, Request, Status
+from database.models.request_model import Priority, Request, RequestStatus
 from logic.helpers import InfoModel, ListItem, Paginator
 from logic.logic.contractor_logic import ContractorItem
 from utils.authentication import AuthManager
@@ -138,7 +138,7 @@ class RequestLogic:
 
     @staticmethod
     def create(data: SingleRequestCreate) -> UUID:
-        request = Request(**data.dict(), status=Status.Todo)
+        request = Request(**data.dict(), status=RequestStatus.Todo)
 
         request.create()
 
@@ -156,7 +156,7 @@ class RequestLogic:
         current_date = start_date
         while current_date <= end_date:
             request = Request(
-                property_id=data.property_id, date=current_date, priority=data.priority, status=Status.Todo
+                property_id=data.property_id, date=current_date, priority=data.priority, status=RequestStatus.Todo
             ).create()
 
             current_date += data.interval
@@ -233,10 +233,10 @@ class RequestLogic:
     def assign(request_id: UUID) -> None:
         request = Request.get(request_id)
 
-        if request.status != Status.Todo:
+        if request.status != RequestStatus.Todo:
             raise BadRequestException("Task has already been assigned")
 
-        request.status = Status.Ongoing
+        request.status = RequestStatus.Ongoing
         request.employee_id = AuthManager.get_user().id
 
         request.update()
@@ -245,9 +245,9 @@ class RequestLogic:
     def done(request_id: UUID) -> None:
         request = Request.get(request_id)
 
-        if request.status != Status.Ongoing:
+        if request.status != RequestStatus.Ongoing:
             raise BadRequestException("Task must have status ongoing")
 
-        request.status = Status.Done
+        request.status = RequestStatus.Done
 
         request.update()
