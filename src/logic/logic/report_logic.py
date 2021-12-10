@@ -1,10 +1,10 @@
-from datetime import date
 from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel
 
 from database.models.report_model import Report, ReportStatus
+from database.models.request_model import RequestStatus
 from logic.helpers import InfoModel, ListItem, Paginator
 from utils.exceptions import BadRequestException
 
@@ -30,13 +30,8 @@ class ReportInfo(InfoModel):
 
 
 class ReportCreate(BaseModel):
-    property_id: UUID
-    employee_id: UUID
     description: str
     cost: str
-    status: str
-    date: date
-    contractor_id: UUID
 
 
 class ReportLogic:
@@ -63,8 +58,8 @@ class ReportLogic:
         return Paginator.paginate(report_items, page)
 
     @staticmethod
-    def create(data: ReportCreate) -> UUID:
-        report = Report(**data.dict())
+    def create(request_id: UUID, data: ReportCreate) -> UUID:
+        report = Report(request_id=request_id, **data.dict())
 
         report.create()
 
@@ -117,8 +112,13 @@ class ReportLogic:
         if report.status != ReportStatus.Approved:
             raise BadRequestException(f"Can't close report with status: {report.status.value}")
 
+        request = report.request
+
         report.status = ReportStatus.Closed
+        request.status = RequestStatus.Closed
+
         report.update()
+        request.update()
 
     @staticmethod
     def cancel(report_id: UUID) -> None:

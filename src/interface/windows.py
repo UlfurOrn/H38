@@ -4,6 +4,7 @@ from typing import Any, Optional, Union
 from uuid import UUID
 
 from database.models.property_model import Condition
+from database.models.report_model import ReportStatus
 from database.models.request_model import Priority, RequestStatus
 from interface.extra import BACK, Button, Column, Field
 from interface.window_types.create_window import CreateWindow
@@ -921,18 +922,42 @@ class ReportViewWindow(ViewWindow):
         Field(name="Status", field="status"),
     ]
 
+    def button_setup(self) -> None:
+        self.buttons = [
+            Button(letter="a", description="approve", function=self.approve),
+            Button(letter="u", description="unapprove", function=self.unapprove),
+            Button(letter="c", description="close", function=self.close),
+            Button(letter="c", description="cancel", function=self.cancel),
+            Button(letter="v", description="view", function=self.view),
+            Button(letter="b", description="back", function=self.back),
+        ]
+
     def window_setup(self) -> None:
         self.info = api.reports.get(self.model_id)
 
     def setup(self) -> None:
-        self.hide_button("u")  # Update is never used for this window
-        self.hide_button("s")  # Select is never used for this window
+        if self.info.status != ReportStatus.Unapproved:
+            self.hide_button("a")
+            self.hide_button("cancel")
+        if self.info.status != ReportStatus.Approved:
+            self.hide_button("u")
+            self.hide_button("close")
 
-    def update(self) -> None:
-        pass
+    def approve(self) -> None:
+        api.reports.approve(self.model_id)
+        self.window_setup()
 
-    def select(self) -> None:
-        pass
+    def unapprove(self) -> None:
+        api.reports.unapprove(self.model_id)
+        self.window_setup()
+
+    def close(self) -> None:
+        api.reports.close(self.model_id)
+        self.window_setup()
+
+    def cancel(self) -> None:
+        api.reports.cancel(self.model_id)
+        self.window_setup()
 
     def view(self) -> None:
         value: Union[BACK, ReportViewOptions] = SelectOptionWindow(ReportViewOptions).run()
@@ -947,24 +972,20 @@ class ReportViewWindow(ViewWindow):
             EmployeeViewWindow(self.info.employee_id).run()
         if value == ReportViewOptions.Contractors:
             raise NotImplementedError()
-            # RequestViewWindow(self.info.request_id).run()
 
 
 class ReportCreateWindow(CreateWindow):
     title = "Create Report"
-    fields = [
-        Field(name="Name", field="name"),
-        Field(name="Phone", field="phone"),
-        Field(name="Email", field="email"),
-        Field(name="Opening Hours", field="opening_hours"),
-        Field(name="Location", field="location", submenu=True),
-    ]
+    fields = [Field(name="Description", field="description"), Field(name="Cost", field="cost")]
+
+    def __init__(self, request_id: UUID):
+        self.request_id = request_id
 
     def submit(self) -> UUID:
         data = ReportCreate(**self.info)
-        contractor_id = api.contractors.create(data)
+        report_id = api.reports.create(request_id=self.request_id, data=data)
 
-        return contractor_id
+        return report_id
 
     def submenu(self) -> None:
         value: Union[BACK, LocationInfo] = LocationListWindow().run()
