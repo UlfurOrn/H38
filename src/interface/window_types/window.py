@@ -159,6 +159,12 @@ class ExceptionHandler:
 
             window = ErrorWindow("Validation Error", error_string.strip())
             logger.exception(exception_value)
+        
+        
+        elif exception_type == NotImplementedError:
+            window = ErrorWindow(
+                "Not Implemented", "This feature has not yet been completed,\ncoming soon in a release near you!"
+            )
 
         # We do not want to catch all exceptions (KeyboardInterrupt for example) only subclasses of Exception
         elif not (exception_type == Exception or exception_type in Exception.__subclasses__()):
