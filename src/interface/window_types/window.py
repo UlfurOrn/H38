@@ -131,7 +131,7 @@ class Window:
         print("|" + " " * (self.WINDOW_SIZE - 2) + "|")
 
     def clear_screen(self) -> None:
-        print("\n" * 5)
+        print("\n" * 50)
 
     def get_input(self, text: str = "Enter Command: ") -> str:
         print()

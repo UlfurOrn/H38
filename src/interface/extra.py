@@ -7,10 +7,10 @@ BACK = "back"
 
 
 class WindowState(Enum):
-    Normal = auto
-    Select = auto
-    View = auto
-    Add = auto
+    Normal = auto()
+    Select = auto()
+    View = auto()
+    Add = auto()
 
 
 class Button(BaseModel):
