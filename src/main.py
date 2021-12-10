@@ -1,5 +1,5 @@
 from uuid import UUID, uuid4
-from Verklegt_1.H38.src.interface.windows import Welcome
+from interface.windows import Welcome
 from logic.logic.report_logic import ReportCreate
 from logic.logic.employee_logic import EmployeeCreate
 from logic.logic.contractor_logic import ContractorCreate
