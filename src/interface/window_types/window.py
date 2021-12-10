@@ -159,8 +159,7 @@ class ExceptionHandler:
 
             window = ErrorWindow("Validation Error", error_string.strip())
             logger.exception(exception_value)
-        
-        
+
         elif exception_type == NotImplementedError:
             window = ErrorWindow(
                 "Not Implemented", "This feature has not yet been completed,\ncoming soon in a release near you!"

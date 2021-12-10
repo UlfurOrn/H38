@@ -15,7 +15,7 @@ class UpdateWindow(Window):
 
     def button_setup(self) -> None:
         self.buttons = [
-            Button(letter="s", description="submit", function=self.submit, supervisor=True),
+            Button(letter="s", description="submit", function=self.submit),
             Button(letter="f", description="fill", function=self.submenu),
             Button(letter="c", description="clear", function=self.clear),
             Button(letter="b", description="back", function=self.back),
