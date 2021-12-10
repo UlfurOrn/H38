@@ -8,6 +8,7 @@ from database.models.report_model import ReportStatus
 from database.models.request_model import Priority, RequestStatus
 from interface.extra import BACK, Button, Column, Field
 from interface.window_types.create_window import CreateWindow
+from interface.window_types.filter_window import FilterWindow
 from interface.window_types.list_window import ListWindow
 from interface.window_types.option_window import OptionWindow, SelectOptionWindow
 from interface.window_types.update_window import UpdateWindow
@@ -15,7 +16,7 @@ from interface.window_types.view_window import ViewWindow
 from interface.window_types.window import Window
 from logic.api import api
 from logic.logic.contractor_logic import ContractorCreate, ContractorInfo, ContractorItem, ContractorUpdate
-from logic.logic.employee_logic import EmployeeCreate, EmployeeInfo, EmployeeItem, EmployeeUpdate
+from logic.logic.employee_logic import EmployeeCreate, EmployeeFilterOptions, EmployeeInfo, EmployeeItem, EmployeeUpdate
 from logic.logic.facility_logic import FacilityCreate, FacilityInfo, FacilityItem, FacilityUpdate
 from logic.logic.location_logic import LocationCreate, LocationInfo, LocationItem, LocationUpdate
 from logic.logic.property_logic import PropertyCreate, PropertyInfo, PropertyItem, PropertyUpdate
@@ -71,9 +72,10 @@ class EmployeeListWindow(ListWindow):
         Column(name="SSN", field="ssn", size=12),
         Column(name="Phone", field="phone", size=9),
     ]
+    filters = EmployeeFilterOptions()
 
     def setup(self) -> None:
-        self.paginator = api.employees.all(self.page)
+        self.paginator = api.employees.all(self.page, self.filters)
 
     def view_item(self, item: EmployeeItem) -> None:
         value = EmployeeViewWindow(item.employee_id).run()
@@ -87,6 +89,13 @@ class EmployeeListWindow(ListWindow):
             return
 
         EmployeeViewWindow(value).run()
+
+    def filter(self) -> None:
+        value = EmployeeFilterWindow(self.filters).run()
+        if value == BACK:
+            return
+        self.filters = value
+        self.page = 1
 
 
 class EmployeeViewWindow(ViewWindow):
@@ -192,6 +201,30 @@ class EmployeeUpdateWindow(UpdateWindow):
 
 class EmployeeViewOptions(str, Enum):
     Location = "Location"
+
+
+class EmployeeFilterWindow(FilterWindow):
+    title = "Employee Filters"
+    fields = [
+        Field(name="Location", field="location", submenu=True),
+        Field(name="SSN", field="ssn"),
+        Field(name="Name", field="name"),
+        Field(name="Phone", field="phone"),
+    ]
+
+    def save(self) -> EmployeeFilterOptions:
+        return EmployeeFilterOptions(**self.info)
+
+    def submenu(self) -> None:
+        value: Union[BACK, LocationInfo] = LocationListWindow().run()
+        if value == BACK:
+            return
+        self.info["location"] = value.airport
+        self.info["location_id"] = value.location_id
+
+    def clear(self) -> None:
+        super().clear()
+        self.info["location_id"] = None
 
 
 # Location Windows:

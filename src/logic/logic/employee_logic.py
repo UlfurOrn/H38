@@ -6,7 +6,7 @@ from pydantic import BaseModel, validator
 from pydantic.utils import Representation
 
 from database.models.employee_model import Employee
-from logic.helpers import InfoModel, ListItem, Paginator
+from logic.helpers import FilterOptions, InfoModel, ListItem, Paginator
 from utils.authentication import requires_supervisor
 
 
@@ -72,19 +72,28 @@ class EmployeeUpdate(BaseModel):
         return value
 
 
+class EmployeeFilterOptions(FilterOptions):
+    location_id: Optional[UUID]
+    location: Optional[str]
+    ssn: Optional[str]
+    name: Optional[str]
+    phone: Optional[str]
+
+
 class EmployeeLogic:
     @staticmethod
-    def all(page: int, location_filter: Optional[UUID] = None, search: Optional[str] = None) -> Paginator:
+    def all(page: int, filters: EmployeeFilterOptions, search: Optional[str] = None) -> Paginator:
         employees = Employee.all()
 
-        if location_filter:
-            employees = filter(lambda employee: employee.location_id == location_filter, employees)
+        if filters.location_id:
+            employees = filter(lambda employee: filters.location_id == employee.location_id, employees)
 
-        def check_match(employee: Employee):
-            return search in str(employee.ssn)
-
-        if search:
-            employees = filter(check_match, employees)
+        if filters.ssn:
+            employees = filter(lambda employee: filters.ssn in str(employee.ssn), employees)
+        if filters.name:
+            employees = filter(lambda employee: filters.name in str(employee.name), employees)
+        if filters.phone:
+            employees = filter(lambda employee: filters.phone in str(employee.phone), employees)
 
         employee_items = [
             EmployeeItem(employee_id=employee.id, name=employee.name, ssn=employee.ssn, phone=employee.work_phone)

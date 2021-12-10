@@ -51,7 +51,7 @@ class FilterWindow(Window):
     def save(self) -> FilterOptions:
         raise NotImplementedError()
 
-    def submenu(self) -> InfoModel:
+    def submenu(self) -> None:
         raise NotImplementedError()
 
     def clear(self) -> None:
