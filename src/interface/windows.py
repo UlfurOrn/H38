@@ -149,7 +149,7 @@ class EmployeeUpdateWindow(UpdateWindow):
         Field(name="Work Phone", field="work_phone"),
         Field(name="Location", field="location", submenu=True),
     ]
-
+                                                                    
     def window_setup(self) -> None:
         self.info = api.employees.get(self.model_id).dict()
 
