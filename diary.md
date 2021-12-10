@@ -60,7 +60,7 @@ also start creating the class diagrams for the three layers of the
 system.
 
 * Guðmundur:
-    *
+    * Worked on the UI flow diagram and class diagram for the database.
 * Kristófer:
     *
 * Kolbeinn:
@@ -88,7 +88,7 @@ in the logic layer should do. This is to hopefully increase our work
 throughput in the following weeks.
 
 * Guðmundur:
-    *
+    * Worked on window designs for a fair number of windows and class diagrams.
 * Kristófer:
     *
 * Kolbeinn:
@@ -117,7 +117,8 @@ decisions we mentioned above. Put the puzzle pieces together into a
 complete report.
 
 * Guðmundur:
-    *
+    * Continued working on wireframes and UI flow. Also participated in writing 
+    the design report.
 * Kristófer:
     *
 * Kolbeinn:
@@ -147,7 +148,7 @@ packages. If we have enough time we will start with the database and prototype
 the other two layers.
 
 * Guðmundur:
-    *
+    * Set up git virtual environment in VSC and got to know how to operate with git.
 * Kristófer:
     *
 * Kolbeinn:
@@ -176,7 +177,7 @@ on the logic for contractors, reports, etc...
 
 
 * Guðmundur:
-    *
+    * Made a model class for property, facility, contractor, report and request
 * Kristófer:
     *
 * Kolbeinn:
@@ -203,7 +204,7 @@ also be working on the database layer and logic layer, fixing any bugs or issues
 pop up.
 
 * Guðmundur:
-    *
+    * worked on logic classes for properties, requests and facilities.
 * Kristófer:
     *
 * Kolbeinn:
@@ -231,7 +232,7 @@ be able to finish them all, but hopefully we get far. We will also, again, be wo
 on adding the missing functionality for the logic and database layers.
 
 * Guðmundur:
-    *
+    * Worked on filtering methods for employees and properties
 * Kristófer:
     *
 * Kolbeinn:
@@ -258,7 +259,7 @@ running. This includes, list, view, create, update, select functionality and mor
 need to finish the Update superclass and any others needed.
 
 * Guðmundur:
-    *
+    * Made a few subclasses for ViewWindow
 * Kristófer:
     *
 * Kolbeinn:
@@ -291,7 +292,7 @@ we will be starting on the contractor logic.
 * Kolbeinn:
     *
 * Ríkharður:
-
+    * Authentication funtionality was worked on.
 * Smári:
     *
 * Úlfur:
@@ -302,13 +303,13 @@ we will be starting on the contractor logic.
 
 
 * Guðmundur:
-    *
+    * worked on SearchWindow Superclass
 * Kristófer:
     *
 * Kolbeinn:
     *
 * Ríkharður:
-
+    * Verification in logic where it applies was implemented. Made to verify inputs when creating or editing things to the database.
 * Smári:
     *
 * Úlfur:
@@ -325,7 +326,7 @@ we will be starting on the contractor logic.
 * Kolbeinn:
     *
 * Ríkharður:
-    *
+    * Working on trying to combine all validators into one file/location. Polished up some other functions
 * Smári:
     *
 * Úlfur:
@@ -342,7 +343,8 @@ we will be starting on the contractor logic.
 * Kolbeinn:
     *
 * Ríkharður:
-    *
+    * Made a welcome window for the beginning of the program. Added window state into the program 
+      so that in some scenarios some buttons are removed where not needed. Started working on the final report.
 * Smári:
     *
 * Úlfur:

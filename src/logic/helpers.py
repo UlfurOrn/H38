@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from pydantic import BaseModel
 
+from utils.exceptions import BadRequestException
+
 
 class ListItem(BaseModel):
     def get(self, key: str) -> str:
@@ -27,7 +29,7 @@ class Paginator(BaseModel):
         max_page = ((total - 1) // cls._PAGE_SIZE) + 1 if items else 1
 
         if not (1 <= page <= max_page):
-            raise Exception(f"Page should be between 1 and {max_page}")
+            raise BadRequestException(f"Page should be between 1 and {max_page}")
 
         return Paginator(
             page=page,

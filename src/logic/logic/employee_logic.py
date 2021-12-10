@@ -1,7 +1,9 @@
 from typing import Optional
-from uuid import UUID
+from uuid import RESERVED_FUTURE, UUID, uuid4
+from click.decorators import command
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
+from pydantic.utils import Representation
 
 from database.models.employee_model import Employee
 from logic.helpers import InfoModel, ListItem, Paginator
@@ -29,13 +31,27 @@ class EmployeeInfo(InfoModel):
 
 class EmployeeCreate(BaseModel):
     name: str
-    ssn: int
+    ssn: str
     address: str
-    home_phone: Optional[int]
-    work_phone: int
+    home_phone: Optional[str]
+    work_phone: str
     email: str
     location_id: UUID
 
+    @validator('home_phone', 'work_phone')
+    def validate_phone(cls, value):
+        if not value:
+            pass
+        else:
+            if not len(value) == 7 or not value.isadigit():
+                raise ValueError('Phone number is incvalid! It should be the length of 7 numbers!')
+        return value
+    
+    @validator('ssn')
+    def validate_ssn(cls, value):
+        if not len(value) == 10 or not value.isadigit():
+            raise ValueError('SSN is invalid! It should be the length of 10 numbers!')
+        return value
 
 class EmployeeUpdate(BaseModel):
     name: Optional[str] = None
@@ -44,6 +60,15 @@ class EmployeeUpdate(BaseModel):
     work_phone: Optional[int] = None
     email: Optional[str] = None
     location_id: Optional[UUID] = None
+
+    @validator('home_phone', 'work_phone')
+    def validate_phone(cls, value):
+        if not value:
+            pass
+        else:
+            if not len(value) == 7 or not value.isadigit():
+                raise ValueError('Phone number is incvalid! It should be the length of 7 numbers!')
+        return value
 
 
 class EmployeeLogic:

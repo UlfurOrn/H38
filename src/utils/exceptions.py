@@ -2,7 +2,7 @@ class NotFoundException(Exception):
     pass
 
 
-class BadRequest(Exception):
+class BadRequestException(Exception):
     pass
 
 
